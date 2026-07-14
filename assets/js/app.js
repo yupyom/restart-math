@@ -1320,9 +1320,9 @@ const practiceModes = [
 ];
 
 function generateIntegerProblem() {
-  const a = randomInt(-9, 9);
-  const b = choose([-6, -5, -4, -3, 3, 4, 5, 6]);
-  const c = randomInt(-9, 9);
+  const a = randomInt(-6, 6);
+  const b = choose([-5, -4, -3, -2, 2, 3, 4, 5]);
+  const c = choose([-5, -4, -3, -2, 2, 3, 4, 5]);
   const product = b * c;
   const answer = a + product;
   return {
@@ -1349,9 +1349,24 @@ function generateIntegerProblem() {
 }
 
 function generateRadicalProblem() {
-  const base = randomInt(2, 9);
-  const rest = choose([2, 3, 5, 6, 7, 10, 11, 13]);
-  const n = base * base * rest;
+  const radicalCases = [
+    { n: 8, base: 2, rest: 2 },
+    { n: 12, base: 2, rest: 3 },
+    { n: 18, base: 3, rest: 2 },
+    { n: 20, base: 2, rest: 5 },
+    { n: 24, base: 2, rest: 6 },
+    { n: 27, base: 3, rest: 3 },
+    { n: 28, base: 2, rest: 7 },
+    { n: 32, base: 4, rest: 2 },
+    { n: 45, base: 3, rest: 5 },
+    { n: 48, base: 4, rest: 3 },
+    { n: 50, base: 5, rest: 2 },
+    { n: 72, base: 6, rest: 2 },
+    { n: 75, base: 5, rest: 3 },
+    { n: 80, base: 4, rest: 5 },
+    { n: 98, base: 7, rest: 2 },
+  ];
+  const { n, base, rest } = choose(radicalCases);
   return {
     modeLabel: "ルート",
     title: "平方数を外へ出す",
@@ -1376,9 +1391,9 @@ function generateRadicalProblem() {
 }
 
 function generateSubstitutionProblem() {
-  const a = randomInt(2, 6);
+  const a = randomInt(2, 4);
   const b = randomInt(-5, 5);
-  const x = randomInt(-4, 6);
+  const x = randomInt(-3, 5);
   const answer = a * x + b;
   return {
     modeLabel: "文字式",
@@ -1408,10 +1423,10 @@ function generateSubstitutionProblem() {
 }
 
 function generateCombineProblem() {
-  const p = randomInt(-7, 7) || 2;
-  const q = randomInt(-7, 7) || -3;
-  const r = randomInt(-9, 9);
-  const s = randomInt(-9, 9);
+  const p = randomInt(-5, 5) || 2;
+  const q = randomInt(-5, 5) || -3;
+  const r = randomInt(-6, 6);
+  const s = randomInt(-6, 6);
   const xSum = p + q;
   const cSum = r + s;
   return {
@@ -1445,8 +1460,8 @@ function generateCombineProblem() {
 }
 
 function generateDistributeProblem() {
-  const a = choose([-5, -4, -3, -2, 2, 3, 4, 5]);
-  const b = randomInt(-8, 8) || 3;
+  const a = choose([-4, -3, -2, 2, 3, 4]);
+  const b = choose([-5, -4, -3, -2, 2, 3, 4, 5]);
   const xCoef = a;
   const constant = a * b;
   return {
@@ -1480,9 +1495,9 @@ function generateDistributeProblem() {
 }
 
 function generateEquationProblem() {
-  const a = randomInt(2, 7);
-  const x = randomInt(-5, 8);
-  const b = randomInt(-9, 9);
+  const a = randomInt(2, 5);
+  const x = randomInt(-4, 6);
+  const b = randomInt(-6, 6);
   const c = a * x + b;
   return {
     modeLabel: "方程式",
@@ -1518,9 +1533,9 @@ function sameInequalityAnswer(input, sign, boundary) {
 }
 
 function generateInequalityProblem() {
-  const a = choose([-5, -4, -3, -2, 2, 3, 4, 5]);
-  const boundary = randomInt(-5, 6);
-  const b = randomInt(-8, 8);
+  const a = choose([-4, -3, -2, 2, 3, 4]);
+  const boundary = randomInt(-4, 5);
+  const b = randomInt(-5, 5);
   const c = a * boundary + b;
   const right = c - b;
   const sign = a > 0 ? "<" : ">";
@@ -1553,9 +1568,9 @@ function samePoint(input, x, y) {
 }
 
 function generateQuadraticVertexProblem() {
-  const a = choose([-3, -2, -1, 1, 2, 3]);
-  const h = randomInt(-4, 5);
-  const k = randomInt(-6, 6);
+  const a = choose([-2, -1, 1, 2]);
+  const h = randomInt(-3, 4);
+  const k = randomInt(-5, 5);
   return {
     modeLabel: "数I",
     title: "頂点と最大・最小",
@@ -1617,9 +1632,19 @@ function generateTrigProblem() {
 }
 
 function generateCountingProblem() {
-  const mode = choose(["permutation", "combination"]);
-  const n = randomInt(5, 8);
-  const r = randomInt(2, Math.min(4, n - 1));
+  const cases = [
+    { mode: "permutation", n: 4, r: 2 },
+    { mode: "permutation", n: 5, r: 2 },
+    { mode: "permutation", n: 6, r: 2 },
+    { mode: "permutation", n: 4, r: 3 },
+    { mode: "permutation", n: 5, r: 3 },
+    { mode: "combination", n: 4, r: 2 },
+    { mode: "combination", n: 5, r: 2 },
+    { mode: "combination", n: 6, r: 2 },
+    { mode: "combination", n: 5, r: 3 },
+    { mode: "combination", n: 6, r: 3 },
+  ];
+  const { mode, n, r } = choose(cases);
   const total = mode === "permutation" ? permutation(n, r) : combination(n, r);
   return {
     modeLabel: "数A",
@@ -1654,8 +1679,15 @@ function generateCountingProblem() {
 }
 
 function generateProbabilityProblem() {
-  const red = randomInt(2, 6);
-  const blue = randomInt(2, 7);
+  const ballCases = [
+    { red: 2, blue: 3 },
+    { red: 3, blue: 2 },
+    { red: 3, blue: 4 },
+    { red: 4, blue: 3 },
+    { red: 2, blue: 4 },
+    { red: 4, blue: 2 },
+  ];
+  const { red, blue } = choose(ballCases);
   const total = red + blue;
   const replace = choose([true, false]);
   const secondRed = replace ? red : red - 1;
