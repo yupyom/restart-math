@@ -1619,6 +1619,91 @@ input[type="text"],
   font-weight: 700;
 }
 
+.triangle-lab-svg,
+.venn-lab-svg {
+  width: 100%;
+  min-height: 260px;
+  font-family: var(--font-ui);
+  font-size: 18px;
+}
+
+.triangle-shape {
+  fill: rgba(47, 111, 115, 0.14);
+  stroke: #2f6f73;
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
+.triangle-extension {
+  stroke: #db8d3d;
+  stroke-width: 4;
+  stroke-dasharray: 8 7;
+  stroke-linecap: round;
+}
+
+.triangle-point {
+  fill: #1f2933;
+}
+
+.triangle-point.apex {
+  fill: #2f6f73;
+  stroke: white;
+  stroke-width: 3;
+}
+
+.triangle-angle-label {
+  fill: #a42c68;
+  font-weight: 700;
+}
+
+.triangle-angle-label.exterior {
+  fill: #b05f16;
+}
+
+.venn-universe {
+  fill: #fffdf7;
+  stroke: #7b8794;
+  stroke-width: 3;
+}
+
+.venn-circle-a {
+  fill: rgba(47, 111, 115, 0.16);
+  stroke: #2f6f73;
+  stroke-width: 4;
+}
+
+.venn-circle-b {
+  fill: rgba(219, 141, 61, 0.16);
+  stroke: #db8d3d;
+  stroke-width: 4;
+}
+
+.venn-set-label {
+  fill: #2f6f73;
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.venn-set-label.b {
+  fill: #b05f16;
+}
+
+.venn-universe-label {
+  fill: #52606d;
+  font-size: 15px;
+}
+
+.venn-count {
+  fill: #1f2933;
+  font-weight: 700;
+  font-size: 24px;
+  text-anchor: middle;
+}
+
+.venn-count.outside {
+  fill: #52606d;
+}
+
 .euclid-step-list {
   display: grid;
   gap: 0.55rem;

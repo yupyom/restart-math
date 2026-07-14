@@ -584,6 +584,54 @@
             <p class="lab-result" id="set-sort-result"></p>
           </article>
 
+          <article class="lab-card" id="venn-lab">
+            <div class="lab-title-row">
+              <div>
+                <p class="eyebrow">集合と場合の数</p>
+                <h3>ベン図で人数を数える</h3>
+              </div>
+              <span class="pill">数I・数A</span>
+            </div>
+            <div class="geometry-lab-stage" id="venn-stage" aria-live="polite"></div>
+            <div class="control-grid">
+              <label>
+                A（電車を使う人数）
+                <input id="venn-a" type="range" min="5" max="20" step="1" value="14" />
+              </label>
+              <label>
+                B（バスを使う人数）
+                <input id="venn-b" type="range" min="5" max="20" step="1" value="10" />
+              </label>
+              <label>
+                両方使う人数
+                <input id="venn-both" type="range" min="0" max="20" step="1" value="4" />
+              </label>
+            </div>
+            <p class="lab-result" id="venn-result"></p>
+          </article>
+
+          <article class="lab-card" id="triangle-angle-lab">
+            <div class="lab-title-row">
+              <div>
+                <p class="eyebrow">図形の基本</p>
+                <h3>三角形の内角と外角</h3>
+              </div>
+              <span class="pill">中2・数A</span>
+            </div>
+            <div class="geometry-lab-stage" id="triangle-stage" aria-live="polite"></div>
+            <div class="control-grid">
+              <label>
+                頂点 (A) の横位置
+                <input id="triangle-apex-x" type="range" min="90" max="430" step="10" value="200" />
+              </label>
+              <label>
+                頂点 (A) の高さ
+                <input id="triangle-apex-y" type="range" min="70" max="190" step="10" value="150" />
+              </label>
+            </div>
+            <p class="lab-result" id="triangle-angle-result"></p>
+          </article>
+
           <article class="lab-card" id="geometry-properties-lab">
             <div class="lab-title-row">
               <div>

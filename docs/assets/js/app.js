@@ -80,6 +80,11 @@ const rangeValueFormatters = {
   "circle-observer": (value) => `位置 ${value}`,
   "gcd-a": (value) => `${value}`,
   "gcd-b": (value) => `${value}`,
+  "venn-a": (value) => `${value} 人`,
+  "venn-b": (value) => `${value} 人`,
+  "venn-both": (value) => `${value} 人`,
+  "triangle-apex-x": (value) => `位置 ${value}`,
+  "triangle-apex-y": (value) => `高さ ${value}`,
 };
 
 function setupRangeValueLabels() {
@@ -1725,6 +1730,108 @@ function renderGeometryPropertiesLab() {
   $("#circle-angle-result").textContent =
     `点 \\(B\\) を動かしても、見ている弧 \\(AC\\) は同じです。円周角は同じ弧に対する中心角の半分なので、\\(\\angle ABC=\\angle ADC=120^\\circ\\div2=60^\\circ\\) です。`;
   scheduleMathTypeset($("#circle-angle-result"));
+}
+
+function setupTriangleAngleLab() {
+  ["#triangle-apex-x", "#triangle-apex-y"].forEach((selector) => {
+    $(selector).addEventListener("input", renderTriangleAngleLab);
+  });
+  renderTriangleAngleLab();
+}
+
+function renderTriangleAngleLab() {
+  const apexX = Number($("#triangle-apex-x").value);
+  const height = Number($("#triangle-apex-y").value);
+  const baseY = 250;
+  const pointB = { x: 70, y: baseY };
+  const pointC = { x: 390, y: baseY };
+  const pointA = { x: apexX, y: baseY - height };
+
+  const toDegrees = (radian) => (radian * 180) / Math.PI;
+  const rawAngleB = toDegrees(Math.atan2(height, pointA.x - pointB.x));
+  const rawAngleC = toDegrees(Math.atan2(height, pointC.x - pointA.x));
+  const angleB = Math.round(rawAngleB);
+  const angleC = Math.round(rawAngleC);
+  const angleA = 180 - angleB - angleC;
+  const exteriorC = 180 - angleC;
+
+  $("#triangle-stage").innerHTML = `
+    <svg class="triangle-lab-svg" viewBox="0 0 520 320" role="img" aria-label="頂点Aを動かせる三角形と、頂点Cの外角">
+      <line class="triangle-extension" x1="${pointC.x}" y1="${baseY}" x2="490" y2="${baseY}"></line>
+      <polygon class="triangle-shape" points="${pointA.x},${pointA.y} ${pointB.x},${pointB.y} ${pointC.x},${pointC.y}"></polygon>
+      <circle class="triangle-point apex" cx="${pointA.x}" cy="${pointA.y}" r="8"></circle>
+      <circle class="triangle-point" cx="${pointB.x}" cy="${pointB.y}" r="6"></circle>
+      <circle class="triangle-point" cx="${pointC.x}" cy="${pointC.y}" r="6"></circle>
+      <text x="${pointA.x - 10}" y="${pointA.y - 14}">A</text>
+      <text x="${pointB.x - 24}" y="${pointB.y + 6}">B</text>
+      <text x="${pointC.x + 4}" y="${pointC.y + 26}">C</text>
+      <text class="triangle-angle-label apex-label" x="${pointA.x + 14}" y="${pointA.y + 10}">${angleA}°</text>
+      <text class="triangle-angle-label" x="${pointB.x + 26}" y="${pointB.y - 12}">${angleB}°</text>
+      <text class="triangle-angle-label" x="${pointC.x - 52}" y="${pointC.y - 12}">${angleC}°</text>
+      <text class="triangle-angle-label exterior" x="${pointC.x + 26}" y="${pointC.y - 12}">${exteriorC}°</text>
+    </svg>
+    <div class="applied-metrics">
+      <div class="applied-metric"><span>内角の和</span><strong>180°</strong></div>
+      <div class="applied-metric positive"><span>C の外角</span><strong>${exteriorC}°</strong></div>
+      <div class="applied-metric"><span>∠A + ∠B</span><strong>${angleA + angleB}°</strong></div>
+    </div>
+  `;
+  $("#triangle-angle-result").textContent =
+    `頂点 \\(A\\) をどこへ動かしても、内角の和は \\(${angleA}^\\circ+${angleB}^\\circ+${angleC}^\\circ=180^\\circ\\) のままです。` +
+    `また、\\(C\\) の外角（点線側の角）は \\(180^\\circ-${angleC}^\\circ=${exteriorC}^\\circ\\) で、隣り合わない2つの内角の和 \\(\\angle A+\\angle B=${angleA + angleB}^\\circ\\) と一致します。`;
+  scheduleMathTypeset($("#triangle-angle-result"));
+}
+
+function setupVennLab() {
+  ["#venn-a", "#venn-b", "#venn-both"].forEach((selector) => {
+    $(selector).addEventListener("input", renderVennLab);
+  });
+  renderVennLab();
+}
+
+function renderVennLab() {
+  const total = 40;
+  const sizeA = Number($("#venn-a").value);
+  const sizeB = Number($("#venn-b").value);
+  const bothInput = $("#venn-both");
+  const bothMax = Math.min(sizeA, sizeB);
+  bothInput.max = String(bothMax);
+  if (Number(bothInput.value) > bothMax) {
+    bothInput.value = String(bothMax);
+    bothInput.dispatchEvent(new Event("input"));
+    return;
+  }
+  const both = Number(bothInput.value);
+  const onlyA = sizeA - both;
+  const onlyB = sizeB - both;
+  const union = sizeA + sizeB - both;
+  const outside = total - union;
+
+  $("#venn-stage").innerHTML = `
+    <svg class="venn-lab-svg" viewBox="0 0 520 320" role="img" aria-label="2つの集合の人数を示すベン図">
+      <rect class="venn-universe" x="25" y="35" width="470" height="250" rx="14"></rect>
+      <circle class="venn-circle-a" cx="205" cy="160" r="95"></circle>
+      <circle class="venn-circle-b" cx="315" cy="160" r="95"></circle>
+      <text class="venn-set-label" x="120" y="70">A</text>
+      <text class="venn-set-label b" x="390" y="70">B</text>
+      <text class="venn-universe-label" x="40" y="62">全体 ${total}人</text>
+      <text class="venn-count" x="150" y="168">${onlyA}</text>
+      <text class="venn-count" x="260" y="168">${both}</text>
+      <text class="venn-count" x="370" y="168">${onlyB}</text>
+      <text class="venn-count outside" x="440" y="265">${outside}</text>
+    </svg>
+    <div class="applied-metrics">
+      <div class="applied-metric"><span>A だけ</span><strong>${onlyA}人</strong></div>
+      <div class="applied-metric"><span>両方（A ∩ B）</span><strong>${both}人</strong></div>
+      <div class="applied-metric"><span>B だけ</span><strong>${onlyB}人</strong></div>
+      <div class="applied-metric positive"><span>少なくとも一方（A ∪ B）</span><strong>${union}人</strong></div>
+      <div class="applied-metric"><span>どちらでもない</span><strong>${outside}人</strong></div>
+    </div>
+  `;
+  $("#venn-result").textContent =
+    `そのまま足すと \\(${sizeA}+${sizeB}=${sizeA + sizeB}\\) 人ですが、これは重なりの \\(${both}\\) 人を2回数えた数です。` +
+    `1回分を引いて \\(n(A\\cup B)=${sizeA}+${sizeB}-${both}=${union}\\) 人。どちらでもない人は \\(${total}-${union}=${outside}\\) 人です。`;
+  scheduleMathTypeset($("#venn-result"));
 }
 
 function euclideanDivisionSteps(first, second) {
@@ -3454,6 +3561,8 @@ function init() {
   setupTrigLab();
   setupProbabilityLab();
   setupSetSortLab();
+  setupVennLab();
+  setupTriangleAngleLab();
   setupGeometryPropertiesLab();
   setupEuclideanAlgorithmLab();
   setupAppliedLabs();
