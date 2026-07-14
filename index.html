@@ -293,20 +293,20 @@
             <div class="term-board" id="term-board" aria-label="文字式の項を色分けした図"></div>
             <div class="control-grid">
               <label>
-                xの係数 p
-                <input id="term-p" type="range" min="-9" max="9" value="3" />
+                <span>たす x カード <strong id="term-p-count">5枚</strong></span>
+                <input id="term-p" type="range" min="0" max="9" value="5" />
               </label>
               <label>
-                xの係数 q
-                <input id="term-q" type="range" min="-9" max="9" value="-5" />
+                <span>ひく x カード <strong id="term-q-count">2枚</strong></span>
+                <input id="term-q" type="range" min="0" max="9" value="2" />
               </label>
               <label>
-                定数 r
-                <input id="term-r" type="range" min="-9" max="9" value="4" />
+                <span>たす 1 カード <strong id="term-r-count">6枚</strong></span>
+                <input id="term-r" type="range" min="0" max="9" value="6" />
               </label>
               <label>
-                定数 s
-                <input id="term-s" type="range" min="-9" max="9" value="2" />
+                <span>ひく 1 カード <strong id="term-s-count">0枚</strong></span>
+                <input id="term-s" type="range" min="0" max="9" value="0" />
               </label>
             </div>
             <p class="lab-result" id="term-result"></p>
@@ -386,11 +386,11 @@
                 <input id="quad-a" type="range" min="-4" max="4" value="1" />
               </label>
               <label>
-                頂点の x 座標 p
+                頂点の横位置
                 <input id="quad-h" type="range" min="-6" max="6" value="2" />
               </label>
               <label>
-                頂点の y 座標 q
+                頂点の高さ
                 <input id="quad-k" type="range" min="-6" max="6" value="-3" />
               </label>
             </div>

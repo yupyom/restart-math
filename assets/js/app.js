@@ -256,12 +256,12 @@ const units = [
     summary:
       "二次関数は、頂点を見るとグラフ全体の動きが一気に分かります。平方完成は、式から頂点を読むための技術です。",
     points: [
-      "\\(y=a(x-p)^2+q\\) の頂点は \\((p,q)\\)",
+      "頂点形式 \\(y=a(x-p)^2+q\\) では、\\(p\\) が横位置、\\(q\\) が高さ",
       "\\(a>0\\) なら下に凸で最小値をもつ",
       "\\(a<0\\) なら上に凸で最大値をもつ",
       "平方完成で \\(x^2+bx+c\\) を頂点形式へ直す",
     ],
-    example: "\\(y=(x-2)^2-3\\) の頂点は \\((2,-3)\\)、最小値は \\(-3\\)",
+    example: "\\(y=(x-2)^2-3\\) は「横位置 \\(2\\)、高さ \\(-3\\)」なので、頂点は \\((2,-3)\\)",
     check: "二次関数の頂点ラボで、\\(a\\) の符号と頂点の位置が最大・最小にどう効くか見ましょう。",
   },
   {
@@ -956,38 +956,48 @@ function chip(value, label, extraClass = "") {
   return `<span class="term-chip ${extraClass}${negative}">${label}</span>`;
 }
 
-function renderTermChips(value, variable) {
-  if (value === 0) return chip(0, "0");
-  const count = Math.min(Math.abs(value), 9);
-  return Array.from({ length: count }, () =>
-    chip(value, `${value < 0 ? "-" : "+"}${variable}`, variable === "1" ? "constant" : ""),
-  ).join("");
+function renderTermChips(count, label, kind = "") {
+  if (count === 0) return `<span class="term-chip muted">なし</span>`;
+  return Array.from({ length: Math.min(count, 9) }, () => `<span class="term-chip ${kind}">${label}</span>`).join("");
+}
+
+function cardExpression(posX, negX, posOne, negOne) {
+  const parts = [];
+  if (posX) parts.push(term(posX));
+  if (negX) parts.push(`- ${negX === 1 ? "x" : `${negX}x`}`);
+  if (posOne) parts.push(parts.length ? `+ ${posOne}` : `${posOne}`);
+  if (negOne) parts.push(`- ${negOne}`);
+  return parts.join(" ") || "0";
 }
 
 function renderTerms() {
-  const p = Number($("#term-p").value);
-  const q = Number($("#term-q").value);
-  const r = Number($("#term-r").value);
-  const s = Number($("#term-s").value);
-  const xSum = p + q;
-  const cSum = r + s;
-  const originalParts = [];
-  if (p !== 0) originalParts.push(term(p));
-  if (q !== 0) originalParts.push(`${q < 0 ? "- " : "+ "}${Math.abs(q)}x`);
-  if (r !== 0) originalParts.push(`${r < 0 ? "- " : "+ "}${Math.abs(r)}`);
-  if (s !== 0) originalParts.push(`${s < 0 ? "- " : "+ "}${Math.abs(s)}`);
-  const original = (originalParts.join(" ") || "0").replace(/^\+ /, "");
+  const posX = Number($("#term-p").value);
+  const negX = Number($("#term-q").value);
+  const posOne = Number($("#term-r").value);
+  const negOne = Number($("#term-s").value);
+  const xSum = posX - negX;
+  const cSum = posOne - negOne;
+  const original = cardExpression(posX, negX, posOne, negOne);
+  $("#term-p-count").textContent = `${posX}枚`;
+  $("#term-q-count").textContent = `${negX}枚`;
+  $("#term-r-count").textContent = `${posOne}枚`;
+  $("#term-s-count").textContent = `${negOne}枚`;
   $("#term-board").innerHTML = `
     <div class="term-lane">
-      <h4>x の項</h4>
-      <div class="term-chips">${renderTermChips(p, "x")}${renderTermChips(q, "x")}</div>
+      <h4>xカードの箱</h4>
+      <p>同じ \\(x\\) のカードだけを数えます。</p>
+      <div class="term-chips">${renderTermChips(posX, "+x", "positive-x")}${renderTermChips(negX, "-x", "negative-x")}</div>
+      <div class="term-explain">\\(+x\\) と \\(-x\\) は1組で \\(0\\)。残りは \\(${term(xSum)}\\)</div>
     </div>
     <div class="term-lane">
-      <h4>定数項</h4>
-      <div class="term-chips">${renderTermChips(r, "1")}${renderTermChips(s, "1")}</div>
+      <h4>1カードの箱</h4>
+      <p>数字だけのカードは、\\(x\\) カードとは別に数えます。</p>
+      <div class="term-chips">${renderTermChips(posOne, "+1", "constant")}${renderTermChips(negOne, "-1", "constant negative-one")}</div>
+      <div class="term-explain">\\(+1\\) と \\(-1\\) は1組で \\(0\\)。残りは \\(${cSum}\\)</div>
     </div>
   `;
   $("#term-result").textContent = `\\(${original}=${linearText(xSum, cSum)}\\)`;
+  scheduleMathTypeset($("#term-board"));
   scheduleMathTypeset($("#term-result"));
 }
 
@@ -1554,7 +1564,7 @@ function generateQuadraticVertexProblem() {
       {
         label: "頂点を読む",
         question: "頂点の座標は？",
-        hint: "\\(y=a(x-p)^2+q\\) の頂点は \\((p,q)\\) です。",
+        hint: "頂点形式 \\(y=a(x-p)^2+q\\) では、\\(p\\) が横位置、\\(q\\) が高さです。",
         check: (input) => samePoint(input, h, k),
         answer: `\\((${h},${k})\\)`,
       },

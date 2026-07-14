@@ -809,6 +809,13 @@ input[type="text"],
   margin: 0 0 0.7rem;
 }
 
+.term-lane p {
+  margin: -0.35rem 0 0.7rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
 .term-chips {
   display: flex;
   flex-wrap: wrap;
@@ -823,14 +830,36 @@ input[type="text"],
   font-weight: 950;
 }
 
+.term-chip.positive-x {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
 .term-chip.constant {
   background: var(--accent-soft);
   color: #9a4c00;
 }
 
-.term-chip.negative {
+.term-chip.negative,
+.term-chip.negative-x,
+.term-chip.negative-one {
   background: #ffe2e2;
   color: #a93232;
+}
+
+.term-chip.muted {
+  background: #eef0f2;
+  color: var(--muted);
+}
+
+.term-explain {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.76);
+  color: #42505a;
+  font-weight: 900;
+  font-size: 0.92rem;
 }
 
 .balance-stage {
