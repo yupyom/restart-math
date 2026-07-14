@@ -92,3 +92,15 @@ python3 -m http.server 8000
 - 単元を追加する場合は `assets/js/app.js` の `units` 配列へ追加します。
 - 学習マップを追加する場合は `assets/js/app.js` の `topics` 配列へ追加します。
 - 見た目を調整する場合は `assets/css/styles.css` を編集します。
+- 数式をHTMLへ表示するときは `<` や `>` がタグとして解釈されやすいため、直接HTMLへ埋め込まず、表示用のエスケープ処理を通します。
+
+## 今後の構造改善メモ
+
+現状は静的HTML + JavaScriptで動く軽い構成です。ただし、単元数・数式・図解が増えてきたため、今後は以下のように分けると壊れにくくなります。
+
+- `content/lessons.json`：単元本文、例、範囲ラベル
+- `content/problems.json`：問題生成の設定
+- `assets/js/renderers.js`：HTML表示とMathJax処理
+- `assets/js/labs.js`：動く図解
+
+教材本文を中間ソースに寄せると、本文編集と画面表示の責務が分かれ、今回のような数式崩れを自動チェックしやすくなります。

@@ -285,7 +285,7 @@ const units = [
     id: "trig-ratios",
     stage: "図形 2",
     range: ["数I"],
-    title: "三角比 \\(\\sin,\\cos,\\tan\\)",
+    title: "三角比（sin, cos, tan）",
     summary:
       "三角比は、直角三角形の辺の比を角度の言葉で表したものです。長さそのものではなく、形の比を見ます。",
     points: [
@@ -577,11 +577,20 @@ function linearText(xCoef, constant) {
 
 function rangeTags(unit) {
   const uniqueRange = [...new Set(unit.range)];
-  return `<div class="range-tags">${uniqueRange.map((item) => `<span>${item}</span>`).join("")}</div>`;
+  return `<div class="range-tags">${uniqueRange.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>`;
 }
 
 function mathInline(text) {
   return `\\(${text}\\)`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function unitMetaLabel(unit) {
@@ -598,7 +607,7 @@ function relatedLabsMarkup(unitId) {
       <p>説明を読んだら、図解を触って「何が変わるか」を見てみましょう。</p>
       <div class="related-lab-list">
         ${refs
-          .map((labId) => `<button class="related-lab-button" type="button" data-open-lab="${labId}">${labCatalog[labId].short}</button>`)
+          .map((labId) => `<button class="related-lab-button" type="button" data-open-lab="${escapeHtml(labId)}">${escapeHtml(labCatalog[labId].short)}</button>`)
           .join("")}
       </div>
     </div>
@@ -780,7 +789,7 @@ function renderUnitButtons() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `unit-button${index === activeUnit ? " active" : ""}`;
-    button.innerHTML = `<strong>${index + 1}. ${unit.title}</strong><span>${unitMetaLabel(unit)}</span>`;
+    button.innerHTML = `<strong>${index + 1}. ${escapeHtml(unit.title)}</strong><span>${escapeHtml(unitMetaLabel(unit))}</span>`;
     button.addEventListener("click", () => {
       activeUnit = index;
       renderUnit();
@@ -814,22 +823,22 @@ function renderUnit() {
   $("#unit-progress-label").textContent = `${activeUnit + 1} / ${units.length}`;
   $("#unit-progress-bar").style.width = `${((activeUnit + 1) / units.length) * 100}%`;
   $("#unit-content").innerHTML = `
-    <span class="unit-stage">${unit.stage}</span>
+    <span class="unit-stage">${escapeHtml(unit.stage)}</span>
     ${rangeTags(unit)}
-    <h3>${unit.title}</h3>
-    <p class="unit-summary">${unit.summary}</p>
+    <h3>${escapeHtml(unit.title)}</h3>
+    <p class="unit-summary">${escapeHtml(unit.summary)}</p>
     <div class="unit-content-grid">
       <div class="note-box">
         <h4>おさらいポイント</h4>
-        <ul>${unit.points.map((point) => `<li>${point}</li>`).join("")}</ul>
+        <ul>${unit.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul>
       </div>
       <div class="example-box">
         <h4>例</h4>
-        <p class="big-formula">${unit.example}</p>
+        <p class="big-formula">${escapeHtml(unit.example)}</p>
       </div>
       <div class="mini-check">
         <h4>動かして確認</h4>
-        <p>${unit.check}</p>
+        <p>${escapeHtml(unit.check)}</p>
       </div>
       ${relatedLabsMarkup(unit.id)}
     </div>
