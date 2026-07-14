@@ -157,6 +157,38 @@ const units = [
     check: "負の数を配ると符号が変わるところを、整数の符号ルールに戻って確認しましょう。",
   },
   {
+    id: "sets-propositions",
+    stage: "数I",
+    range: ["数I"],
+    title: "集合と命題",
+    summary:
+      "数学Iでは、計算だけでなく「条件を正確に読む」力が必要になります。集合・命題・反例は、そのための言葉です。",
+    points: [
+      "\\(A\\cap B\\) は共通部分、\\(A\\cup B\\) は和集合",
+      "命題は真偽を判断できる文",
+      "「ならば」を読むときは、逆・裏・対偶を区別する",
+      "必要条件・十分条件は、矢印の向きで確認する",
+    ],
+    example: "\\(x>2\\Rightarrow x>0\\) は真だが、逆は真とは限らない",
+    check: "一つでも反例があれば、その命題は偽です。反例を探す習慣が論理の足腰になります。",
+  },
+  {
+    id: "linear-inequalities",
+    stage: "数I",
+    range: ["中2", "数I"],
+    title: "不等式の基本",
+    summary:
+      "不等式は、等式と同じように両辺へ同じ操作ができます。ただし、負の数をかけたり割ったりすると不等号の向きが変わります。",
+    points: [
+      "\\(a<b\\) なら \\(a+c<b+c\\)",
+      "\\(a<b\\)、\\(c>0\\) なら \\(ac<bc\\)",
+      "\\(a<b\\)、\\(c<0\\) なら \\(ac>bc\\)",
+      "解は数直線上の範囲として表す",
+    ],
+    example: "\\(-2x<6\\Rightarrow x>-3\\)",
+    check: "負の数で割る場面だけ、赤信号みたいに一度止まって不等号の向きを確認しましょう。",
+  },
+  {
     id: "identities-equations",
     stage: "式 1",
     range: ["中2", "中3", "数I"],
@@ -215,6 +247,150 @@ const units = [
     ],
     example: "\\(y=2x-1\\) では \\(x\\) が1増えると \\(y\\) は2増える",
     check: "関数ラボで係数を動かし、グラフの変化を言葉にしてみましょう。",
+  },
+  {
+    id: "quadratic-vertex",
+    stage: "数I",
+    range: ["数I"],
+    title: "二次関数の頂点と最大・最小",
+    summary:
+      "二次関数は、頂点を見るとグラフ全体の動きが一気に分かります。平方完成は、式から頂点を読むための技術です。",
+    points: [
+      "\\(y=a(x-p)^2+q\\) の頂点は \\((p,q)\\)",
+      "\\(a>0\\) なら下に凸で最小値をもつ",
+      "\\(a<0\\) なら上に凸で最大値をもつ",
+      "平方完成で \\(x^2+bx+c\\) を頂点形式へ直す",
+    ],
+    example: "\\(y=(x-2)^2-3\\) の頂点は \\((2,-3)\\)、最小値は \\(-3\\)",
+    check: "二次関数の頂点ラボで、\\(a\\) の符号と頂点の位置が最大・最小にどう効くか見ましょう。",
+  },
+  {
+    id: "quadratic-inequalities",
+    stage: "数I",
+    range: ["数I"],
+    title: "二次方程式・二次不等式とグラフ",
+    summary:
+      "二次方程式の解は、放物線と \\(x\\) 軸の交点です。二次不等式は、グラフが \\(x\\) 軸より上か下かを読む問題です。",
+    points: [
+      "\\(ax^2+bx+c=0\\) の解はグラフの \\(x\\) 切片",
+      "判別式 \\(D=b^2-4ac\\) で交点の個数が分かる",
+      "\\(y>0\\) はグラフが \\(x\\) 軸より上の範囲",
+      "因数分解できると符号表で解ける",
+    ],
+    example: "\\((x-1)(x-4)>0\\) の解は \\(x<1,\\ 4<x\\)",
+    check: "根の間は符号が変わる、というグラフの見方を持つと不等式が軽くなります。",
+  },
+  {
+    id: "trig-ratios",
+    stage: "数I",
+    range: ["数I"],
+    title: "三角比 \\(\\sin,\\cos,\\tan\\)",
+    summary:
+      "三角比は、直角三角形の辺の比を角度の言葉で表したものです。長さそのものではなく、形の比を見ます。",
+    points: [
+      "\\(\\sin\\theta=\\dfrac{\\text{対辺}}{\\text{斜辺}}\\)",
+      "\\(\\cos\\theta=\\dfrac{\\text{隣辺}}{\\text{斜辺}}\\)",
+      "\\(\\tan\\theta=\\dfrac{\\text{対辺}}{\\text{隣辺}}\\)",
+      "斜辺を変えても、角度が同じなら三角比は変わらない",
+    ],
+    example: "直角三角形の辺が \\(3,4,5\\) なら、\\(\\sin\\theta=\\frac{3}{5}\\)、\\(\\cos\\theta=\\frac{4}{5}\\)",
+    check: "三角比ラボで斜辺を変え、角度が同じなら比が変わらないことを見ましょう。",
+  },
+  {
+    id: "sine-cosine-rule",
+    stage: "数I",
+    range: ["数I"],
+    title: "正弦定理・余弦定理の入口",
+    summary:
+      "直角三角形でなくても、辺と角の関係を扱えるのが正弦定理・余弦定理です。三平方の定理が広がった景色として見ると入りやすいです。",
+    points: [
+      "正弦定理：\\(\\dfrac{a}{\\sin A}=\\dfrac{b}{\\sin B}=\\dfrac{c}{\\sin C}\\)",
+      "余弦定理：\\(a^2=b^2+c^2-2bc\\cos A\\)",
+      "\\(A=90^\\circ\\) なら余弦定理は三平方の定理になる",
+      "分かっている辺・角から、使う定理を選ぶ",
+    ],
+    example: "\\(a^2=b^2+c^2-2bc\\cos A\\)",
+    check: "まずは「どの角の向かいがどの辺か」を図に書き込むのが一番の近道です。",
+  },
+  {
+    id: "data-analysis-i",
+    stage: "数I",
+    range: ["数I"],
+    title: "分散・標準偏差・相関",
+    summary:
+      "数学Iのデータ分析では、平均だけでなく散らばりや2つのデータの関係を見ます。数字で傾向を言葉にする単元です。",
+    points: [
+      "偏差は \\(\\text{値}-\\text{平均}\\)",
+      "分散は偏差の2乗の平均",
+      "標準偏差は分散の平方根",
+      "散布図と相関係数で2つの変量の関係を見る",
+    ],
+    example: "\\(1,2,3\\) の平均は \\(2\\)、分散は \\(\\frac{2}{3}\\)",
+    check: "標準偏差は「平均との差がだいたいどれくらいか」の物差しです。",
+  },
+  {
+    id: "counting-principles",
+    stage: "数A",
+    range: ["数A"],
+    title: "場合の数：和の法則・積の法則",
+    summary:
+      "場合の数は、ただ数える単元ではありません。重ならない選択なのか、連続する選択なのかを見分ける単元です。",
+    points: [
+      "どちらか一方を選ぶなら和の法則",
+      "順に両方を選ぶなら積の法則",
+      "順序を区別するなら順列",
+      "順序を区別しないなら組合せ",
+    ],
+    example: "\\({}_5P_2=5\\times4=20\\)、\\({}_5C_2=\\dfrac{5\\times4}{2\\times1}=10\\)",
+    check: "「AしてからBする」のか、「AまたはB」なのかを日本語から読み取るのが最初の勝負です。",
+  },
+  {
+    id: "probability-a",
+    stage: "数A",
+    range: ["数A"],
+    title: "確率：独立・条件付き・期待値",
+    summary:
+      "確率は、場合の数を土台にして起こりやすさを比で表します。条件が変わると分母が変わる、という感覚が大切です。",
+    points: [
+      "\\(P(A)=\\dfrac{A\\text{が起こる場合の数}}{\\text{すべての場合の数}}\\)",
+      "独立な試行では確率をかける",
+      "条件付き確率では、条件を満たす世界だけで考える",
+      "期待値は、値と確率をかけて足した平均的な値",
+    ],
+    example: "赤3個・青5個の袋から戻して2回引くと、赤赤の確率は \\(\\frac{3}{8}\\times\\frac{3}{8}=\\frac{9}{64}\\)",
+    check: "確率の木ラボで、戻す・戻さないで2回目の分母が変わることを確認しましょう。",
+  },
+  {
+    id: "geometry-a",
+    stage: "数A",
+    range: ["数A"],
+    title: "図形の性質",
+    summary:
+      "数学Aの図形では、三角形・円・作図・空間図形の性質を、証明や関係式として読む力を育てます。",
+    points: [
+      "三角形では角の二等分線、外心・内心・重心などを見る",
+      "円では円周角、接線、方べきの関係が重要",
+      "図形の性質は、補助線で見える形に変える",
+      "コンピュータで動かすと不変な関係を発見しやすい",
+    ],
+    example: "同じ弧に対する円周角は等しい",
+    check: "図を動かしても変わらない量を探すと、証明したいことが見えてきます。",
+  },
+  {
+    id: "math-human-activities",
+    stage: "数A",
+    range: ["数A"],
+    title: "数学と人間の活動：整数としくみ",
+    summary:
+      "数学Aには、歴史や生活の中で生まれた数学的なしくみを見る単元があります。整数の性質や互除法はその入口です。",
+    points: [
+      "約数・倍数・素因数分解で整数を分解して見る",
+      "最大公約数はユークリッドの互除法で求められる",
+      "記数法を変えると、同じ数の表し方が変わる",
+      "暗号・暦・測量など、人間の活動と数学は深くつながる",
+    ],
+    example: "\\(84=30\\times2+24,\\ 30=24\\times1+6,\\ 24=6\\times4\\) より \\(\\gcd(84,30)=6\\)",
+    check: "計算をただ進めるだけでなく、「なぜ余りを使うと最大公約数が残るのか」を見ていきましょう。",
   },
   {
     id: "geometry",
@@ -281,12 +457,18 @@ const topics = [
   ["algebra", 2, "文字式の分配法則", "かっこの中の各項へ配る", "distribution-letters"],
   ["algebra", 3, "展開", "積の形を和の形に直す", "distribution-letters"],
   ["algebra", 3, "因数分解", "和の形を積の形に戻す", "distribution-letters"],
+  ["algebra", 3, "集合", "共通部分・和集合・補集合で条件を整理する", "sets-propositions"],
+  ["algebra", 3, "命題", "真偽・逆・裏・対偶・反例を読む", "sets-propositions"],
+  ["algebra", 3, "一次不等式", "負の数で割ると向きが変わる", "linear-inequalities"],
   ["algebra", 3, "恒等式", "どんな値でも成り立つ等式", "identities-equations"],
   ["algebra", 3, "一次方程式", "両辺に同じ操作をして解く", "linear-equations"],
   ["algebra", 4, "連立方程式", "2つの条件を同時に満たす値", "simultaneous-equations"],
   ["function", 2, "比例・反比例", "一定の比や積でつながる関係", "functions"],
   ["function", 3, "一次関数", "傾きと切片で直線を読む", "functions"],
   ["function", 3, "二次関数", "放物線の開き方と移動を見る", "functions"],
+  ["function", 3, "二次関数の頂点", "平方完成で頂点と最大・最小を読む", "quadratic-vertex"],
+  ["function", 4, "二次方程式とグラフ", "解を x 軸との交点として読む", "quadratic-inequalities"],
+  ["function", 4, "二次不等式", "放物線が x 軸より上か下かを見る", "quadratic-inequalities"],
   ["function", 4, "関数と方程式", "交点を解として読む", "functions"],
   ["geometry", 1, "角度", "直線・三角形・多角形の角", "geometry"],
   ["geometry", 2, "面積", "公式を分解して理解する", "geometry"],
@@ -294,10 +476,20 @@ const topics = [
   ["geometry", 3, "相似", "拡大・縮小と比の計算", "geometry"],
   ["geometry", 3, "円", "中心角・円周角・接線", "geometry"],
   ["geometry", 3, "三平方の定理", "直角三角形の辺の関係", "geometry"],
+  ["geometry", 4, "三角比", "直角三角形の辺の比を角度で読む", "trig-ratios"],
+  ["geometry", 4, "正弦定理・余弦定理", "直角でない三角形の辺と角を結ぶ", "sine-cosine-rule"],
+  ["geometry", 4, "図形の性質", "三角形・円の不変な関係を見る", "geometry-a"],
   ["data", 1, "平均・中央値", "代表値を使い分ける", "data"],
   ["data", 2, "度数分布", "データを階級で整理する", "data"],
   ["data", 2, "確率の基本", "起こりやすさを数で表す", "data"],
   ["data", 3, "標準偏差", "散らばりを数値で読む", "data"],
+  ["data", 4, "分散と標準偏差", "平均との差の大きさを数値化する", "data-analysis-i"],
+  ["data", 4, "散布図と相関", "2つの変量の関係を見る", "data-analysis-i"],
+  ["data", 3, "場合の数", "和の法則・積の法則で数える", "counting-principles"],
+  ["data", 4, "順列・組合せ", "順序を区別するかで式が変わる", "counting-principles"],
+  ["data", 4, "条件付き確率", "条件を満たす世界だけで確率を見る", "probability-a"],
+  ["data", 4, "期待値", "値と確率をかけて平均的な値を見る", "probability-a"],
+  ["algebra", 4, "整数と互除法", "最大公約数を余りで追う", "math-human-activities"],
   ["algebra", 4, "文章題の立式", "状況を文字式へ翻訳する", "exam-review"],
   ["algebra", 4, "総合演習", "計算・式・グラフをつなぐ", "exam-review"],
 ].map(([category, level, title, description, unitId]) => ({
@@ -352,6 +544,58 @@ function rangeTags(unit) {
 
 function mathInline(text) {
   return `\\(${text}\\)`;
+}
+
+function gcd(a, b) {
+  let x = Math.abs(a);
+  let y = Math.abs(b);
+  while (y) {
+    [x, y] = [y, x % y];
+  }
+  return x || 1;
+}
+
+function fractionText(numerator, denominator) {
+  if (denominator === 0) return "未定義";
+  const sign = numerator * denominator < 0 ? "-" : "";
+  const n = Math.abs(numerator);
+  const d = Math.abs(denominator);
+  const divisor = gcd(n, d);
+  const reducedN = n / divisor;
+  const reducedD = d / divisor;
+  if (reducedD === 1) return `${sign}${reducedN}`;
+  return `${sign}\\frac{${reducedN}}{${reducedD}}`;
+}
+
+function parseFraction(input) {
+  const text = normalizeText(input);
+  if (/^-?\d+\/-?\d+$/.test(text)) {
+    const [n, d] = text.split("/").map(Number);
+    if (d === 0) return null;
+    return n / d;
+  }
+  if (/^-?\d+(\.\d+)?$/.test(text)) return Number(text);
+  return null;
+}
+
+function sameRational(input, numerator, denominator) {
+  const value = parseFraction(input);
+  if (value === null) return false;
+  return Math.abs(value - numerator / denominator) < 1e-9;
+}
+
+function factorial(n) {
+  return Array.from({ length: n }, (_, index) => index + 1).reduce((acc, value) => acc * value, 1);
+}
+
+function permutation(n, r) {
+  let total = 1;
+  for (let value = n; value > n - r; value -= 1) total *= value;
+  return total;
+}
+
+function combination(n, r) {
+  return permutation(n, r) / factorial(r);
 }
 
 function normalizeText(value) {
@@ -849,6 +1093,208 @@ function drawGraph() {
   scheduleMathTypeset($("#graph-result"));
 }
 
+function setupQuadraticVertex() {
+  ["#quad-a", "#quad-h", "#quad-k"].forEach((selector) => {
+    $(selector).addEventListener("input", drawQuadraticVertex);
+  });
+  drawQuadraticVertex();
+}
+
+function drawQuadraticVertex() {
+  const canvas = $("#quadratic-vertex");
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  const rawA = Number($("#quad-a").value);
+  const a = rawA === 0 ? 1 : rawA;
+  const h = Number($("#quad-h").value);
+  const k = Number($("#quad-k").value);
+  const min = -10;
+  const max = 10;
+  const mapX = (x) => ((x - min) / (max - min)) * width;
+  const mapY = (y) => height - ((y - min) / (max - min)) * height;
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = "#fffdf7";
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.strokeStyle = "#e4d9c8";
+  ctx.lineWidth = 1;
+  for (let value = min; value <= max; value += 1) {
+    ctx.beginPath();
+    ctx.moveTo(mapX(value), 0);
+    ctx.lineTo(mapX(value), height);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, mapY(value));
+    ctx.lineTo(width, mapY(value));
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle = "#1f2933";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(mapX(min), mapY(0));
+  ctx.lineTo(mapX(max), mapY(0));
+  ctx.moveTo(mapX(0), mapY(min));
+  ctx.lineTo(mapX(0), mapY(max));
+  ctx.stroke();
+
+  ctx.strokeStyle = "#d9468a";
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  let started = false;
+  for (let px = 0; px <= width; px += 3) {
+    const x = min + (px / width) * (max - min);
+    const y = a * (x - h) ** 2 + k;
+    const py = mapY(y);
+    if (py < -height || py > height * 2) {
+      started = false;
+      continue;
+    }
+    if (!started) {
+      ctx.moveTo(px, py);
+      started = true;
+    } else {
+      ctx.lineTo(px, py);
+    }
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = "#1f2933";
+  ctx.beginPath();
+  ctx.arc(mapX(h), mapY(k), 10, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.font = "900 22px system-ui";
+  ctx.textAlign = "left";
+  ctx.fillText(`頂点 (${h}, ${k})`, Math.min(mapX(h) + 14, width - 170), Math.max(mapY(k) - 14, 28));
+
+  const kind = a > 0 ? "下に凸なので最小値" : "上に凸なので最大値";
+  const zeroNote = rawA === 0 ? "（a=0 は二次関数ではないため、表示は a=1 として扱っています。）" : "";
+  $("#quadratic-result").textContent = `\\(y=${a}(x-${h})^2${k < 0 ? k : `+${k}`}\\)。頂点は \\((${h},${k})\\)、${kind} は \\(${k}\\) です。${zeroNote}`;
+  scheduleMathTypeset($("#quadratic-result"));
+}
+
+function setupTrigLab() {
+  ["#trig-angle", "#trig-hyp", "#trig-focus"].forEach((selector) => {
+    $(selector).addEventListener("input", drawTrigLab);
+  });
+  drawTrigLab();
+}
+
+function drawTrigLab() {
+  const canvas = $("#trig-canvas");
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  const degree = Number($("#trig-angle").value);
+  const hyp = Number($("#trig-hyp").value);
+  const focus = $("#trig-focus").value;
+  const rad = (degree * Math.PI) / 180;
+  const adjacent = hyp * Math.cos(rad);
+  const opposite = hyp * Math.sin(rad);
+  const scale = Math.min(62, (width - 230) / adjacent, (height - 90) / opposite);
+  const ax = 110;
+  const ay = height - 55;
+  const bx = ax + adjacent * scale;
+  const by = ay;
+  const cx = bx;
+  const cy = ay - opposite * scale;
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = "#fffdf7";
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = "rgba(47,111,115,0.12)";
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.lineTo(bx, by);
+  ctx.lineTo(cx, cy);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.lineWidth = 6;
+  ctx.lineCap = "round";
+  ctx.strokeStyle = focus === "cos" || focus === "all" ? "#407bff" : "#b9c2cf";
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.lineTo(bx, by);
+  ctx.stroke();
+
+  ctx.strokeStyle = focus === "sin" || focus === "all" ? "#d9468a" : "#b9c2cf";
+  ctx.beginPath();
+  ctx.moveTo(bx, by);
+  ctx.lineTo(cx, cy);
+  ctx.stroke();
+
+  ctx.strokeStyle = focus === "all" ? "#2f6f73" : "#b9c2cf";
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.lineTo(cx, cy);
+  ctx.stroke();
+
+  ctx.strokeStyle = "#1f2933";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(bx - 24, by - 24, 24, 24);
+
+  ctx.font = "900 22px system-ui";
+  ctx.fillStyle = "#1f2933";
+  ctx.fillText(`θ = ${degree}°`, ax + 26, ay - 18);
+  ctx.fillStyle = "#407bff";
+  ctx.fillText(`隣辺 ≒ ${adjacent.toFixed(2)}`, (ax + bx) / 2 - 60, ay + 34);
+  ctx.fillStyle = "#d9468a";
+  ctx.fillText(`対辺 ≒ ${opposite.toFixed(2)}`, bx + 18, (by + cy) / 2);
+  ctx.fillStyle = "#2f6f73";
+  ctx.fillText(`斜辺 = ${hyp}`, (ax + cx) / 2 - 30, (ay + cy) / 2 - 14);
+
+  $("#trig-result").textContent =
+    `\\(\\sin${degree}^{\\circ}\\approx${(opposite / hyp).toFixed(3)}\\)、` +
+    `\\(\\cos${degree}^{\\circ}\\approx${(adjacent / hyp).toFixed(3)}\\)、` +
+    `\\(\\tan${degree}^{\\circ}\\approx${(opposite / adjacent).toFixed(3)}\\)。斜辺を変えても、角度が同じなら比は同じです。`;
+  scheduleMathTypeset($("#trig-result"));
+}
+
+function setupProbabilityLab() {
+  ["#prob-red", "#prob-blue", "#prob-mode"].forEach((selector) => {
+    $(selector).addEventListener("input", renderProbabilityLab);
+  });
+  renderProbabilityLab();
+}
+
+function renderProbabilityLab() {
+  const red = Number($("#prob-red").value);
+  const blue = Number($("#prob-blue").value);
+  const total = red + blue;
+  const mode = $("#prob-mode").value;
+  const secondRedNumerator = mode === "replace" ? red : red - 1;
+  const secondTotal = mode === "replace" ? total : total - 1;
+  const rrNumerator = red * secondRedNumerator;
+  const rrDenominator = total * secondTotal;
+  const rbNumerator = red * (mode === "replace" ? blue : blue);
+  const rbDenominator = total * secondTotal;
+
+  $("#probability-stage").innerHTML = `
+    <div class="probability-tree">
+      <div class="tree-node root">袋<br>R:${red} B:${blue}</div>
+      <div class="tree-column">
+        <div class="tree-branch red">1回目 R<br>\\(${fractionText(red, total)}\\)</div>
+        <div class="tree-branch blue">1回目 B<br>\\(${fractionText(blue, total)}\\)</div>
+      </div>
+      <div class="tree-column">
+        <div class="tree-branch red">R の後に R<br>\\(${fractionText(secondRedNumerator, secondTotal)}\\)</div>
+        <div class="tree-branch blue">R の後に B<br>\\(${fractionText(mode === "replace" ? blue : blue, secondTotal)}\\)</div>
+      </div>
+    </div>
+    <p class="tree-note">枝をたどるときは確率をかけます。</p>
+  `;
+  $("#probability-result").textContent =
+    mode === "replace"
+      ? `戻して2回なので、赤赤の確率は \\(${fractionText(red, total)}\\times${fractionText(red, total)}=${fractionText(rrNumerator, rrDenominator)}\\)。`
+      : `戻さず2回なので、赤赤の確率は \\(${fractionText(red, total)}\\times${fractionText(red - 1, total - 1)}=${fractionText(rrNumerator, rrDenominator)}\\)。2回目の分母が変わります。`;
+  scheduleMathTypeset($("#probability-stage"));
+  scheduleMathTypeset($("#probability-result"));
+}
+
 const practiceModes = [
   { id: "integer", label: "整数の計算", generator: generateIntegerProblem },
   { id: "radical", label: "ルート整理", generator: generateRadicalProblem },
@@ -856,6 +1302,11 @@ const practiceModes = [
   { id: "combine", label: "同類項", generator: generateCombineProblem },
   { id: "distribute", label: "分配法則", generator: generateDistributeProblem },
   { id: "equation", label: "一次方程式", generator: generateEquationProblem },
+  { id: "inequality", label: "一次不等式", generator: generateInequalityProblem },
+  { id: "quadratic", label: "二次関数", generator: generateQuadraticVertexProblem },
+  { id: "trig", label: "三角比", generator: generateTrigProblem },
+  { id: "counting", label: "場合の数", generator: generateCountingProblem },
+  { id: "probability", label: "確率", generator: generateProbabilityProblem },
 ];
 
 function generateIntegerProblem() {
@@ -1046,6 +1497,191 @@ function generateEquationProblem() {
   };
 }
 
+function sameInequalityAnswer(input, sign, boundary) {
+  const text = normalizeText(input).replace("＜", "<").replace("＞", ">");
+  const compact = text.replace(/^x/, "");
+  return (
+    text === `x${sign}${boundary}` ||
+    compact === `${sign}${boundary}` ||
+    text === `${boundary}${sign === "<" ? ">x" : "<x"}`
+  );
+}
+
+function generateInequalityProblem() {
+  const a = choose([-5, -4, -3, -2, 2, 3, 4, 5]);
+  const boundary = randomInt(-5, 6);
+  const b = randomInt(-8, 8);
+  const c = a * boundary + b;
+  const right = c - b;
+  const sign = a > 0 ? "<" : ">";
+  return {
+    modeLabel: "数I",
+    title: "一次不等式",
+    prompt: `\\(${term(a)}${b < 0 ? "-" + Math.abs(b) : "+" + b}<${c}\\)`,
+    steps: [
+      {
+        label: "定数項を右辺へ移す",
+        question: `\\(${term(a)}<?\\) の右辺は？`,
+        hint: b < 0 ? `両辺に \\(${Math.abs(b)}\\) を足します。` : `両辺から \\(${b}\\) を引きます。`,
+        check: (input) => Number(normalizeText(input)) === right,
+        answer: String(right),
+      },
+      {
+        label: "係数で割る",
+        question: "\\(x\\) の範囲は？",
+        hint: a < 0 ? "負の数で割るので、不等号の向きが変わります。" : "正の数で割るので、不等号の向きはそのままです。",
+        check: (input) => sameInequalityAnswer(input, sign, boundary),
+        answer: `\\(x${sign}${boundary}\\)`,
+      },
+    ],
+  };
+}
+
+function samePoint(input, x, y) {
+  const text = normalizeText(input).replace(/[()（）]/g, "");
+  return text === `${x},${y}` || text === `${x}、${y}`;
+}
+
+function generateQuadraticVertexProblem() {
+  const a = choose([-3, -2, -1, 1, 2, 3]);
+  const h = randomInt(-4, 5);
+  const k = randomInt(-6, 6);
+  return {
+    modeLabel: "数I",
+    title: "頂点と最大・最小",
+    prompt: `\\(y=${a}(x-${h})^2${k < 0 ? k : `+${k}`}\\)`,
+    steps: [
+      {
+        label: "頂点を読む",
+        question: "頂点の座標は？",
+        hint: "\\(y=a(x-p)^2+q\\) の頂点は \\((p,q)\\) です。",
+        check: (input) => samePoint(input, h, k),
+        answer: `\\((${h},${k})\\)`,
+      },
+      {
+        label: a > 0 ? "最小値を読む" : "最大値を読む",
+        question: a > 0 ? "最小値は？" : "最大値は？",
+        hint: a > 0 ? "下に凸なので頂点の y 座標が最小値です。" : "上に凸なので頂点の y 座標が最大値です。",
+        check: (input) => Number(normalizeText(input)) === k,
+        answer: String(k),
+      },
+    ],
+  };
+}
+
+function generateTrigProblem() {
+  const triangles = [
+    { opposite: 3, adjacent: 4, hyp: 5 },
+    { opposite: 5, adjacent: 12, hyp: 13 },
+    { opposite: 8, adjacent: 15, hyp: 17 },
+  ];
+  const tri = choose(triangles);
+  return {
+    modeLabel: "数I",
+    title: "三角比",
+    prompt: `直角三角形で、角 \\(\\theta\\) の対辺が \\(${tri.opposite}\\)、隣辺が \\(${tri.adjacent}\\)、斜辺が \\(${tri.hyp}\\)`,
+    steps: [
+      {
+        label: "\\(\\sin\\theta\\)",
+        question: "\\(\\sin\\theta\\) は？",
+        hint: "\\(\\sin\\theta=\\dfrac{\\text{対辺}}{\\text{斜辺}}\\) です。",
+        check: (input) => sameRational(input, tri.opposite, tri.hyp),
+        answer: `\\(${fractionText(tri.opposite, tri.hyp)}\\)`,
+      },
+      {
+        label: "\\(\\cos\\theta\\)",
+        question: "\\(\\cos\\theta\\) は？",
+        hint: "\\(\\cos\\theta=\\dfrac{\\text{隣辺}}{\\text{斜辺}}\\) です。",
+        check: (input) => sameRational(input, tri.adjacent, tri.hyp),
+        answer: `\\(${fractionText(tri.adjacent, tri.hyp)}\\)`,
+      },
+      {
+        label: "\\(\\tan\\theta\\)",
+        question: "\\(\\tan\\theta\\) は？",
+        hint: "\\(\\tan\\theta=\\dfrac{\\text{対辺}}{\\text{隣辺}}\\) です。",
+        check: (input) => sameRational(input, tri.opposite, tri.adjacent),
+        answer: `\\(${fractionText(tri.opposite, tri.adjacent)}\\)`,
+      },
+    ],
+  };
+}
+
+function generateCountingProblem() {
+  const mode = choose(["permutation", "combination"]);
+  const n = randomInt(5, 8);
+  const r = randomInt(2, Math.min(4, n - 1));
+  const total = mode === "permutation" ? permutation(n, r) : combination(n, r);
+  return {
+    modeLabel: "数A",
+    title: mode === "permutation" ? "順列" : "組合せ",
+    prompt:
+      mode === "permutation"
+        ? `\\(${n}\\) 人から \\(${r}\\) 人を選んで一列に並べる`
+        : `\\(${n}\\) 人から \\(${r}\\) 人を選ぶ`,
+    steps: [
+      {
+        label: "順序を区別するか",
+        question: "使う考え方は？（順列 / 組合せ）",
+        hint: mode === "permutation" ? "並べるので順序を区別します。" : "選ぶだけなので順序を区別しません。",
+        check: (input) => {
+          const text = normalizeText(input);
+          return mode === "permutation" ? text.includes("順列") || text === "p" : text.includes("組合") || text === "c";
+        },
+        answer: mode === "permutation" ? "順列" : "組合せ",
+      },
+      {
+        label: "総数を求める",
+        question: "全部で何通り？",
+        hint:
+          mode === "permutation"
+            ? `\\({}_{${n}}P_{${r}}\\) を計算します。`
+            : `\\({}_{${n}}C_{${r}}\\) を計算します。`,
+        check: (input) => Number(normalizeText(input)) === total,
+        answer: String(total),
+      },
+    ],
+  };
+}
+
+function generateProbabilityProblem() {
+  const red = randomInt(2, 6);
+  const blue = randomInt(2, 7);
+  const total = red + blue;
+  const replace = choose([true, false]);
+  const secondRed = replace ? red : red - 1;
+  const secondTotal = replace ? total : total - 1;
+  const rrNumerator = red * secondRed;
+  const rrDenominator = total * secondTotal;
+  return {
+    modeLabel: "数A",
+    title: replace ? "独立な試行" : "戻さない確率",
+    prompt: `赤玉 \\(${red}\\) 個、青玉 \\(${blue}\\) 個の袋から、${replace ? "戻して" : "戻さず"}2回取り出す。赤赤の確率を求める。`,
+    steps: [
+      {
+        label: "1回目が赤",
+        question: "1回目が赤の確率は？",
+        hint: "赤玉の数を全体の数で割ります。",
+        check: (input) => sameRational(input, red, total),
+        answer: `\\(${fractionText(red, total)}\\)`,
+      },
+      {
+        label: "2回目も赤",
+        question: "1回目に赤が出た後、2回目も赤の確率は？",
+        hint: replace ? "戻すので袋の中身は最初と同じです。" : "戻さないので、赤玉も全体も1つずつ減ります。",
+        check: (input) => sameRational(input, secondRed, secondTotal),
+        answer: `\\(${fractionText(secondRed, secondTotal)}\\)`,
+      },
+      {
+        label: "枝をかける",
+        question: "赤赤の確率は？",
+        hint: "1回目の確率と2回目の確率をかけます。",
+        check: (input) => sameRational(input, rrNumerator, rrDenominator),
+        answer: `\\(${fractionText(rrNumerator, rrDenominator)}\\)`,
+      },
+    ],
+  };
+}
+
 function setupPractice() {
   const wrap = $("#practice-modes");
   wrap.innerHTML = "";
@@ -1225,6 +1861,9 @@ function init() {
   setupTerms();
   setupEquation();
   setupGraph();
+  setupQuadraticVertex();
+  setupTrigLab();
+  setupProbabilityLab();
   setupPractice();
   setupMap();
   setupSmoothUnitLinks();

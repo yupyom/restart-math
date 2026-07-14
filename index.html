@@ -121,8 +121,8 @@
             <h2>いまの学習範囲の見取り図</h2>
           </div>
           <p>
-            現状は「中学数学のおさらい」を中心に、数学I・数学Aの入口へつなぐ構成です。
-            数学I/Aを完全網羅と言い切るには、三角比・二次関数の最大最小・場合の数と確率・図形の性質をさらに厚くする必要があります。
+            現状は「中学数学のおさらい」を土台に、数学I・数学Aの基礎へ進める構成です。
+            数学I/Aの柱が見えるように、範囲ラベル・単元・動く図解・問題を追加しています。
           </p>
         </div>
 
@@ -139,22 +139,22 @@
           </article>
           <article class="coverage-card medium">
             <h3>数学I</h3>
-            <p class="coverage-status">入口〜基礎：一部カバー</p>
+            <p class="coverage-status">基礎範囲：拡張中</p>
             <ul>
-              <li>数と式：実数・平方根・式の計算の橋渡し</li>
-              <li>二次関数：グラフと係数の感覚</li>
-              <li>図形と計量：現状は未展開、三角比を追加予定領域</li>
-              <li>データの分析：代表値と散らばりの入口</li>
+              <li>数と式：実数、集合と命題、不等式、式の計算</li>
+              <li>二次関数：頂点、最大・最小、方程式・不等式との関係</li>
+              <li>図形と計量：三角比、正弦定理・余弦定理の入口</li>
+              <li>データの分析：分散、標準偏差、散布図、相関の入口</li>
             </ul>
           </article>
           <article class="coverage-card light">
             <h3>数学A</h3>
-            <p class="coverage-status">目次レベル：まだ薄い</p>
+            <p class="coverage-status">基礎範囲：拡張中</p>
             <ul>
-              <li>場合の数と確率：学習マップにはあるがレッスンは不足</li>
-              <li>図形の性質：円・相似の入口のみ</li>
-              <li>数学と人間の活動：未実装</li>
-              <li>次の拡張で、問題生成と図解を足すとよい領域</li>
+              <li>場合の数：和の法則、積の法則、順列、組合せ</li>
+              <li>確率：独立な試行、条件付き確率、期待値の入口</li>
+              <li>図形の性質：三角形、円、空間図形の入口</li>
+              <li>数学と人間の活動：整数・互除法などへの導入</li>
             </ul>
           </article>
         </div>
@@ -369,6 +369,92 @@
               </label>
             </div>
             <p class="lab-result" id="graph-result"></p>
+          </article>
+
+          <article class="lab-card">
+            <div class="lab-title-row">
+              <div>
+                <p class="eyebrow">Quadratic functions</p>
+                <h3>二次関数の頂点ラボ</h3>
+              </div>
+              <span class="pill">数I</span>
+            </div>
+            <canvas id="quadratic-vertex" width="900" height="360" aria-label="二次関数の頂点と最大最小"></canvas>
+            <div class="control-grid">
+              <label>
+                開き a
+                <input id="quad-a" type="range" min="-4" max="4" value="1" />
+              </label>
+              <label>
+                頂点の x 座標 p
+                <input id="quad-h" type="range" min="-6" max="6" value="2" />
+              </label>
+              <label>
+                頂点の y 座標 q
+                <input id="quad-k" type="range" min="-6" max="6" value="-3" />
+              </label>
+            </div>
+            <p class="lab-result" id="quadratic-result"></p>
+          </article>
+
+          <article class="lab-card">
+            <div class="lab-title-row">
+              <div>
+                <p class="eyebrow">Trigonometry</p>
+                <h3>三角比ラボ</h3>
+              </div>
+              <span class="pill">数I</span>
+            </div>
+            <canvas id="trig-canvas" width="900" height="360" aria-label="直角三角形と三角比"></canvas>
+            <div class="control-grid">
+              <label>
+                角度 θ
+                <input id="trig-angle" type="range" min="10" max="80" value="35" />
+              </label>
+              <label>
+                斜辺
+                <input id="trig-hyp" type="range" min="4" max="10" value="7" />
+              </label>
+              <label>
+                表示
+                <select id="trig-focus">
+                  <option value="all">sin・cos・tan</option>
+                  <option value="sin">sin を見る</option>
+                  <option value="cos">cos を見る</option>
+                  <option value="tan">tan を見る</option>
+                </select>
+              </label>
+            </div>
+            <p class="lab-result" id="trig-result"></p>
+          </article>
+
+          <article class="lab-card">
+            <div class="lab-title-row">
+              <div>
+                <p class="eyebrow">Probability</p>
+                <h3>確率の木ラボ</h3>
+              </div>
+              <span class="pill">数A</span>
+            </div>
+            <div class="probability-stage" id="probability-stage" aria-label="確率の木"></div>
+            <div class="control-grid">
+              <label>
+                赤玉 R
+                <input id="prob-red" type="range" min="1" max="9" value="3" />
+              </label>
+              <label>
+                青玉 B
+                <input id="prob-blue" type="range" min="1" max="9" value="5" />
+              </label>
+              <label>
+                取り出し方
+                <select id="prob-mode">
+                  <option value="replace">戻して2回</option>
+                  <option value="noreplace">戻さず2回</option>
+                </select>
+              </label>
+            </div>
+            <p class="lab-result" id="probability-result"></p>
           </article>
         </div>
       </section>
