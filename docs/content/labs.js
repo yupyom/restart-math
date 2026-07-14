@@ -4,7 +4,7 @@ export const labs = [
     title: "整数の数直線",
     short: "数直線",
     category: "整数・不等式",
-    lessonIds: ["integers-signs", "integer-rules", "linear-inequalities"],
+    lessonIds: ["integers-signs", "absolute-value", "integer-rules", "linear-inequalities", "absolute-value-equations"],
     practiceIds: ["integer", "inequality"],
     objectIntro: "数直線の上を右・左へ進む矢印として見る",
     observe: "始点と移動量が決まると、終点が一つに決まる",
@@ -192,7 +192,9 @@ export const labCatalog = Object.fromEntries(labs.map((lab) => [lab.id, lab]));
 
 export const unitLabRefs = {
   "integers-signs": ["number-line-lab"],
+  "absolute-value": ["number-line-lab"],
   "integer-rules": ["number-line-lab"],
+  "absolute-value-equations": ["number-line-lab", "inequality-lab"],
   "distribution-numbers": ["distribution-lab"],
   "powers-roots": ["radical-lab"],
   "simplify-roots": ["radical-lab"],

@@ -6,14 +6,28 @@ export const categoryLabels = {
   function: "関数",
   geometry: "図形",
   data: "データ・確率",
+  logic: "論理・証明",
+  sequence: "数列",
 };
 
 function categoryForLesson(unit) {
   if (["関数"].includes(unit.strand)) return "function";
   if (["図形", "図形と計量", "図形の性質"].includes(unit.strand)) return "geometry";
   if (["データ", "データの分析", "場合の数と確率"].includes(unit.strand)) return "data";
+  if (["論理と証明"].includes(unit.strand)) return "logic";
+  if (["数列"].includes(unit.strand)) return "sequence";
   if (["数と式", "数学と人間の活動", "総合"].includes(unit.strand)) {
-    return ["integers-signs", "integer-rules", "distribution-numbers", "powers-roots", "simplify-roots", "root-operations"].includes(unit.id)
+    return [
+      "integers-signs",
+      "absolute-value",
+      "integer-rules",
+      "distribution-numbers",
+      "powers-roots",
+      "simplify-roots",
+      "root-operations",
+      "number-classification",
+      "exponent-rules",
+    ].includes(unit.id)
       ? "number"
       : "algebra";
   }
@@ -21,6 +35,7 @@ function categoryForLesson(unit) {
 }
 
 function levelForLesson(unit) {
+  if (unit.range.includes("数B")) return 5;
   if (unit.range.includes("数A")) return 4;
   if (unit.range.includes("数I")) return 3;
   if (unit.range.includes("中3")) return 3;
