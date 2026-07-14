@@ -1,0 +1,568 @@
+function normalizeText(value) {
+  return String(value)
+    .trim()
+    .replace(/[０-９]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0))
+    .replace(/[Ａ-Ｚａ-ｚ]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0))
+    .replace(/[−ー－]/g, "-")
+    .replace(/[＋]/g, "+")
+    .replace(/[＝]/g, "=")
+    .replace(/[＜]/g, "<")
+    .replace(/[＞]/g, ">")
+    .replace(/[、，;]/g, ",")
+    .replace(/\s+/g, "")
+    .toLowerCase();
+}
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function choose(values) {
+  return values[randomInt(0, values.length - 1)];
+}
+
+function numericAnswer(input, answer, variable = "") {
+  const prefix = variable ? new RegExp(`^${variable}=`) : null;
+  const text = prefix ? normalizeText(input).replace(prefix, "") : normalizeText(input);
+  return Number(text.replace(/度|°/g, "")) === answer;
+}
+
+function fractionValue(input) {
+  const text = normalizeText(input);
+  if (/^-?\d+\/-?\d+$/.test(text)) {
+    const [numerator, denominator] = text.split("/").map(Number);
+    return denominator === 0 ? null : numerator / denominator;
+  }
+  return /^-?\d+(?:\.\d+)?$/.test(text) ? Number(text) : null;
+}
+
+function sameRational(input, numerator, denominator) {
+  const value = fractionValue(input);
+  return value !== null && Math.abs(value - numerator / denominator) < 1e-9;
+}
+
+function sameNumberList(input, expected) {
+  const values = normalizeText(input)
+    .replace(/[{}()（）]/g, "")
+    .split(",")
+    .filter(Boolean)
+    .map(Number)
+    .sort((a, b) => a - b);
+  const target = [...expected].sort((a, b) => a - b);
+  return values.length === target.length && values.every((value, index) => value === target[index]);
+}
+
+function sameOrderedPair(input, first, second) {
+  const values = normalizeText(input)
+    .replace(/[{}()（）]/g, "")
+    .split(",")
+    .map(Number);
+  return values.length === 2 && values[0] === first && values[1] === second;
+}
+
+function sameOrderedList(input, expected) {
+  const values = normalizeText(input)
+    .replace(/[{}()（）]/g, "")
+    .split(",")
+    .filter(Boolean)
+    .map(Number);
+  return values.length === expected.length && values.every((value, index) => value === expected[index]);
+}
+
+function linearFactor(root) {
+  if (root < 0) return `x+${Math.abs(root)}`;
+  if (root > 0) return `x-${root}`;
+  return "x";
+}
+
+function sameRadical(input, coefficient, radicand) {
+  const text = normalizeText(input)
+    .replace(/\*/g, "")
+    .replace(/sqrt\((\d+)\)/g, "√$1")
+    .replace(/sqrt(\d+)/g, "√$1");
+  if (radicand === 1) return Number(text) === coefficient;
+  return [
+    `${coefficient}√${radicand}`,
+    coefficient === 1 ? `√${radicand}` : "",
+    coefficient === -1 ? `-√${radicand}` : "",
+  ].includes(text);
+}
+
+function gcd(first, second) {
+  let a = Math.abs(first);
+  let b = Math.abs(second);
+  while (b) [a, b] = [b, a % b];
+  return a;
+}
+
+function fractionText(numerator, denominator) {
+  const divisor = gcd(numerator, denominator);
+  const top = numerator / divisor;
+  const bottom = denominator / divisor;
+  return bottom === 1 ? String(top) : `\\frac{${top}}{${bottom}}`;
+}
+
+function radicalText(coefficient, radicand) {
+  if (radicand === 1) return String(coefficient);
+  if (coefficient === 1) return `\\sqrt{${radicand}}`;
+  if (coefficient === -1) return `-\\sqrt{${radicand}}`;
+  return `${coefficient}\\sqrt{${radicand}}`;
+}
+
+function integerAdvanced() {
+  const left = randomInt(8, 18);
+  const right = randomInt(2, 7);
+  const factor = choose([-6, -5, -4, 4, 5, 6]);
+  const tail = randomInt(-15, 15);
+  const grouped = left - right;
+  const product = grouped * factor;
+  const answer = product + tail;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "かっこと負の数を含む計算",
+    prompt: `\\((${left}-${right})\\times(${factor})${tail < 0 ? tail : `+${tail}`}\\)`,
+    steps: [
+      { label: "かっこの中", question: `\\(${left}-${right}\\) は？`, hint: "かっこを最初に計算します。", check: (input) => numericAnswer(input, grouped), answer: String(grouped) },
+      { label: "乗法", question: `\\(${grouped}\\times(${factor})\\) は？`, hint: "符号を先に決めます。", check: (input) => numericAnswer(input, product), answer: String(product) },
+      { label: "最後の加減", question: "式全体の値は？", hint: "最後に残った数を足し引きします。", check: (input) => numericAnswer(input, answer), answer: String(answer) },
+    ],
+  };
+}
+
+function radicalAdvanced() {
+  const base = randomInt(8, 14);
+  const rest = choose([2, 3, 5, 6, 7]);
+  const square = base ** 2;
+  const value = square * rest;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "大きい平方因数を見つける",
+    prompt: `\\(\\sqrt{${value}}\\) を最も簡単な形にする`,
+    steps: [
+      { label: "平方因数", question: `\\(${value}=\\Box\\times${rest}\\) の平方数は？`, hint: `\\(${base}^2\\) を確かめます。`, check: (input) => numericAnswer(input, square), answer: String(square) },
+      { label: "√の外へ出す", question: "最も簡単な形は？", hint: `\\(\\sqrt{${square}}=${base}\\) です。`, check: (input) => sameRadical(input, base, rest), answer: `\\(${radicalText(base, rest)}\\)` },
+    ],
+  };
+}
+
+function squareRootAdvanced() {
+  const root = randomInt(11, 20);
+  const square = root ** 2;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "平方根と方程式を区別する",
+    prompt: `\\(x^2=${square}\\) と \\(\\sqrt{${square}}\\)`,
+    steps: [
+      { label: "√の値", question: `\\(\\sqrt{${square}}\\) は？`, hint: "√は0以上の値です。", check: (input) => numericAnswer(input, root), answer: String(root) },
+      { label: "負の解", question: `\\(x^2=${square}\\) の負の解は？`, hint: "負の数も2乗すると正になります。", check: (input) => numericAnswer(input, -root, "x"), answer: `\\(x=-${root}\\)` },
+      { label: "解の個数", question: "実数の解は何個？", hint: `\\(${root}\\) と \\(-${root}\\) です。`, check: (input) => numericAnswer(input, 2), answer: "2" },
+    ],
+  };
+}
+
+function rootOperationsAdvanced() {
+  const radicand = choose([2, 3, 5, 7]);
+  const first = randomInt(7, 14);
+  const second = choose([-8, -6, 5, 9]);
+  const total = first + second;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "係数が大きいルートの加減",
+    prompt: `\\(${first}\\sqrt{${radicand}}${second < 0 ? second : `+${second}`}\\sqrt{${radicand}}\\)`,
+    steps: [
+      { label: "係数を計算", question: `\\(${first}${second < 0 ? second : `+${second}`}\\) は？`, hint: "同じルート部分は残します。", check: (input) => numericAnswer(input, total), answer: String(total) },
+      { label: "ルートを戻す", question: "整理した式は？", hint: `係数に \\(\\sqrt{${radicand}}\\) を付けます。`, check: (input) => sameRadical(input, total, radicand), answer: `\\(${radicalText(total, radicand)}\\)` },
+    ],
+  };
+}
+
+function substitutionAdvanced() {
+  const coefficient = choose([-4, -3, 3, 4]);
+  const constant = randomInt(-8, 8);
+  const x = choose([-5, -4, -3, 3, 4, 5]);
+  const square = x ** 2;
+  const product = coefficient * square;
+  const answer = product + constant;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "負の数を2乗する代入",
+    prompt: `\\(${coefficient}x^2${constant < 0 ? constant : `+${constant}`}\\) に \\(x=${x}\\) を代入する`,
+    steps: [
+      { label: "2乗", question: `\\((${x})^2\\) は？`, hint: "かっこを付けて負の数全体を2乗します。", check: (input) => numericAnswer(input, square), answer: String(square) },
+      { label: "係数をかける", question: `\\(${coefficient}\\times${square}\\) は？`, hint: "符号に注意します。", check: (input) => numericAnswer(input, product), answer: String(product) },
+      { label: "式の値", question: "式全体の値は？", hint: "最後に定数項を足します。", check: (input) => numericAnswer(input, answer), answer: String(answer) },
+    ],
+  };
+}
+
+function combineAdvanced() {
+  const xFirst = randomInt(-9, 9) || 5;
+  const xSecond = randomInt(-9, 9) || -3;
+  const yFirst = randomInt(-9, 9) || 4;
+  const ySecond = randomInt(-9, 9) || -2;
+  const constant = randomInt(-12, 12);
+  const xTotal = xFirst + xSecond;
+  const yTotal = yFirst + ySecond;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "x・y・定数を別々にまとめる",
+    prompt: `\\(${xFirst}x${yFirst < 0 ? yFirst : `+${yFirst}`}y${xSecond < 0 ? xSecond : `+${xSecond}`}x${ySecond < 0 ? ySecond : `+${ySecond}`}y${constant < 0 ? constant : `+${constant}`}\\)`,
+    steps: [
+      { label: "xの係数", question: "まとめた \\(x\\) の係数は？", hint: `\\(${xFirst}\\) と \\(${xSecond}\\) を足します。`, check: (input) => numericAnswer(input, xTotal), answer: String(xTotal) },
+      { label: "yの係数", question: "まとめた \\(y\\) の係数は？", hint: `\\(${yFirst}\\) と \\(${ySecond}\\) を足します。`, check: (input) => numericAnswer(input, yTotal), answer: String(yTotal) },
+      { label: "定数", question: "文字が付かない定数項は？", hint: "種類の違う項とはまとめません。", check: (input) => numericAnswer(input, constant), answer: String(constant) },
+    ],
+  };
+}
+
+function distributeAdvanced() {
+  const first = choose([-5, -4, 3, 4, 5]);
+  const second = choose([-4, -3, 2, 3, 4]);
+  const leftConstant = randomInt(-6, 6) || 2;
+  const rightConstant = randomInt(-6, 6) || -3;
+  const xCoefficient = first + second;
+  const constant = first * leftConstant + second * rightConstant;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "二つのかっこを展開する",
+    prompt: `\\(${first}(x${leftConstant < 0 ? leftConstant : `+${leftConstant}`})${second < 0 ? second : `+${second}`}(x${rightConstant < 0 ? rightConstant : `+${rightConstant}`})\\)`,
+    steps: [
+      { label: "xの係数", question: "展開後の \\(x\\) の係数は？", hint: "二つのかっこから出る \\(x\\) の係数を足します。", check: (input) => numericAnswer(input, xCoefficient), answer: String(xCoefficient) },
+      { label: "定数項", question: "展開後の定数項は？", hint: "外の数を、それぞれのかっこの定数へかけます。", check: (input) => numericAnswer(input, constant), answer: String(constant) },
+      { label: "係数を並べる", question: "xの係数、定数項の順にカンマで書くと？", hint: "二つの種類を混ぜずに並べます。", check: (input) => sameOrderedPair(input, xCoefficient, constant), answer: `${xCoefficient}, ${constant}` },
+    ],
+  };
+}
+
+function equationAdvanced() {
+  const leftCoefficient = randomInt(5, 9);
+  const rightCoefficient = randomInt(1, 4);
+  const solution = randomInt(-6, 8);
+  const leftConstant = randomInt(-9, 9);
+  const rightConstant = (leftCoefficient - rightCoefficient) * solution + leftConstant;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "両辺にxがある一次方程式",
+    prompt: `\\(${leftCoefficient}x${leftConstant < 0 ? leftConstant : `+${leftConstant}`}=${rightCoefficient}x${rightConstant < 0 ? rightConstant : `+${rightConstant}`}\\)`,
+    steps: [
+      { label: "xの項を片側へ", question: "右辺の \\(x\\) の項を左へ移すと、xの係数は？", hint: `\\(${leftCoefficient}-${rightCoefficient}\\) を計算します。`, check: (input) => numericAnswer(input, leftCoefficient - rightCoefficient), answer: String(leftCoefficient - rightCoefficient) },
+      { label: "定数を片側へ", question: "定数を右へまとめた値は？", hint: `\\(${rightConstant}-${leftConstant}\\) を計算します。`, check: (input) => numericAnswer(input, rightConstant - leftConstant), answer: String(rightConstant - leftConstant) },
+      { label: "解", question: "\\(x\\) は？", hint: "最後にxの係数で割ります。", check: (input) => numericAnswer(input, solution, "x"), answer: `\\(x=${solution}\\)` },
+    ],
+  };
+}
+
+function setsAdvanced() {
+  const universe = Array.from({ length: 12 }, (_, index) => index + 1);
+  const union = universe.filter((value) => value % 2 === 0 || value % 3 === 0);
+  const complement = universe.filter((value) => !union.includes(value));
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "和集合の補集合",
+    prompt: "全体集合を1から12までの整数、\\(A\\) を偶数、\\(B\\) を3の倍数の集合とする。",
+    steps: [
+      { label: "和集合", question: "\\(A\\cup B\\) の要素をカンマで書くと？", hint: "少なくとも一方の条件に合う数を集めます。", check: (input) => sameNumberList(input, union), answer: `{ ${union.join(", ")} }` },
+      { label: "補集合", question: "\\((A\\cup B)^c\\) の要素をカンマで書くと？", hint: "全体集合から和集合の要素を除きます。", check: (input) => sameNumberList(input, complement), answer: `{ ${complement.join(", ")} }` },
+      { label: "言葉で読む", question: "補集合は、和集合の内側・外側のどちら？", hint: "上付きの \\(c\\) は全体集合の中での『外』を表します。", check: (input) => normalizeText(input).includes("外"), answer: "外側" },
+    ],
+  };
+}
+
+function identitiesAdvanced() {
+  const first = randomInt(2, 7);
+  const second = randomInt(2, 7);
+  const linear = first + second;
+  const constant = first * second;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "恒等式の係数を比較する",
+    prompt: `\\((x+${first})(x+${second})=x^2+px+q\\) がすべての \\(x\\) で成り立つ。`,
+    steps: [
+      { label: "xの係数", question: "\\(p\\) は？", hint: "二つの定数を足したものが \\(x\\) の係数です。", check: (input) => numericAnswer(input, linear, "p"), answer: `\\(p=${linear}\\)` },
+      { label: "定数項", question: "\\(q\\) は？", hint: "二つの定数をかけます。", check: (input) => numericAnswer(input, constant, "q"), answer: `\\(q=${constant}\\)` },
+    ],
+  };
+}
+
+function inequalityAdvanced() {
+  const leftCoefficient = choose([-8, -7, 6, 7, 8]);
+  const rightCoefficient = choose([-3, -2, 2, 3]);
+  const difference = leftCoefficient - rightCoefficient;
+  const boundary = randomInt(-6, 6);
+  const leftConstant = randomInt(-8, 8);
+  const rightConstant = difference * boundary + leftConstant;
+  const sign = difference > 0 ? "<" : ">";
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "両辺にxがある一次不等式",
+    prompt: `\\(${leftCoefficient}x${leftConstant < 0 ? leftConstant : `+${leftConstant}`}<${rightCoefficient}x${rightConstant < 0 ? rightConstant : `+${rightConstant}`}\\)`,
+    steps: [
+      { label: "xの係数", question: "xの項を左へまとめた係数は？", hint: `\\(${leftCoefficient}-${rightCoefficient}\\) を計算します。`, check: (input) => numericAnswer(input, difference), answer: String(difference) },
+      { label: "境目", question: "等号にしたときの境目の数は？", hint: "定数も片側へまとめて、係数で割ります。", check: (input) => numericAnswer(input, boundary), answer: String(boundary) },
+      { label: "不等号", question: "解を、\\(x\\) と境目の数を不等号で結んで書くと？", hint: difference < 0 ? "負の係数で割るので向きを反転します。" : "正の係数で割るので向きはそのままです。", check: (input) => normalizeText(input) === `x${sign}${boundary}`, answer: `\\(x${sign}${boundary}\\)` },
+    ],
+  };
+}
+
+function quadraticAdvanced() {
+  const horizontal = randomInt(-5, 5);
+  const vertical = randomInt(-8, 8);
+  const linearCoefficient = -2 * horizontal;
+  const constant = horizontal ** 2 + vertical;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "平方完成して頂点を読む",
+    prompt: `\\(y=x^2${linearCoefficient < 0 ? linearCoefficient : `+${linearCoefficient}`}x${constant < 0 ? constant : `+${constant}`}\\)`,
+    steps: [
+      { label: "横位置", question: "平方完成したときの頂点のx座標は？", hint: `\\(x^2-2px\\) の係数から \\(p\\) を読みます。`, check: (input) => numericAnswer(input, horizontal), answer: String(horizontal) },
+      { label: "高さ", question: "頂点のy座標は？", hint: `\\(x=${horizontal}\\) を元の式へ代入します。`, check: (input) => numericAnswer(input, vertical), answer: String(vertical) },
+      { label: "頂点", question: "頂点を \\(x,y\\) の順に書くと？", hint: "横位置と高さを組にします。", check: (input) => sameOrderedPair(input, horizontal, vertical), answer: `\\((${horizontal},${vertical})\\)` },
+    ],
+  };
+}
+
+function functionValuesAdvanced() {
+  const slope = choose([-4, -3, 2, 3, 4]);
+  const intercept = randomInt(-8, 8);
+  const firstX = randomInt(-4, 0);
+  const secondX = firstX + randomInt(2, 5);
+  const firstY = slope * firstX + intercept;
+  const secondY = slope * secondX + intercept;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "2点から一次関数を決める",
+    prompt: `直線が2点 \\((${firstX},${firstY})\\)、\\((${secondX},${secondY})\\) を通る。`,
+    steps: [
+      { label: "xの増加量", question: "xの増加量は？", hint: `\\(${secondX}-${firstX}\\) を計算します。`, check: (input) => numericAnswer(input, secondX - firstX), answer: String(secondX - firstX) },
+      { label: "yの増加量", question: "yの増加量は？", hint: `\\(${secondY}-${firstY}\\) を計算します。`, check: (input) => numericAnswer(input, secondY - firstY), answer: String(secondY - firstY) },
+      { label: "傾き", question: "傾き \\(m\\) は？", hint: "yの増加量をxの増加量で割ります。", check: (input) => numericAnswer(input, slope, "m"), answer: `\\(m=${slope}\\)` },
+      { label: "切片", question: "切片 \\(b\\) は？", hint: "どちらかの点を \\(y=mx+b\\) へ代入します。", check: (input) => numericAnswer(input, intercept, "b"), answer: `\\(b=${intercept}\\)` },
+    ],
+  };
+}
+
+function quadraticSignAdvanced() {
+  const lower = randomInt(-5, 0);
+  const upper = lower + randomInt(3, 7);
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "下に開く放物線の符号",
+    prompt: `\\(-(${linearFactor(lower)})(${linearFactor(upper)})>0\\)`,
+    steps: [
+      { label: "二つの根", question: "根を小さい順にカンマで書くと？", hint: "各かっこが0になる値です。", check: (input) => sameNumberList(input, [lower, upper]), answer: `${lower}, ${upper}` },
+      { label: "開く向き", question: "最高次の係数は正・負のどちら？", hint: "式の先頭にマイナスがあります。", check: (input) => normalizeText(input).includes("負"), answer: "負" },
+      { label: "正の範囲", question: "根の内側・外側のどちら？", hint: "下に開く放物線は、二つの根の間でx軸より上です。", check: (input) => normalizeText(input).includes("内"), answer: "内側" },
+      { label: "解", question: "解を不等式で書くと？", hint: `\\(${lower}<x<${upper}\\) です。`, check: (input) => normalizeText(input) === `${lower}<x<${upper}`, answer: `\\(${lower}<x<${upper}\\)` },
+    ],
+  };
+}
+
+function trigAdvanced() {
+  const angle = choose([30, 60]);
+  const unit = randomInt(3, 8);
+  const hypotenuse = unit * 2;
+  const target = unit;
+  const targetName = angle === 30 ? "対辺" : "隣辺";
+  const ratioName = angle === 30 ? "sin" : "cos";
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "代表角から辺を求める",
+    prompt: `斜辺が \\(${hypotenuse}\\)、角 \\(\\theta=${angle}^\\circ\\) の直角三角形で${targetName}を求める。`,
+    steps: [
+      { label: "使う比", question: `斜辺と${targetName}を結ぶのは sin・cos・tan のどれ？`, hint: `${targetName}÷斜辺の比を選びます。`, check: (input) => normalizeText(input).includes(ratioName), answer: ratioName },
+      { label: "代表値", question: `\\(${ratioName}${angle}^\\circ\\) は？`, hint: "正三角形を半分にした比を使います。", check: (input) => sameRational(input, 1, 2), answer: `\\(\\frac12\\)` },
+      { label: "辺の長さ", question: `${targetName}は？`, hint: `\\(${hypotenuse}\\times\\frac12\\) を計算します。`, check: (input) => numericAnswer(input, target), answer: String(target) },
+    ],
+  };
+}
+
+function sineCosineAdvanced() {
+  const { second, third, answer } = choose([
+    { second: 3, third: 8, answer: 7 },
+    { second: 5, third: 8, answer: 7 },
+    { second: 7, third: 15, answer: 13 },
+  ]);
+  const square = answer ** 2;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "余弦定理で第三辺を求める",
+    prompt: `\\(b=${second}\\)、\\(c=${third}\\)、その間の角 \\(A=60^\\circ\\) のとき辺 \\(a\\) を求める。`,
+    steps: [
+      { label: "定理を選ぶ", question: "2辺とその間の角から第三辺を求めるのは正弦定理・余弦定理のどちら？", hint: "\\(a^2=b^2+c^2-2bc\\cos A\\) を使います。", check: (input) => normalizeText(input).includes("余弦"), answer: "余弦定理" },
+      { label: "aの2乗", question: `\\(a^2=${second}^2+${third}^2-2\\times${second}\\times${third}\\times\\frac12\\) は？`, hint: "乗法を先に計算します。", check: (input) => numericAnswer(input, square), answer: String(square) },
+      { label: "辺の長さ", question: "\\(a\\) は？", hint: "辺の長さなので正の平方根を取ります。", check: (input) => numericAnswer(input, answer, "a"), answer: `\\(a=${answer}\\)` },
+    ],
+  };
+}
+
+function countingAdvanced() {
+  const size = choose([4, 5, 6]);
+  const duplicateFactor = 2;
+  let factorial = 1;
+  for (let value = 2; value <= size; value += 1) factorial *= value;
+  const answer = factorial / duplicateFactor;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "同じものを含む並べ方",
+    prompt: `\\(${size}\\) 枚の文字カードを一列に並べる。2枚だけが同じ文字で、残りはすべて異なる文字とする。`,
+    steps: [
+      { label: "区別して並べる", question: `全部を別物と考えた \\(${size}!\\) は？`, hint: `\\(${size}\\) から1までをかけます。`, check: (input) => numericAnswer(input, factorial), answer: String(factorial) },
+      { label: "重複を除く", question: "同じ2個の入れ替えを何通りとして割る？", hint: "同じもの2個の並べ替えは \\(2!\\) 通りです。", check: (input) => numericAnswer(input, duplicateFactor), answer: String(duplicateFactor) },
+      { label: "異なる並べ方", question: "答えは何通り？", hint: `\\(${factorial}\\div2\\) を計算します。`, check: (input) => numericAnswer(input, answer), answer: String(answer) },
+    ],
+  };
+}
+
+function probabilityAdvanced() {
+  const red = randomInt(2, 5);
+  const blue = randomInt(3, 7);
+  const total = red + blue;
+  const noRedNumerator = blue ** 2;
+  const noRedDenominator = total ** 2;
+  const atLeastOneNumerator = noRedDenominator - noRedNumerator;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "少なくとも1回を余事象で求める",
+    prompt: `赤玉 \\(${red}\\) 個、青玉 \\(${blue}\\) 個から戻して2回引く。少なくとも1回赤が出る確率を求める。`,
+    steps: [
+      { label: "赤が出ない確率", question: "1回で青が出る確率は？", hint: "赤が出ないとは青が出ることです。", check: (input) => sameRational(input, blue, total), answer: `\\(${fractionText(blue, total)}\\)` },
+      { label: "2回とも青", question: "2回とも赤が出ない確率は？", hint: "青の確率を2回かけます。", check: (input) => sameRational(input, noRedNumerator, noRedDenominator), answer: `\\(${fractionText(noRedNumerator, noRedDenominator)}\\)` },
+      { label: "余事象", question: "少なくとも1回赤が出る確率は？", hint: "1から『2回とも青』を引きます。", check: (input) => sameRational(input, atLeastOneNumerator, noRedDenominator), answer: `\\(${fractionText(atLeastOneNumerator, noRedDenominator)}\\)` },
+    ],
+  };
+}
+
+function dataSummaryAdvanced() {
+  const values = choose([
+    [12, 4, 6, 8, 10, 2],
+    [3, 15, 6, 9, 12, 3],
+    [20, 5, 7, 9, 11, 8],
+  ]);
+  const sorted = [...values].sort((a, b) => a - b);
+  const total = sorted.reduce((sum, value) => sum + value, 0);
+  const mean = total / sorted.length;
+  const median = (sorted[2] + sorted[3]) / 2;
+  const range = sorted.at(-1) - sorted[0];
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "未整列データの代表値",
+    prompt: `データ \\( ${values.join(", ")} \\)`,
+    steps: [
+      { label: "並べ替え", question: "小さい順にカンマで書くと？", hint: "中央値を求める前に必ず並べます。", check: (input) => sameOrderedList(input, sorted), answer: sorted.join(", ") },
+      { label: "平均", question: "平均は？", hint: `合計を \\(${sorted.length}\\) で割ります。`, check: (input) => numericAnswer(input, mean), answer: String(mean) },
+      { label: "中央値", question: "中央値は？", hint: "6個なので中央2個の平均です。", check: (input) => numericAnswer(input, median), answer: String(median) },
+      { label: "範囲", question: "範囲は？", hint: "最大値から最小値を引きます。", check: (input) => numericAnswer(input, range), answer: String(range) },
+    ],
+  };
+}
+
+function dataAnalysisAdvanced() {
+  const center = randomInt(4, 10);
+  const values = [center - 1, center, center + 1];
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "分数になる分散",
+    prompt: `データ \\( ${values.join(", ")} \\) の分散を求める。`,
+    steps: [
+      { label: "平均", question: "平均は？", hint: "中央の値と同じになります。", check: (input) => numericAnswer(input, center), answer: String(center) },
+      { label: "偏差", question: "偏差を小さい順にカンマで書くと？", hint: "各値から平均を引きます。", check: (input) => sameNumberList(input, [-1, 0, 1]), answer: "-1, 0, 1" },
+      { label: "2乗の合計", question: "偏差を2乗した値の合計は？", hint: `\\((-1)^2+0^2+1^2\\) を計算します。`, check: (input) => numericAnswer(input, 2), answer: "2" },
+      { label: "分散", question: "偏差の2乗の平均は？", hint: "2乗の合計をデータの個数3で割ります。", check: (input) => sameRational(input, 2, 3), answer: `\\(\\frac23\\)` },
+      { label: "標準偏差", question: "標準偏差は、分散の何を取る？", hint: "元のデータと同じ単位へ戻します。", check: (input) => normalizeText(input).includes("平方根"), answer: "正の平方根" },
+    ],
+  };
+}
+
+function geometryPropertiesAdvanced() {
+  const inscribed = choose([25, 35, 40, 55, 65, 70]);
+  const central = inscribed * 2;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "円周角から中心角へ戻す",
+    prompt: `弧 \\(AC\\) を見込む円周角が \\(${inscribed}^\\circ\\) である。`,
+    steps: [
+      { label: "中心角", question: "同じ弧を見込む中心角は何度？", hint: "中心角は円周角の2倍です。", check: (input) => numericAnswer(input, central), answer: `${central}°` },
+      { label: "弧の大きさ", question: "小さいほうの弧 \\(AC\\) は何度？", hint: "弧の角度は対応する中心角で表します。", check: (input) => numericAnswer(input, central), answer: `${central}°` },
+    ],
+  };
+}
+
+function euclideanSteps(first, second) {
+  let dividend = Math.max(first, second);
+  let divisor = Math.min(first, second);
+  const steps = [];
+  while (divisor !== 0) {
+    const remainder = dividend % divisor;
+    steps.push({ dividend, divisor, remainder });
+    dividend = divisor;
+    divisor = remainder;
+  }
+  return { steps, answer: dividend };
+}
+
+function numberTheoryAdvanced() {
+  const [first, second] = choose([
+    [899, 493],
+    [662, 414],
+    [527, 341],
+  ]);
+  const result = euclideanSteps(first, second);
+  const steps = result.steps.map(({ dividend, divisor, remainder }, index) => ({
+    label: `余り ${index + 1}`,
+    question: `\\(${dividend}\\) を \\(${divisor}\\) で割った余りは？`,
+    hint: "商をかけて、引いた残りを求めます。",
+    check: (input) => numericAnswer(input, remainder),
+    answer: String(remainder),
+  }));
+  steps.push({ label: "最大公約数", question: "最大公約数は？", hint: "余りが0になる直前の余りです。", check: (input) => numericAnswer(input, result.answer), answer: String(result.answer) });
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "3桁の整数の互除法",
+    prompt: `\\(${first}\\) と \\(${second}\\) の最大公約数を求める。`,
+    steps,
+  };
+}
+
+function geometryBasicsAdvanced() {
+  const triangle = choose([
+    { leg: 5, hypotenuse: 13, answer: 12 },
+    { leg: 8, hypotenuse: 17, answer: 15 },
+    { leg: 7, hypotenuse: 25, answer: 24 },
+  ]);
+  const square = triangle.hypotenuse ** 2 - triangle.leg ** 2;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "斜辺から短い辺を求める",
+    prompt: `斜辺が \\(${triangle.hypotenuse}\\)、一つの短い辺が \\(${triangle.leg}\\) の直角三角形。`,
+    steps: [
+      { label: "平方を引く", question: `未知の辺の2乗 \\(${triangle.hypotenuse}^2-${triangle.leg}^2\\) は？`, hint: "斜辺の平方から、分かっている短辺の平方を引きます。", check: (input) => numericAnswer(input, square), answer: String(square) },
+      { label: "長さ", question: "未知の辺の長さは？", hint: "正の平方根を取ります。", check: (input) => numericAnswer(input, triangle.answer), answer: String(triangle.answer) },
+    ],
+  };
+}
+
+export const advancedPracticeGenerators = {
+  integer: integerAdvanced,
+  radical: radicalAdvanced,
+  "square-root-meaning": squareRootAdvanced,
+  "root-operations": rootOperationsAdvanced,
+  substitution: substitutionAdvanced,
+  combine: combineAdvanced,
+  distribute: distributeAdvanced,
+  equation: equationAdvanced,
+  sets: setsAdvanced,
+  identities: identitiesAdvanced,
+  inequality: inequalityAdvanced,
+  quadratic: quadraticAdvanced,
+  "function-values": functionValuesAdvanced,
+  "quadratic-sign": quadraticSignAdvanced,
+  trig: trigAdvanced,
+  "sine-cosine-rule": sineCosineAdvanced,
+  counting: countingAdvanced,
+  probability: probabilityAdvanced,
+  "data-summary": dataSummaryAdvanced,
+  "data-analysis": dataAnalysisAdvanced,
+  "geometry-properties": geometryPropertiesAdvanced,
+  "number-theory": numberTheoryAdvanced,
+  "geometry-basics": geometryBasicsAdvanced,
+};

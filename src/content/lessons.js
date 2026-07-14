@@ -1,0 +1,1085 @@
+import { unitLabRefs } from "./labs.js";
+
+const rawUnits = [
+  {
+    id: "integers-signs",
+    stage: "整数 1",
+    range: ["中1"],
+    title: "正負の数と数直線",
+    summary:
+      "負の数は「小さい数」だけでなく、数直線上の左向き・反対向きとして考えると加減が見えやすくなります。",
+    points: [
+      "正の方向へ進むと数は大きくなる",
+      "負の方向へ進むと数は小さくなる",
+      "引き算は「反対向きに足す」と考えられる",
+    ],
+    example: "\\(-3+5=2\\)、\\(-3-5=-8\\)",
+    check: "数直線ラボで \\(a-b\\) を選び、\\(b\\) の向きが反対になることを確認しよう。",
+  },
+  {
+    id: "integer-rules",
+    stage: "整数 2",
+    range: ["中1"],
+    title: "符号のルールと計算順序",
+    summary:
+      "乗除の符号は、負の向きを何回反転するかで決まります。計算順序は、式を誤読しないための交通ルールです。",
+    points: [
+      "同じ符号の積・商は正",
+      "違う符号の積・商は負",
+      "累乗・かっこ・乗除・加減の順に処理する",
+    ],
+    example: "\\(-2\\times(-3)=6\\)、\\(4-3^2=-5\\)",
+    check: "「マイナスが2回出たら向きが戻る」と声に出すと、符号ミスが減ります。",
+  },
+  {
+    id: "distribution-numbers",
+    stage: "整数 3",
+    range: ["中1", "中2"],
+    title: "数で見る分配法則",
+    summary:
+      "\\(6\\times13\\) は「6 が 13 個分」という意味です。13 を 10 と 3 に分けて数えても 13 個分であることは変わらないので、かけ算も二つに分けて計算できます。",
+    points: [
+      "\\(13=10+3\\) のように、数を計算しやすい部分へ分ける",
+      "\\(6\\times(10+3)=6\\times10+6\\times3\\) と、外の数を両方へかける",
+      "文字を学んだ後は、同じ考えを展開・因数分解にも使う",
+    ],
+    example: "\\(6\\times13=6(10+3)=60+18=78\\)",
+    check: "分配法則ラボで、長方形を二つに分けても全体の広さが変わらないことを見よう。",
+    checkExample: "高さを \\(6\\)、二つの幅を \\(10\\) と \\(3\\) にする。二つの色の部分を足すと \\(60+18=78\\) になる。",
+    model: {
+      type: "area",
+      title: "図形で確かめる",
+      description: "たてが 6、横が 13 の長方形を考えます。横を 10 と 3 に分けると、6 が 10 個分の部分と、6 が 3 個分の部分に分かれます。",
+      height: 6,
+      firstWidth: 10,
+      secondWidth: 3,
+      formula: "\\(6\\times13=6\\times10+6\\times3=60+18=78\\)",
+    },
+  },
+  {
+    id: "powers-roots",
+    stage: "ルート 1",
+    range: ["中3", "数I"],
+    title: "平方と平方根",
+    summary:
+      "平方は同じ数を2回かけること、平方根は「2乗するとその数になる数」です。正の数には正と負の2つの平方根があり、√はそのうち0以上のほうを表します。",
+    points: [
+      "\\(5^2=(-5)^2=25\\) なので、25の平方根は \\(5\\) と \\(-5\\)",
+      "記号 \\(\\sqrt{25}\\) は0以上の平方根だけを表すので \\(\\sqrt{25}=5\\)",
+      "面積25の正方形の一辺は5",
+      "\\(\\sqrt{2}\\) のように整数で表せない長さもある",
+    ],
+    example: "\\(x^2=49\\) の解は \\(x=\\pm7\\)、一方で \\(\\sqrt{49}=7\\)",
+    check: "平方数 1, 4, 9, 16, 25, ... はルート整理の足場になります。",
+  },
+  {
+    id: "simplify-roots",
+    stage: "ルート 2",
+    range: ["中3", "数I"],
+    title: "ルートを整理する",
+    summary:
+      "√の中に平方数の因数があれば、その平方数だけ外へ出せます。これは平方根の計算で最初に効くルールです。",
+    points: [
+      "\\(\\sqrt{a^2b}=a\\sqrt{b}\\)",
+      "\\(\\sqrt{72}=\\sqrt{36\\times2}=6\\sqrt{2}\\)",
+      "√の中をなるべく小さくして見通しをよくする",
+    ],
+    example: "\\(\\sqrt{50}=\\sqrt{25\\times2}=5\\sqrt{2}\\)",
+    check: "ルートラボで n を動かし、どの平方数が外へ出るか観察しよう。",
+  },
+  {
+    id: "root-operations",
+    stage: "ルート 3",
+    range: ["中3", "数I"],
+    title: "ルートの足し算・かけ算",
+    summary:
+      "同じルート部分だけが足し引きできます。かけ算では \\(\\sqrt{a}\\sqrt{b}=\\sqrt{ab}\\) を使います。",
+    points: [
+      "\\(2\\sqrt{3}+5\\sqrt{3}=7\\sqrt{3}\\)",
+      "\\(\\sqrt{2}+\\sqrt{3}\\) はこれ以上まとめられない",
+      "\\(\\sqrt{6}\\times\\sqrt{3}=\\sqrt{18}=3\\sqrt{2}\\)",
+    ],
+    example: "\\(\\sqrt{12}+\\sqrt{27}=2\\sqrt{3}+3\\sqrt{3}=5\\sqrt{3}\\)",
+    check: "文字式の同類項と似ています。\\(\\sqrt{3}\\) のまとまりを数えている、と考えましょう。",
+  },
+  {
+    id: "letters-as-boxes",
+    stage: "文字式 1",
+    range: ["中1", "中2"],
+    title: "文字と文字式の読み方",
+    summary:
+      "文字は、まだ決めていない数や変化する量に名前を付ける札です。どの文字を使うかに絶対のルールはなく、その式や問題で最初に示された意味を読みます。",
+    points: [
+      "\\(a,b,c\\) は一般の数や辺、\\(x,y\\) は未知数や座標によく使うが、これは慣習であって固定規則ではない",
+      "\\(3a\\) は \\(3\\times a\\) の省略。数の係数を文字の前に置く約束なので、積を \\(a3\\) とは書かない",
+      "物理の \\(v\\)（速度）や \\(t\\)（時間）のように量の名前に合わせる場合も、ページごとの定義が最優先",
+      "\\(x=4\\) なら \\(3x=3\\times4=12\\)。文字へ数を入れることを代入という",
+    ],
+    example: {
+      type: "word-problem",
+      prompt: "りんご1個の値段を \\(a\\) 円とします。3個分の値段を式で表し、\\(a=120\\) のときの金額を求めます。",
+      explanation: "同じ \\(a\\) 円が3個分なので \\(3\\times a\\) です。かけ算記号を省き、数を文字の前に置いて \\(3a\\) と書きます。",
+      equation: "\\(3a=3\\times120=360\\)",
+    },
+    check: "同類項ラボの \\(x\\) カードを見て、\\(3x\\) が同じカード3枚を表すことを確かめましょう。",
+  },
+  {
+    id: "like-terms",
+    stage: "文字式 2",
+    range: ["中1", "中2"],
+    title: "同類項をまとめる",
+    summary:
+      "x の項どうし、定数どうしのように、同じ種類のまとまりだけを足し引きできます。",
+    points: [
+      "\\(3x+2x=5x\\)",
+      "\\(3x+2\\) は違う種類なのでまとめられない",
+      "係数は「何個分あるか」を表す",
+    ],
+    example: "\\(7x-2+3x+5=10x+3\\)",
+    check: "同類項ラボで x の項と定数が別レーンに分かれることを見よう。",
+  },
+  {
+    id: "distribution-letters",
+    stage: "文字式 3",
+    range: ["中1", "中2", "数I"],
+    title: "文字式の分配法則",
+    summary:
+      "整数で見た分配法則は、文字式でもそのまま働きます。かっこの中の各項に外の数をかけます。",
+    points: [
+      "\\(a(x+b)=ax+ab\\)",
+      "\\(-2(x-3)=-2x+6\\)",
+      "符号ごと配るのがコツ",
+    ],
+    example: "\\(3(x+4)=3x+12\\)",
+    check: "負の数を配ると符号が変わるところを、整数の符号ルールに戻って確認しましょう。",
+  },
+  {
+    id: "sets-propositions",
+    stage: "条件を整理する",
+    range: ["数I"],
+    title: "集合から命題へ：条件を整理する",
+    summary:
+      "集合は、条件に合うものを箱に分けて、文章の『かつ』『または』を見える形にする道具です。まず数カードの仕分けに慣れ、そのあとで『もし〜ならば』という命題へ進みます。確率で条件に合う結果を数える準備にもなります。",
+    points: [
+      "要素 \\(x\\) が集合 \\(A\\) に入ることを \\(x\\in A\\)、\\(A\\) が \\(B\\) に含まれることを \\(A\\subset B\\) と書く",
+      "\\(A\\cap B\\) は両方に入る共通部分、\\(A\\cup B\\) は少なくとも一方に入る和集合",
+      "命題は、内容が正しいか誤りかを決められる文。まず具体的な数で確かめる",
+      "『すべて成り立つ』を否定するには反例が一つあればよい。対偶や必要・十分条件は、その次の段階で扱う",
+    ],
+    example: {
+      type: "narrative",
+      body: "1から12までの整数で、集合 \\(A\\) を偶数、集合 \\(B\\) を4の倍数とします。すべての \\(B\\) の要素は \\(A\\) にも入ります。この箱の関係を文章に直すと、『4の倍数なら偶数』という命題になります。逆向きは \\(2\\) が反例です。",
+      equation: "\\(B\\subset A\\quad\\Longrightarrow\\quad 4\\text{の倍数なら偶数}\\)",
+    },
+    check: "最初から記号だけを覚えず、集合ラボで数カードを箱へ入れてから、同じ条件を文章で読んでみましょう。",
+  },
+  {
+    id: "linear-inequalities",
+    stage: "不等式",
+    range: ["中2", "数I"],
+    title: "不等式の基本",
+    summary:
+      "方程式が『ちょうど同じになる値』を探すのに対し、不等式は予算以内・基準以上のような『条件に合う値の範囲』を探します。\\(x<3\\) は3を含まず、\\(x\\le3\\) は3も含みます。",
+    points: [
+      "まず方程式と同じように、文字が一方に残る形まで両辺を整理する",
+      "\\(a<b\\) なら \\(a+c<b+c\\)",
+      "\\(a\\le b\\) なら \\(a+c\\le b+c\\)",
+      "\\(a<b\\)、\\(c>0\\) なら \\(ac<bc\\)",
+      "\\(a<b\\)、\\(c<0\\) なら \\(ac>bc\\)",
+      "解は数直線上の範囲として表す",
+    ],
+    example: {
+      type: "word-problem",
+      prompt: "1,000円以内で遊びます。入場料は400円、乗り物は1回150円です。乗れる回数を \\(x\\) 回として範囲を求めます。",
+      explanation: "入場料と乗り物代の合計が1,000円以下なので不等式にします。計算上は \\(x\\le4\\) となり、回数なので \\(0,1,2,3,4\\) 回が条件に合います。",
+      equation: "\\(400+150x\\le1000\\quad\\Longrightarrow\\quad x\\le4\\)",
+    },
+    check: "不等号ラボで、正の数をかける場合と負の数をかける場合を比べよう。",
+    checkExample: "\\(2<5\\) に \\(-1\\) をかけると、\\(-2\\) は \\(-5\\) より右にあるので \\(-2>-5\\) になる。",
+  },
+  {
+    id: "identities-equations",
+    stage: "等号を読み分ける",
+    range: ["中2", "中3", "数I"],
+    title: "方程式と恒等式：同じ「=」の二つの役割",
+    summary:
+      "方程式は、文章や条件から『左右が同じになる未知の値』を探すための等式です。恒等式は、展開・因数分解の前後のように、同じ量を別の形で書いた等式です。どちらも等号は左右が同じという意味ですが、成り立つ文字の範囲が違います。",
+    points: [
+      "方程式 \\(x+2=7\\) は \\(x=5\\) のときだけ成り立ち、その値を探す",
+      "恒等式 \\(2(x+3)=2x+6\\) は、どの \\(x\\) を入れても成り立つ",
+      "展開や因数分解では、式の形を変えても値が同じだと示すために恒等式を使う",
+      "数を一つ代入して成り立っても恒等式の証明にはならない。式変形して左右が同じ形になることを確かめる",
+    ],
+    example: {
+      type: "narrative",
+      body: "『ある数に2を足すと7』なら、成り立つ値を探す方程式です。一方、2個の \\(x+3\\) を配って \\(2x+6\\) と書き直す式は、展開前後が同じ量だと示す恒等式です。前者は \\(x=5\\) だけ、後者はどの \\(x\\) でも成り立ちます。",
+      equation: "\\(\\underbrace{x+2=7}_{\\text{方程式}}\\qquad\\underbrace{2(x+3)=2x+6}_{\\text{恒等式}}\\)",
+    },
+    check: "\\(x=0\\) と \\(x=1\\) を両方の式へ入れ、方程式と恒等式で『成り立つ値の範囲』が違うことを比べましょう。",
+  },
+  {
+    id: "linear-equations",
+    stage: "方程式 1",
+    range: ["中1", "中2"],
+    title: "一次方程式を解く",
+    summary:
+      "方程式は、分からない量を文字で置き、同じ総量を二通りに表して等号で結んだ式です。一次方程式を解くときは、左右から同じブロックを取り、\\(x\\) 袋一つの中身を調べます。",
+    points: [
+      "まず、何を \\(x\\) と置いたかと単位を書く",
+      "文章中の同じ総量を二通りで表し、等号で結ぶ",
+      "足されている数は両辺から引く",
+      "かけられている数は両辺を割る",
+      "解いたあと、求めた値を元の文章と式へ戻して確かめる",
+    ],
+    example: {
+      type: "word-problem",
+      prompt: "ノートを3冊と50円の袋を買い、合計が410円でした。ノート1冊の値段を \\(x\\) 円として求めます。",
+      explanation: "ノート3冊は \\(3x\\) 円です。袋代を足した \\(3x+50\\) 円が合計410円と同じなので方程式を立て、両辺から50を引いてから3で割ります。",
+      equation: "\\(3x+50=410\\quad\\Longrightarrow\\quad x=120\\)",
+    },
+    check: "方程式ラボで \\(x\\) 袋と1ブロックを動かし、文章の量が式のどの部分に対応するか指さしてみましょう。",
+  },
+  {
+    id: "equation-modeling",
+    stage: "方程式 2",
+    range: ["中1", "中2", "数I", "数I/A入口"],
+    title: "文章から方程式を立てる",
+    summary:
+      "文章題でいちばん大切なのは、計算より『同じ量を表す二つの言い方』を見つけることです。分からない量を文字にし、単位をそろえ、同じ総量を等号で結びます。",
+    points: [
+      "求めたい量を \\(x\\) と置き、円・個・km などの単位も書く",
+      "文章に出てくる他の量を \\(x\\) を使った式で表す",
+      "合計・残り・道のりなど、同じ量を表す左右を等号で結ぶ",
+      "解が負になってよい場面か、個数なら整数かを問題文へ戻って確かめる",
+    ],
+    example: {
+      type: "word-problem",
+      prompt: "鉛筆を3本と80円の消しゴムを1個買うと、合計500円でした。鉛筆1本の値段を \\(x\\) 円として求めます。",
+      explanation: "鉛筆代は \\(3x\\) 円、消しゴム代は80円です。この二つを足した金額が500円なので、同じ『合計金額』を等号で結びます。",
+      equation: "\\(3x+80=500\\quad\\Longrightarrow\\quad x=140\\)",
+    },
+    check: "式を解く前に、左辺と右辺がどちらも何の総量を表しているか、単位を付けて読んでみましょう。",
+  },
+  {
+    id: "simultaneous-equations",
+    stage: "方程式",
+    range: ["中2"],
+    title: "連立方程式と交点",
+    summary:
+      "2本の式を同時に満たす値は、2本の直線が交わる点としても見られます。",
+    points: [
+      "代入法は片方の式をもう片方へ入れる",
+      "加減法は係数をそろえて消す",
+      "グラフでは交点の座標が解になる",
+    ],
+    example: "\\(x+y=5\\)、\\(x-y=1\\) の解は \\(x=3,\\ y=2\\)",
+    check: "式の操作とグラフの交点を行き来できると、理解がかなり安定します。",
+  },
+  {
+    id: "functions",
+    stage: "関数 1",
+    range: ["中1", "中2", "中3", "数I"],
+    title: "関数の入口：式・表・グラフ",
+    summary:
+      "関数は、\\(x\\) を一つ決めると \\(y\\) が一つ決まる対応です。同じ関係を式・表・グラフで表すと、具体的な値と変化の全体像を行き来できます。まず一次関数で読み方を確かめ、二次関数へ進みます。",
+    points: [
+      "\\(y=mx+b\\) の \\(m\\) は傾き、\\(b\\) は切片",
+      "式は入力から出力を計算する規則、表は具体的な対応、グラフは対応する点の集まり",
+      "一次関数のグラフは直線になり、傾きは \\(x\\) が1増えたときの \\(y\\) の増加量を表す",
+      "二つの関数を同時に満たす値は、二つのグラフの交点として読める",
+    ],
+    example: "\\(y=2x-1\\) では \\(x\\) が1増えると \\(y\\) は2増える",
+    check: "関数ラボで係数を動かし、グラフの変化を言葉にしてみましょう。",
+  },
+  {
+    id: "quadratic-vertex",
+    stage: "関数 2",
+    range: ["数I"],
+    title: "二次関数の頂点と最大・最小",
+    summary:
+      "二次関数は、頂点を見るとグラフ全体の動きが一気に分かります。平方完成は、式から頂点を読むための技術です。",
+    points: [
+      "頂点形式 \\(y=a(x-p)^2+q\\) では、\\(p\\) が横位置、\\(q\\) が高さ",
+      "\\(a>0\\) なら下に凸で最小値をもつ",
+      "\\(a<0\\) なら上に凸で最大値をもつ",
+      "平方完成で \\(x^2+bx+c\\) を頂点形式へ直す",
+    ],
+    example: "\\(y=(x-2)^2-3\\) は「横位置 \\(2\\)、高さ \\(-3\\)」なので、頂点は \\((2,-3)\\)",
+    check: "二次関数の頂点ラボで、\\(a\\) の符号と頂点の位置が最大・最小にどう効くか見ましょう。",
+  },
+  {
+    id: "quadratic-inequalities",
+    stage: "関数 3",
+    range: ["数I"],
+    title: "二次方程式・二次不等式とグラフ",
+    summary:
+      "二次方程式の解は、放物線と \\(x\\) 軸の交点です。二次不等式は、グラフが \\(x\\) 軸より上か下かを読む問題です。",
+    points: [
+      "\\(ax^2+bx+c=0\\) の解はグラフの \\(x\\) 切片",
+      "判別式 \\(D=b^2-4ac\\) で交点の個数が分かる",
+      "\\(y>0\\) はグラフが \\(x\\) 軸より上の範囲",
+      "因数分解できると符号表で解ける",
+    ],
+    example: "\\((x-1)(x-4)>0\\) の解は \\(x<1,\\ 4<x\\)",
+    check: "根の間は符号が変わる、というグラフの見方を持つと不等式が軽くなります。",
+  },
+  {
+    id: "trig-ratios",
+    stage: "図形 2",
+    range: ["数I"],
+    title: "三角比（sin, cos, tan）",
+    summary:
+      "三角比は、直角三角形で一つの鋭角を決めたときの辺の比です。まず角 \\(\\theta\\) の向かいを対辺、となりを隣辺、直角の向かいにある最長の辺を斜辺と呼び分けます。",
+    points: [
+      "\\(\\sin\\theta=\\dfrac{\\text{対辺}}{\\text{斜辺}}\\)",
+      "\\(\\cos\\theta=\\dfrac{\\text{隣辺}}{\\text{斜辺}}\\)",
+      "\\(\\tan\\theta=\\dfrac{\\text{対辺}}{\\text{隣辺}}\\)",
+      "30°・45°・60°は、正三角形や正方形を半分にして正確な比を作れる代表的な角",
+      "三角形を拡大しても角度が同じなら相似なので、辺の長さは変わっても三角比は変わらない",
+    ],
+    example: {
+      type: "narrative",
+      body: "辺の長さが3・4・5の直角三角形で、角 \\(\\theta\\) の向かいが3、となりが4なら、斜辺は5です。どの辺を分子・分母にするかを、角から見て決めます。",
+      equation: "\\(\\sin\\theta=\\frac35\\quad\\cos\\theta=\\frac45\\quad\\tan\\theta=\\frac34\\)",
+    },
+    check: "三角比ラボで斜辺を変え、角度が同じなら比が変わらないことを見ましょう。",
+  },
+  {
+    id: "sine-cosine-rule",
+    stage: "図形 3",
+    range: ["数I"],
+    title: "正弦定理・余弦定理の入口",
+    summary:
+      "直角でない三角形でも、辺と向かい合う角の組を対応させれば長さや角度を求められます。辺 \\(a,b,c\\) はそれぞれ角 \\(A,B,C\\) の向かい側に置くのが最初の約束です。",
+    points: [
+      "正弦定理：\\(\\dfrac{a}{\\sin A}=\\dfrac{b}{\\sin B}=\\dfrac{c}{\\sin C}\\)",
+      "余弦定理：\\(a^2=b^2+c^2-2bc\\cos A\\)",
+      "\\(A=90^\\circ\\) なら余弦定理は三平方の定理になる",
+      "辺とその向かいの角の組が分かるなら正弦定理、2辺とその間の角や3辺なら余弦定理を選ぶ",
+    ],
+    example: "\\(a^2=b^2+c^2-2bc\\cos A\\)",
+    check: "まずは「どの角の向かいがどの辺か」を図に書き込むのが一番の近道です。",
+  },
+  {
+    id: "data-analysis-i",
+    stage: "データ 2",
+    range: ["数I"],
+    title: "分散・標準偏差・相関",
+    summary:
+      "データ分析では、中心を表す平均・中央値と、広がりを表す四分位範囲・分散・標準偏差を分けて計算します。2種類の量は散布図にして、同時に増減する傾向を相関として読みます。",
+    points: [
+      "偏差は \\(x_i-\\bar{x}\\)、分散は偏差の2乗の平均 \\(s^2=\\dfrac1n\\sum(x_i-\\bar{x})^2\\)",
+      "標準偏差 \\(s=\\sqrt{s^2}\\) は元のデータと同じ単位で散らばりを表す",
+      "四分位数は並べたデータを4等分する境目で、四分位範囲は \\(Q_3-Q_1\\)",
+      "相関係数は \\(-1\\) から \\(1\\) の範囲だが、相関があっても一方が他方の原因とは限らない",
+    ],
+    example: {
+      type: "aligned-steps",
+      intro: "データ \\(1,2,3\\) の平均、分散、標準偏差を順に求めます。",
+      rows: [
+        "\\bar{x}=(1+2+3)\\div3=2",
+        "s^2=((-1)^2+0^2+1^2)\\div3=\\frac{2}{3}",
+        "s=\\sqrt{\\frac{2}{3}}\\approx0.82",
+      ],
+      conclusion: "平均からの差を2乗するので、正負の偏差が打ち消し合わず、散らばりの大きさとして残ります。",
+    },
+    check: "平均と散らばりラボで、平均・中央値・範囲・分散を同じデータから一つずつ計算して確かめましょう。",
+  },
+  {
+    id: "counting-principles",
+    stage: "場合の数",
+    range: ["数A"],
+    title: "場合の数：和の法則・積の法則",
+    summary:
+      "場合の数は、ただ数える単元ではありません。重ならない選択なのか、連続する選択なのかを見分ける単元です。",
+    points: [
+      "どちらか一方を選ぶなら和の法則",
+      "順に両方を選ぶなら積の法則",
+      "順序を区別するなら順列",
+      "順序を区別しないなら組合せ",
+    ],
+    example: "\\({}_5P_2=5\\times4=20\\)、\\({}_5C_2=\\dfrac{5\\times4}{2\\times1}=10\\)",
+    check: "「AしてからBする」のか、「AまたはB」なのかを日本語から読み取るのが最初の勝負です。",
+  },
+  {
+    id: "probability-a",
+    stage: "確率",
+    range: ["数A"],
+    title: "確率：独立・条件付き・期待値",
+    summary:
+      "確率は、場合の数を土台にして起こりやすさを比で表します。条件が変わると分母が変わる、という感覚が大切です。",
+    points: [
+      "\\(P(A)=\\dfrac{A\\text{が起こる場合の数}}{\\text{すべての場合の数}}\\)",
+      "独立な試行では確率をかける",
+      "条件付き確率では、条件を満たす世界だけで考える",
+      "期待値は、値と確率をかけて足した平均的な値",
+    ],
+    example: "赤3個・青5個の袋から戻して2回引くと、赤赤の確率は \\(\\frac{3}{8}\\times\\frac{3}{8}=\\frac{9}{64}\\)",
+    check: "確率の木ラボで、戻す・戻さないで2回目の分母が変わることを確認しましょう。",
+  },
+  {
+    id: "geometry-a",
+    stage: "図形 4",
+    range: ["数A"],
+    title: "図形の性質",
+    summary:
+      "図形の性質では、見た目だけでなく、すでに分かっている定理を根拠に辺や角の関係を確かめます。三角形の五心、円周角、接線、方べきは、補助線で知っている三角形へ戻すと読みやすくなります。",
+    points: [
+      "図では、対応する点・辺・角に同じ印を付けて見る",
+      "内心は角の二等分線、外心は辺の垂直二等分線、重心は中線の交点",
+      "同じ弧を見込む円周角は等しく、直径を見込む円周角は90°",
+      "円の接線は、接点を通る半径と垂直になる",
+      "補助線を引き、すでに知っている三角形や円の形に変える",
+    ],
+    example: {
+      type: "narrative",
+      body: "図の \\(\\angle ABC\\) と \\(\\angle ADC\\) は、どちらも同じ弧 \\(AC\\) を見ています。頂点の場所が違っても、見ている弧が同じなら二つの角の大きさは同じです。",
+      equation: "\\(\\angle ABC=\\angle ADC\\)",
+    },
+    check: "円周角ラボで観察点を動かし、場所が変わっても同じ弧 \\(AC\\) を見る角が等しいことを確かめましょう。",
+    model: {
+      type: "circle-angle",
+      title: "円の図で確かめる",
+      description: "点 \\(B\\) と点 \\(D\\) から、同じ弧 \\(AC\\) の両端へ線を結びます。二つの頂点は違っても、見ている弧は同じです。",
+    },
+  },
+  {
+    id: "math-human-activities",
+    stage: "整数",
+    range: ["数A"],
+    title: "数学と人間の活動：整数としくみ",
+    summary:
+      "整数の性質は、数を約数・倍数・余りに分けて、繰り返すしくみを見つける学びです。互除法や記数法は、測る・記録する・情報を扱うといった人の活動につながります。",
+    points: [
+      "約数・倍数・素因数分解で整数を分解して見る",
+      "\\(a=bq+r\\) と割ったとき、\\(a\\) と \\(b\\) の最大公約数は \\(b\\) と余り \\(r\\) の最大公約数と同じ",
+      "2進法や10進法では、使う数字と位の重みが違うだけで、同じ数を表せる",
+      "合同式は『同じ数で割った余りが等しい』関係を短く書く道具",
+    ],
+    example: {
+      type: "aligned-steps",
+      intro: "\\(84\\) と \\(30\\) の最大公約数を、余りを使って求めます。",
+      rows: ["84=30\\times2+24", "30=24\\times1+6", "24=6\\times4"],
+      conclusion: "最後の余りでない数は \\(6\\) なので、\\(\\gcd(84,30)=6\\) です。",
+    },
+    check: "互除法ラボで2本の長さを同じ幅に区切り、余りへ置き換えても共通の区切り幅が残ることを見ましょう。",
+  },
+  {
+    id: "geometry",
+    stage: "図形",
+    range: ["中1", "中2", "中3", "数A"],
+    title: "図形の基本量",
+    summary:
+      "図形では、長さ・角度・面積を関係で読むことが大切です。計算ルールはここでも支えになります。",
+    points: [
+      "三角形の内角の和は180°",
+      "相似では対応する辺の比が等しい",
+      "三平方の定理は直角三角形の辺を結ぶ",
+    ],
+    example: "\\(3^2+4^2=5^2\\)",
+    check: "上の直角三角形で、二つの短い辺と斜辺がどれかを指さしてから式を読みましょう。",
+    model: {
+      type: "right-triangle",
+      title: "直角三角形で確かめる",
+      description: "直角をはさむ二辺が \\(3\\) と \\(4\\)、向かいの一番長い辺が \\(5\\) の三角形です。長さと式を対応させます。",
+      formula: "\\(3^2+4^2=5^2\\)",
+    },
+  },
+  {
+    id: "data",
+    stage: "データ",
+    range: ["中1", "中2", "数I"],
+    title: "平均・中央値・散らばり",
+    summary:
+      "データは、観察や測定で集めた値のまとまりです。中心を表す平均・中央値と、広がりを表す範囲を別々に計算すると、平均だけでは見えない違いまで説明できます。",
+    points: [
+      "平均は \\(\\dfrac{\\text{すべての値の合計}}{\\text{値の個数}}\\)",
+      "中央値は小さい順に並べた中央の値。個数が偶数なら中央2個の平均",
+      "範囲は \\(\\text{最大値}-\\text{最小値}\\) で、散らばりの最初の目安",
+      "平均は極端な値に動かされやすいが、中央値は比較的動きにくい",
+    ],
+    example: {
+      type: "narrative",
+      body: "データ \\(1,2,2,5,20\\) はすでに小さい順です。合計は30、個数は5なので平均は6です。中央にある3番目の値が中央値2、最大値と最小値の差が範囲19です。",
+      equation: "\\(\\text{平均}=30\\div5=6\\quad\\text{中央値}=2\\quad\\text{範囲}=20-1=19\\)",
+    },
+    check: "平均と散らばりラボで、5個の値を数直線に置き、定義どおりに平均・中央値・範囲を求めましょう。",
+  },
+  {
+    id: "exam-review",
+    stage: "総合",
+    range: ["中学総合", "数I/A入口"],
+    title: "学び直し総合：式・図・文章を行き来する",
+    summary:
+      "最後は、文章を式に直す、式を図で確かめる、答えを元の場面へ戻す、という往復をまとめます。公式を一つずつ暗記するのではなく、どの量が何を表すかを説明できる状態を目指します。",
+    points: [
+      "分からない量を文字で置き、単位と条件を書く",
+      "同じ量を二通りで表して、等式・不等式・関数のどれが合うか選ぶ",
+      "数直線・表・グラフ・図形を使い、式の意味を別の表現で確かめる",
+      "解いたあと、符号・大きさ・単位が問題文に合うか戻って確認する",
+    ],
+    example: {
+      type: "word-problem",
+      prompt: "商品を1個600円で \\(x\\) 個売ります。1個ごとの費用は300円、固定の費用は1,000円です。利益が1,400円になる個数を求めます。",
+      explanation: "売上は \\(600x\\) 円、費用は \\(300x+1000\\) 円です。利益は売上から費用を引いた量なので、利益1,400円と等号で結びます。",
+      equation: "\\(600x-(300x+1000)=1400\\quad\\Longrightarrow\\quad x=8\\)",
+    },
+    check: "会計ラボで売上・変動費・固定費・利益を別々のバーとして見て、方程式の各項と対応させましょう。",
+  },
+];
+
+// 本文を読んでいて「なぜ？」で止まったときだけ開く補助線です。
+const lessonContexts = {
+  "integers-signs": {
+    why: {
+      question: "どうして 0 より左にも数を広げるの？",
+      answer: "基準より反対向きの量も、同じ一本の物差しで表せるようにするためです。",
+      tryIt: "数直線で \\(-3\\) から右へ \\(5\\)、左へ \\(5\\) 進む動きを比べる",
+    },
+    definitions: [
+      {
+        term: "負の数",
+        meaning: "\\(0\\) を基準にして、正の向きと反対側にある数",
+        example: "\\(-3\\) は \\(0\\) から左へ \\(3\\) 進んだ位置",
+        boundary: "負号は『数が負』を示す場合と『引く』操作を示す場合があるので、式の位置を見る",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "数直線で向きを見る", summary: "温度や高さのように、基準からどちらへどれだけ離れたかを一つの数で表せます。", labId: "number-line-lab" },
+    ],
+    storyIds: ["negative-numbers-have-direction"],
+  },
+  "integer-rules": {
+    why: {
+      question: "どうして計算する順番を決めるの？",
+      answer: "同じ式を読む人によって答えが変わらないよう、共通の読み方を決めているからです。",
+      tryIt: "\\(2+3×4\\) を、先に足す場合と先にかける場合で比べる",
+    },
+    definitions: [
+      {
+        term: "式",
+        meaning: "数や記号を、計算の約束に従って並べたもの",
+        example: "\\(2+3×4\\) は、順番の約束に従って読める式",
+        boundary: "等号で成り立つかを問うと、方程式や等式として別の役割を持つ",
+      },
+      {
+        term: "かっこ",
+        meaning: "いつもの計算順序の中で、先に一まとまりとして読む部分を示す印",
+        example: "\\((2+3)×4\\) では \\(2+3\\) を先に計算する",
+        boundary: "かっこがなければ、足し算より乗算を先に読む",
+      },
+    ],
+    connections: [
+      { kind: "shared-rule", title: "同じ式を同じ答えへ", summary: "計算順序をそろえると、途中式を見せ合ってどこを直すか確認できます。", storyId: "shared-calculation-order" },
+      { kind: "model", title: "かっこを面積で確かめる", summary: "一まとまりを先に作る意味は、長方形を分けたり合わせたりする見方でも確かめられます。", storyId: "parentheses-change-the-reading" },
+    ],
+    storyIds: ["shared-calculation-order", "parentheses-change-the-reading", "notation-changes-with-the-page"],
+  },
+  "distribution-numbers": {
+    why: {
+      question: "どうして、かっこの外の数を中の全部にかけるの？",
+      answer: "全体を同じ倍率にするなら、全体を作る各部分も同じ倍率にする必要があるからです。",
+      tryIt: "\\(6×(10+3)\\) と \\(6×10+6×3\\) を、二つに分けた長方形で比べる",
+    },
+    definitions: [
+      {
+        term: "分配法則",
+        meaning: "一つの数を和や差の各部分に配ってかけても、全体を先にまとめてかけても同じになる規則",
+        example: "\\(6(10+3)=6×10+6×3\\)",
+        boundary: "足し算そのものをかけ算に変える規則ではなく、かっこの外にあるかけ算を配る規則",
+      },
+    ],
+    connections: [
+      { kind: "daily-life", title: "暗算を分けて軽くする", summary: "\\(6×13\\) を \\(6×10\\) と \\(6×3\\) に分けると、小さい計算を足して求められます。", labId: "distribution-lab" },
+    ],
+    storyIds: ["parentheses-change-the-reading"],
+  },
+  "letters-as-boxes": {
+    why: {
+      question: "どうして文字を使い、どうして文字ごとに意味が違うの？",
+      answer: "まだ決まっていない数や繰り返し使う量に短い名前を付けると、値が変わっても同じ関係を一つの式で表せるからです。文字の選び方は慣習で、問題ごとの定義が最優先です。",
+      tryIt: "りんご1個の値段を \\(a\\) 円として、3個・5個の値段を \\(3a\\)、\\(5a\\) と書く",
+    },
+    definitions: [
+      {
+        term: "変数・未知数",
+        meaning: "変数は変わり得る量を表す文字、未知数は条件から値を求める文字",
+        example: "関数 \\(y=2x+1\\) の \\(x\\) は入力により変わり、方程式 \\(x+2=7\\) の \\(x\\) は求める数",
+        boundary: "同じ文字でも、式の役割によって変数にも未知数にもなる",
+      },
+      {
+        term: "係数と省略されたかけ算",
+        meaning: "\\(3a\\) の \\(3\\) は係数で、\\(3\\times a\\) を表す",
+        example: "\\(-a\\) は \\(-1\\times a\\)、\\(ab\\) は \\(a\\times b\\)",
+        boundary: "数は文字の前に置くので \\(a\\times3\\) も \\(3a\\) と書く。\\(a_3\\) は3番目の \\(a\\) で積ではない",
+      },
+      {
+        term: "文字の慣習",
+        meaning: "\\(a,b,c\\) は一般の数、\\(x,y\\) は未知数や座標、\\(i,j,k\\) は番号によく使うという傾向",
+        example: "物理では速度を \\(v\\)、時間を \\(t\\) と置くことが多い",
+        boundary: "絶対の規則ではない。式の前後にある『とする』『ただし』を必ず読む",
+      },
+    ],
+    connections: [
+      { kind: "notation", title: "教科が変わっても記号を読めるようにする", summary: "よく使う文字の慣習、\\(3a\\) と \\(a_3\\) の違い、物理量の記号を読み分けます。", storyId: "letters-are-labels" },
+      { kind: "model", title: "文字をカードとして数える", summary: "\\(x\\) カードを3枚並べ、\\(3x\\) が同じ量3個分であることを確かめます。", labId: "term-lab" },
+    ],
+    storyIds: ["letters-are-labels"],
+  },
+  "distribution-letters": {
+    why: {
+      question: "文字が入っても、分配法則は使えるの？",
+      answer: "文字はまだ決まっていない数を表す箱なので、数で成り立つ規則は文字にもそのまま使えるからです。",
+      tryIt: "\\(3(x+4)\\) を \\(x\\) カードと 1 カードの三組として数える",
+    },
+    definitions: [
+      {
+        term: "係数",
+        meaning: "文字の前にある、同じ文字が何個分かを表す数",
+        example: "\\(3x\\) の 3 は \\(x\\) が 3 個分という意味",
+        boundary: "\\(x+3\\) の 3 は \\(x\\) の係数ではなく、別の定数項",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "展開と面積は同じ考え", summary: "長方形を分ける見方は、文字式を展開するときにもそのまま使えます。", labId: "distribution-lab" },
+    ],
+    storyIds: ["distribute-to-every-part"],
+  },
+  "identities-equations": {
+    why: {
+      question: "同じ等号なのに、方程式と恒等式を分けるのはなぜ？",
+      answer: "方程式では成り立つ値を探し、恒等式では二つの式がいつでも同じ量を表すことを確かめるからです。目的を分けると、代入するのか、展開・因数分解するのかを選びやすくなります。",
+      tryIt: "\\(x+2=7\\) と \\(2(x+3)=2x+6\\) に、\\(x=0,1,5\\) を順に代入して比べる",
+    },
+    definitions: [
+      {
+        term: "等号",
+        meaning: "左右の量が同じであることを示す印",
+        example: "\\(3+4=7\\) では、左の量と右の量が等しい",
+        boundary: "次の計算へ進む矢印ではない。式変形の途中でも左右が同じことを保つ",
+      },
+      {
+        term: "方程式",
+        meaning: "成り立つ文字の値を探す等式",
+        example: "\\(x+2=7\\) は \\(x=5\\) のとき成り立つ",
+        boundary: "\\((x+2)^2=x^2+4x+4\\) は、どの \\(x\\) でも成り立つ恒等式",
+      },
+      {
+        term: "恒等式",
+        meaning: "考えている範囲のどの文字の値でも成り立つ等式",
+        example: "\\(2(x+3)=2x+6\\) は分配法則による展開の前後を表す",
+        boundary: "いくつかの値で成り立つことを確かめただけでは、すべての値で成り立つ証明にはならない",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "つり合いを図で見る", summary: "両辺へ同じ操作をする理由は、ブロックを載せた天びんのつり合いとして確かめられます。", labId: "equation-lab" },
+      { kind: "history", title: "等号が文章を短くした", summary: "ロバート・レコードが二本の線を等号として用いた背景と、記号がすぐには定着しなかったことを読みます。", storyId: "recorde-equal-sign" },
+    ],
+    storyIds: ["equal-sign-keeps-balance", "recorde-equal-sign"],
+  },
+  "linear-equations": {
+    why: {
+      question: "移項とだけ覚えずに、両辺を操作するのはなぜ？",
+      answer: "何をしたかが左右で分かるようにすると、符号だけを機械的に変えるより間違いを見つけやすいからです。",
+      tryIt: "\\(3x−5=16\\) の両辺に 5 を足し、次に両辺を 3 で割る",
+    },
+    definitions: [
+      {
+        term: "解",
+        meaning: "方程式を成り立たせる文字の値",
+        example: "\\(3x−5=16\\) の解は \\(x=7\\)",
+        boundary: "途中に出る \\(3x=21\\) は解ではなく、同じ解を持つ途中の等式",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "天びんのつり合い", summary: "式を変形する操作は、左右から同じブロックを動かす操作と対応します。", labId: "equation-lab" },
+      { kind: "history", title: "文章から始まった代数", summary: "アル＝フワーリズミが記号を使わず、実用上の問題を言葉と方程式で整理した仕事を読みます。", storyId: "al-khwarizmi-algebra" },
+    ],
+    storyIds: ["equal-sign-keeps-balance", "al-khwarizmi-algebra"],
+  },
+  "equation-modeling": {
+    why: {
+      question: "文章のどこを等号で結べばよいの？",
+      answer: "左右に同じ種類・同じ単位の量を置きます。『鉛筆代と消しゴム代の合計』と『支払った500円』のように、同じ総量の二つの表し方を探します。",
+      tryIt: "鉛筆3本と80円の消しゴムで合計500円という文に、円を表す部分へ下線を引く",
+    },
+    definitions: [
+      {
+        term: "立式",
+        meaning: "文章や図にある数量の関係を、文字と演算記号を使った式に直すこと",
+        example: "鉛筆1本を \\(x\\) 円と置き、\\(3x+80=500\\) と表す",
+        boundary: "単位の違う量をそのまま等号で結ばない。円なら左右とも円、長さなら左右とも同じ長さの単位にそろえる",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "同じ総量を天びんで見る", summary: "文章の左右が同じ量を表すことを、つり合ったブロックとして確かめます。", labId: "equation-lab" },
+      { kind: "application", title: "速さ・時間・道のりへつなぐ", summary: "単位を確かめながら、道のりを二通りに表す文章題へ進めます。", labId: "speed-distance-lab" },
+      { kind: "history", title: "生活の問題を方程式にする", summary: "相続・取引・測量などの問題を整理するために代数が使われた背景を読みます。", storyId: "al-khwarizmi-algebra" },
+    ],
+    storyIds: ["al-khwarizmi-algebra", "recorde-equal-sign"],
+  },
+  "linear-inequalities": {
+    why: {
+      question: "不等号の向きは、見た目だけで覚えてよいの？",
+      answer: "向きは二つの数の大小関係を示しています。負の数をかけたり割ったりすると、数直線で左右の向きが反転するため、不等号も反対向きになります。",
+      tryIt: "\\(2<5\\) の両辺に \\(−1\\) をかけ、\\(−2\\) と \\(−5\\) の位置を数直線で比べる",
+    },
+    definitions: [
+      {
+        term: "以上・以下",
+        meaning: "境目の数を含める大小関係。\\(x\\le3\\) は \\(x=3\\) も含む",
+        example: "\\(x\\le3\\) は『\\(x\\) は \\(3\\) 以下』と読む",
+        boundary: "\\(<\\) と \\(\\le\\) は、境目の数を含むかどうかが違う",
+      },
+      {
+        term: "不等式の解",
+        meaning: "不等式を成り立たせる値すべて。多くの場合、一つの数ではなく範囲になる",
+        example: "\\(x\\le3\\) の解には \\(3,2,0,-10\\) などがすべて含まれる",
+        boundary: "回数や個数の文章題では、計算上の範囲から0以上の整数だけを選ぶ場合がある",
+      },
+    ],
+    connections: [
+      { kind: "notation", title: "記号の形と意味を分けて読む", summary: "\\(a\\le b\\) と \\(a\\leqq b\\) のように字形が異なる場合もあります。どちらも「\\(a\\) は \\(b\\) 以下」と読むことを、式の前後で確かめましょう。", storyId: "notation-changes-with-the-page" },
+    ],
+    storyIds: ["notation-changes-with-the-page"],
+  },
+  "sets-propositions": {
+    why: {
+      question: "なぜ、条件に合うものを集合として箱に入れるの？",
+      answer: "文章の『かつ』『または』『〜ならば』を、どの要素が条件を満たすかという形で見えるようにし、読み違いを減らすためです。",
+      tryIt: "1から12までの数を、偶数の箱と3の倍数の箱へ分ける",
+    },
+    definitions: [
+      {
+        term: "共通部分と和集合",
+        meaning: "\\(A\\cap B\\) は両方に入る要素、\\(A\\cup B\\) は少なくとも一方に入る要素の集合",
+        example: "偶数と3の倍数の共通部分には \\(6\\) と \\(12\\) が入る",
+        boundary: "和集合の『または』は両方に入る場合も含む",
+      },
+      {
+        term: "命題と反例",
+        meaning: "命題は真偽を決められる文。反例は『すべて成り立つ』という主張を崩す一例",
+        example: "『偶数なら4の倍数』には、偶数 \\(2\\) という反例がある",
+        boundary: "対偶や必要・十分条件は、集合と反例に慣れた後の段階で扱う",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "数カードを条件で仕分ける", summary: "一枚ずつ条件を確かめると、\\(\\cap\\) と \\(\\cup\\) の違いが図として残ります。", labId: "set-sort-lab" },
+      { kind: "history", title: "集合そのものを研究対象にした", summary: "カントールが有限の箱分けを越えて、無限集合の大きさまで調べた背景を読みます。", storyId: "cantor-sets-and-infinity" },
+    ],
+    storyIds: ["cantor-sets-and-infinity"],
+  },
+  functions: {
+    why: {
+      question: "なぜ同じ関係を、式・表・グラフの三つで表すの？",
+      answer: "式は計算の規則、表は具体的な値、グラフは変化の全体像を見せます。同じ関係を別の表し方で確かめると、読み落としを見つけやすくなるからです。",
+      tryIt: "関数ラボで係数を一つ動かし、式・入力と出力・グラフの変化を同時に見る",
+    },
+    definitions: [
+      {
+        term: "関数・入力・出力",
+        meaning: "一つの入力を決めると、対応する出力がただ一つ決まる関係",
+        example: "\\(y=2x+1\\) では、\\(x=3\\) を入れると \\(y=7\\) が一つに決まる",
+        boundary: "一つの入力から出力が二つに分かれる関係は、ここでいう \\(y\\) を \\(x\\) の関数とする条件を満たさない",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "入力と出力をグラフへ置く", summary: "係数を動かし、式・表・グラフが同時に変わる様子を確かめます。", labId: "function-lab" },
+      { kind: "history", title: "式と図形を結ぶ座標", summary: "代数を幾何へ使う考えが、現在の座標とグラフへどうつながるかを読みます。", storyId: "descartes-algebra-meets-geometry" },
+      { kind: "society", title: "売上・費用・利益を分けて記録する", summary: "会計で量を分け、対応関係を検算する考えを短く読みます。", storyId: "pacioli-recording-both-sides" },
+    ],
+    storyIds: ["descartes-algebra-meets-geometry", "pacioli-recording-both-sides"],
+  },
+  "trig-ratios": {
+    why: {
+      question: "なぜ辺の長さではなく、辺どうしの比を見るの？",
+      answer: "同じ角をもつ直角三角形は相似で、大きさが変わっても対応する辺の比は一定だからです。その比を角度ごとの名前にしたものが三角比です。",
+      tryIt: "三角比ラボで角度を35°に固定し、斜辺だけを変えて三つの比を比べる",
+    },
+    definitions: [
+      {
+        term: "対辺・隣辺・斜辺",
+        meaning: "対辺と隣辺は注目する角 \\(\\theta\\) から見て決まり、斜辺は直角の向かいにある最長の辺",
+        example: "3・4・5の三角形で、\\(\\theta\\) の向かいが3なら対辺3、となりが4、斜辺5",
+        boundary: "別の鋭角に注目すると、対辺と隣辺は入れ替わるが斜辺は変わらない",
+      },
+      {
+        term: "30°・45°・60°の代表値",
+        meaning: "\\(\\sin30^\\circ=\\frac12\\)、\\(\\sin45^\\circ=\\frac{\\sqrt2}{2}\\)、\\(\\sin60^\\circ=\\frac{\\sqrt3}{2}\\)。cosは30°と60°の値が入れ替わる",
+        example: "\\(\\tan30^\\circ=\\frac1{\\sqrt3}\\)、\\(\\tan45^\\circ=1\\)、\\(\\tan60^\\circ=\\sqrt3\\)",
+        boundary: "値を暗記する前に、30°・60°は正三角形の半分、45°は正方形の半分から作れることを図で確かめる",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "辺を色分けして比を見る", summary: "角から見た対辺・隣辺・斜辺を色分けし、拡大しても比が一定なことを確かめます。", labId: "trig-lab" },
+      { kind: "history", title: "星を測るための三角法", summary: "アル＝バッターニーが天体観測と計算に三角法を用いた背景を読みます。", storyId: "al-battani-trigonometry" },
+    ],
+    storyIds: ["al-battani-trigonometry"],
+  },
+  "sine-cosine-rule": {
+    why: {
+      question: "正弦定理と余弦定理は、何を手がかりに選ぶの？",
+      answer: "分かっている辺と角の組を図へ書き、向かい合う辺と角の組があるなら正弦定理、2辺とその間の角や3辺が分かるなら余弦定理を選びます。",
+      tryIt: "三角形の辺 \\(a\\) と、その向かいの角 \\(A\\) を同じ色で印を付ける",
+    },
+    definitions: [
+      {
+        term: "向かい合う辺と角",
+        meaning: "辺 \\(a\\) は角 \\(A\\) の正面、辺 \\(b\\) は角 \\(B\\) の正面という対応",
+        example: "\\(a/\\sin A=b/\\sin B\\) では、必ず向かい合う組を縦にそろえる",
+        boundary: "図の近くに見える辺ではなく、角の頂点に接していない向かい側の辺を選ぶ",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "辺と角の対応を色で見る", summary: "三角比ラボへ戻り、角から見た辺の名前を確かめます。", labId: "trig-lab" },
+      { kind: "history", title: "観測と三角法", summary: "星や月の位置を計算する必要が、三角法の方法を育てた例を読みます。", storyId: "al-battani-trigonometry" },
+    ],
+    storyIds: ["al-battani-trigonometry"],
+  },
+  data: {
+    why: {
+      question: "なぜ平均だけでなく、中央値や散らばりも見るの？",
+      answer: "平均が同じデータでも、中央の位置や値の広がり方が違うことがあるからです。一つの代表値だけで全体を決めつけないために、複数の物差しを使います。",
+      tryIt: "平均と散らばりラボで散らばりを変え、平均・中央値・範囲がどう動くか見る",
+    },
+    definitions: [
+      {
+        term: "平均",
+        meaning: "すべての値を合計し、値の個数で割った数",
+        example: "\\(2,4,9\\) の平均は \\((2+4+9)\\div3=5\\)",
+        boundary: "平均はデータに実在する値とは限らず、極端な値の影響を受ける",
+      },
+      {
+        term: "中央値",
+        meaning: "値を小さい順に並べたときの中央。偶数個なら中央2個の平均",
+        example: "\\(1,3,8,10\\) の中央値は \\((3+8)\\div2=5.5\\)",
+        boundary: "並べる前の位置ではなく、必ず小さい順に並べた後の中央を見る",
+      },
+      {
+        term: "範囲",
+        meaning: "最大値から最小値を引いた、データ全体の幅",
+        example: "\\(1,2,2,5,20\\) の範囲は \\(20-1=19\\)",
+        boundary: "最小値と最大値だけで決まるので、途中の値の散らばりは表し切れない",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "数直線で中心と広がりを見る", summary: "5個の値と平均の位置を同じ数直線に置き、定義と計算を結びます。", labId: "data-spread-lab" },
+    ],
+    storyIds: ["nightingale-data-for-explanation"],
+  },
+  "data-analysis-i": {
+    why: {
+      question: "なぜ偏差をそのまま足さず、2乗して平均するの？",
+      answer: "平均より上の偏差と下の偏差をそのまま足すと0になるためです。2乗して正の大きさにそろえると、平均との差を打ち消さずにまとめられます。",
+      tryIt: "\\(1,2,3\\) の偏差 \\(-1,0,1\\) の和と、2乗の和を比べる",
+    },
+    definitions: [
+      {
+        term: "分散と標準偏差",
+        meaning: "分散は偏差の2乗の平均、標準偏差は分散の正の平方根",
+        example: "\\(1,2,3\\) の分散は \\(2/3\\)、標準偏差は \\(\\sqrt{2/3}\\)",
+        boundary: "分散の単位は元の単位の2乗。元と同じ単位で読むには標準偏差を使う",
+      },
+      {
+        term: "相関",
+        meaning: "2種類のデータが一緒に増える・一方が増えると他方が減るという直線的な傾向",
+        example: "相関係数が \\(1\\) に近いほど右上がり、\\(-1\\) に近いほど右下がりの傾向が強い",
+        boundary: "相関は因果関係の証明ではなく、外れ値で大きく変わることもある",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "同じ平均でも散らばりを変える", summary: "値の位置、偏差、分散、標準偏差を一つの図で対応させます。", labId: "data-spread-lab" },
+    ],
+    storyIds: ["nightingale-data-for-explanation"],
+  },
+  "counting-principles": {
+    why: {
+      question: "なぜ、全部を書き出さずに数え方の法則を使うの？",
+      answer: "選択肢が増えると書き漏らしや重複が起きるからです。樹形図で小さい例を確かめ、同じ枝分かれを足すか、段階ごとにかけるかを見分けます。",
+      tryIt: "上着3種類とズボン2種類の組を樹形図で書き、枝の先が \\(3\\times2=6\\) 個になることを確かめる",
+    },
+    definitions: [
+      {
+        term: "和の法則と積の法則",
+        meaning: "重ならない場合をどれか一つ選ぶときは足し、段階を続けて選ぶときはかける",
+        example: "上着3種類から一つ、続けてズボン2種類から一つ選ぶ組合せは \\(3\\times2=6\\) 通り",
+        boundary: "同じ結果を二重に数えていないか、順序を区別する場面かを先に確かめる",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "枝分かれで数える", summary: "確率の木で選択を一段ずつたどり、積の法則を目で確かめます。", labId: "probability-lab" },
+      { kind: "history", title: "ゲームの問いから確率へ", summary: "パスカルとフェルマーの往復書簡が、偶然を計算する方法の発展につながった例を読みます。", storyId: "pascal-fermat-probability" },
+    ],
+    storyIds: ["pascal-fermat-probability"],
+  },
+  "probability-a": {
+    why: {
+      question: "確率の分母は、なぜ問題ごとに変わるの？",
+      answer: "分母は『今考えている、起こり得る結果の全体』だからです。条件が付いたり、玉を戻さなかったりすると、次に考える全体そのものが変わります。",
+      tryIt: "赤3個・青5個から玉を1個取り、戻す場合と戻さない場合で2回目の全体数を比べる",
+    },
+    definitions: [
+      {
+        term: "事象と標本空間",
+        meaning: "標本空間は考える結果の全体、事象はその中で条件に合う結果の集まり",
+        example: "さいころの全体を \\(1\\) から \\(6\\)、偶数の事象を \\(\\{2,4,6\\}\\) とする",
+        boundary: "どの結果も同じ起こりやすさとは限らない。場合の数の比を使う前に同様に確からしいかを確認する",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "条件で分母が変わる", summary: "玉を戻す・戻さないを切り替え、2回目の全体がどう変わるか見ます。", labId: "probability-lab" },
+      { kind: "history", title: "偶然を計算の対象にした", summary: "賭けの分配などの具体的な問いが、確率論の出発点の一つになった経緯を読みます。", storyId: "pascal-fermat-probability" },
+    ],
+    storyIds: ["pascal-fermat-probability"],
+  },
+  geometry: {
+    why: {
+      question: "なぜ三角比より先に、相似と三平方を確かめるの？",
+      answer: "三角比が大きさを変えても同じなのは相似が土台にあり、斜辺や未知の辺を求める計算には三平方の定理を使うからです。辺の名前と基本関係を先に確かめると、比の式が意味のある式になります。",
+      tryIt: "3・4・5の直角三角形で斜辺を指さし、\\(3^2+4^2=5^2\\) を図と対応させる",
+    },
+    definitions: [
+      {
+        term: "相似と対応",
+        meaning: "形が同じ二つの図形で、対応する角が等しく、対応する辺の比がそろう関係",
+        example: "一辺を2倍にした直角三角形では、三辺がすべて2倍になり、辺どうしの比は変わらない",
+        boundary: "見た目が似ているだけでなく、どの頂点・辺が対応するかを順番までそろえる",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "直角三角形の辺を見る", summary: "三角比ラボで、斜辺・対辺・隣辺を図と対応させます。", labId: "trig-lab" },
+      { kind: "history", title: "定義から定理を積み上げる", summary: "ユークリッドの『原論』が、定義・公準・証明を順序立ててまとめた背景を読みます。", storyId: "euclid-elements" },
+    ],
+    storyIds: ["euclid-elements", "descartes-algebra-meets-geometry"],
+  },
+  "geometry-a": {
+    why: {
+      question: "なぜ図を見ただけで同じ角だと決めてはいけないの？",
+      answer: "図は関係を考える手がかりで、正確な長さや角度を保証する測定図ではないからです。印・条件・定理を根拠として一つずつ確かめます。",
+      tryIt: "円周角ラボで点を動かし、見た目の位置が変わっても同じ弧を見る角が等しいことを確かめる",
+    },
+    definitions: [
+      {
+        term: "円周角",
+        meaning: "頂点が円周上にあり、2辺が円と交わってできる角",
+        example: "同じ弧 \\(AC\\) を見込む \\(\\angle ABC\\) と \\(\\angle ADC\\) は等しい",
+        boundary: "頂点が円の中心にある中心角とは別で、同じ弧に対する中心角は円周角の2倍",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "同じ弧を見る位置を動かす", summary: "観察点が変わっても、見込む弧が同じなら角が変わらないことを確かめます。", labId: "geometry-properties-lab" },
+      { kind: "history", title: "証明を順序立てて読む", summary: "定義と公準から一つずつ結論を導く『原論』の構成を、図形の根拠を読む姿勢へつなげます。", storyId: "euclid-elements" },
+    ],
+    storyIds: ["euclid-elements"],
+  },
+  "math-human-activities": {
+    why: {
+      question: "なぜ割り算の余りから最大公約数が分かるの？",
+      answer: "\\(a=bq+r\\) のとき、\\(a\\) と \\(b\\) を割り切る数は余り \\(r=a-bq\\) も割り切り、逆も成り立つため、共通の約数が変わらないからです。",
+      tryIt: "\\(84\\) と \\(30\\) を正方形で区切り、余った24と30を同じ幅で区切り直す",
+    },
+    definitions: [
+      {
+        term: "最大公約数と互除法",
+        meaning: "2つ以上の整数をすべて割り切る最大の正の整数を、割り算の余りを繰り返して求める方法",
+        example: "\\(84=30\\times2+24\\)、\\(30=24\\times1+6\\) なので最大公約数は \\(6\\)",
+        boundary: "最後に出た余りではなく、余りが0になったときの割る数を答える",
+      },
+    ],
+    connections: [
+      { kind: "model", title: "長さを同じ幅で区切る", summary: "余りへ置き換えても最大の共通幅が残ることを、長方形と正方形で見ます。", labId: "euclidean-algorithm-lab" },
+      { kind: "notation", title: "文字は場面ごとの名札", summary: "\\(a,b,q,r\\) の役割も、式の直前にある定義から読み取ります。", storyId: "letters-are-labels" },
+      { kind: "history", title: "幾何と整数をまとめた『原論』", summary: "ユークリッドの書物には図形だけでなく、最大公約数を求める方法や整数の内容も含まれます。", storyId: "euclid-elements" },
+    ],
+    storyIds: ["letters-are-labels", "euclid-elements", "gauss-patterns-in-integers"],
+  },
+};
+
+const lessonMetadata = {
+  "integers-signs": { strand: "数と式", practiceIds: ["integer"] },
+  "integer-rules": { strand: "数と式", practiceIds: ["integer"] },
+  "distribution-numbers": { strand: "数と式", practiceIds: ["distribute"] },
+  "powers-roots": { strand: "数と式", practiceIds: ["square-root-meaning"] },
+  "simplify-roots": { strand: "数と式", practiceIds: ["radical"] },
+  "root-operations": { strand: "数と式", practiceIds: ["root-operations"] },
+  "letters-as-boxes": { strand: "数と式", practiceIds: ["substitution"] },
+  "like-terms": { strand: "数と式", practiceIds: ["combine"] },
+  "distribution-letters": { strand: "数と式", practiceIds: ["distribute"] },
+  "sets-propositions": { strand: "数と式", practiceIds: ["sets"] },
+  "linear-inequalities": { strand: "数と式", practiceIds: ["inequality"] },
+  "identities-equations": { strand: "数と式", practiceIds: ["identities"] },
+  "linear-equations": { strand: "数と式", practiceIds: ["equation"] },
+  "equation-modeling": { strand: "数と式", practiceIds: ["equation"] },
+  "simultaneous-equations": { strand: "数と式", practiceIds: ["equation"] },
+  functions: { strand: "関数", practiceIds: ["function-values"] },
+  "quadratic-vertex": { strand: "関数", practiceIds: ["quadratic"] },
+  "quadratic-inequalities": { strand: "関数", practiceIds: ["quadratic-sign"] },
+  "trig-ratios": { strand: "図形と計量", practiceIds: ["trig"] },
+  "sine-cosine-rule": { strand: "図形と計量", practiceIds: ["sine-cosine-rule"] },
+  "data-analysis-i": { strand: "データの分析", practiceIds: ["data-analysis"] },
+  "counting-principles": { strand: "場合の数と確率", practiceIds: ["counting"] },
+  "probability-a": { strand: "場合の数と確率", practiceIds: ["probability"] },
+  "geometry-a": { strand: "図形の性質", practiceIds: ["geometry-properties"] },
+  "math-human-activities": { strand: "数学と人間の活動", practiceIds: ["number-theory"] },
+  geometry: { strand: "図形", practiceIds: ["geometry-basics"] },
+  data: { strand: "データ", practiceIds: ["data-summary"] },
+  "exam-review": { strand: "総合", practiceIds: ["equation", "distribute"] },
+};
+
+// 学校の章順ではなく、本文中で使う概念が先に現れるように並べる。
+// 原稿の置き場所と学習順を分け、順序の見直しで本文を大きく移動しなくてよい形にする。
+export const learningPath = [
+  "integers-signs",
+  "integer-rules",
+  "distribution-numbers",
+  "letters-as-boxes",
+  "like-terms",
+  "distribution-letters",
+  "linear-equations",
+  "equation-modeling",
+  "functions",
+  "simultaneous-equations",
+  "linear-inequalities",
+  "identities-equations",
+  "powers-roots",
+  "simplify-roots",
+  "root-operations",
+  "quadratic-vertex",
+  "quadratic-inequalities",
+  "geometry",
+  "trig-ratios",
+  "sine-cosine-rule",
+  "geometry-a",
+  "data",
+  "data-analysis-i",
+  "sets-propositions",
+  "counting-principles",
+  "probability-a",
+  "math-human-activities",
+  "exam-review",
+];
+
+const rawUnitCatalog = Object.fromEntries(rawUnits.map((unit) => [unit.id, unit]));
+const learningPathHasEveryUnit =
+  learningPath.length === rawUnits.length &&
+  new Set(learningPath).size === learningPath.length &&
+  learningPath.every((id) => rawUnitCatalog[id]);
+
+if (!learningPathHasEveryUnit) {
+  throw new Error("learningPath と単元データの ID が一致していません。");
+}
+
+const orderedUnits = learningPath.map((id) => rawUnitCatalog[id]);
+
+export const units = orderedUnits.map((unit, index) => ({
+  ...unit,
+  order: index + 1,
+  nextLessonId: orderedUnits[index + 1]?.id ?? null,
+  labIds: unitLabRefs[unit.id] || [],
+  ...(lessonMetadata[unit.id] || { strand: "数学", practiceIds: [] }),
+  context: lessonContexts[unit.id] ?? null,
+  // 表示側はこの三つだけを「次の一手」として使う。複数の関連教材は補助導線に回す。
+  recommendedLabId: unitLabRefs[unit.id]?.[0] ?? null,
+  recommendedPracticeId: lessonMetadata[unit.id]?.practiceIds?.[0] ?? null,
+  recommendedNextLessonId: orderedUnits[index + 1]?.id ?? null,
+}));

@@ -1,0 +1,11 @@
+{
+  "name": "restart-math",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "中高生向け数学おさらいサイトの教材ソースと公開用ビルド",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/validate-content.mjs"
+  }
+}
