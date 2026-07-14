@@ -823,6 +823,67 @@ code {
   stroke-width: 4;
 }
 
+.line-graph-figure {
+  width: min(100%, 460px);
+}
+
+.graph-grid {
+  stroke: rgba(47, 111, 115, 0.16);
+  stroke-width: 1;
+}
+
+.graph-axis {
+  stroke: var(--ink);
+  stroke-width: 2.4;
+}
+
+.graph-axis-label {
+  fill: var(--ink) !important;
+  font-style: italic;
+  font-size: 20px !important;
+}
+
+.graph-tick {
+  fill: #6b7480 !important;
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+.graph-line {
+  stroke: var(--blue);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.graph-slope-run,
+.graph-slope-rise {
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-dasharray: 5 4;
+  fill: none;
+}
+
+.graph-slope-label {
+  fill: #9a4c00 !important;
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+.graph-intercept {
+  fill: var(--pink);
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.graph-intercept-label {
+  fill: var(--pink) !important;
+  font-family: var(--font-ui) !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
 .unit-content-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -886,6 +947,78 @@ code {
 
 .equation-display mjx-container[display="true"] > mjx-math {
   text-align: left !important;
+}
+
+.walkthrough-list {
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.walkthrough-step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: start;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.walkthrough-index {
+  display: grid;
+  place-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.walkthrough-body {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.walkthrough-equation {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.1rem 0;
+  color: var(--ink);
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+  line-height: 1.5;
+}
+
+.walkthrough-equation mjx-container[display="true"] {
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.walkthrough-note {
+  margin: 0;
+  padding-left: 1.2rem;
+  text-indent: -1.2rem;
+  font-family: var(--font-reading);
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: #c0392b;
+}
+
+.walkthrough-note::before {
+  content: "↳ ";
+  font-weight: 700;
+}
+
+.walkthrough-conclusion {
+  margin-top: 0.3rem;
 }
 
 .mini-check {

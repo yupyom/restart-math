@@ -40,6 +40,9 @@ const mathTextKeys = new Set([
   "prompt",
   "explanation",
   "conclusion",
+  "intro",
+  "note",
+  "caption",
 ]);
 
 function validateExample(example, unitId) {
@@ -49,12 +52,20 @@ function validateExample(example, unitId) {
   }
 
   assert(example && typeof example === "object", `単元 ${unitId} の例の形式が不正です。`);
-  assert(["aligned-steps", "word-problem", "narrative"].includes(example.type), `単元 ${unitId} の例の型が不正です。`);
+  assert(["aligned-steps", "word-problem", "narrative", "walkthrough"].includes(example.type), `単元 ${unitId} の例の型が不正です。`);
 
   if (example.type === "aligned-steps") {
     assert(Array.isArray(example.rows) && example.rows.length >= 2, `単元 ${unitId} の段階式には二行以上必要です。`);
     example.rows.forEach((row) => {
       assert(typeof row === "string" && row.includes("=") && !row.includes(","), `単元 ${unitId} の段階式は一行ずつ等式で書いてください。`);
+    });
+  }
+
+  if (example.type === "walkthrough") {
+    assert(Array.isArray(example.steps) && example.steps.length >= 2, `単元 ${unitId} の心の声つき解答には二手以上必要です。`);
+    example.steps.forEach((step) => {
+      assert(step && typeof step === "object" && typeof step.equation === "string" && step.equation.trim(), `単元 ${unitId} の心の声つき解答の各手には式が必要です。`);
+      assert(!step.equation.includes(","), `単元 ${unitId} の心の声つき解答は一手ずつ書いてください。`);
     });
   }
 

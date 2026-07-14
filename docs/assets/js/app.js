@@ -282,6 +282,31 @@ function workedExampleMarkup(value) {
     `;
   }
 
+  if (value && typeof value === "object" && value.type === "walkthrough") {
+    const steps = value.steps
+      .map((step, index) => {
+        const equation = escapeHtml(`\\(${String(step.equation).replace(/^\\\(|\\\)$/g, "")}\\)`);
+        const note = step.note ? `<p class="walkthrough-note">${formatTextWithMath(step.note)}</p>` : "";
+        return `
+          <li class="walkthrough-step">
+            <span class="walkthrough-index" aria-hidden="true">${index + 1}</span>
+            <div class="walkthrough-body">
+              <div class="walkthrough-equation">${equation}</div>
+              ${note}
+            </div>
+          </li>
+        `;
+      })
+      .join("");
+    return `
+      <div class="worked-example worked-example-walkthrough">
+        ${value.intro ? `<p class="example-intro">${formatTextWithMath(value.intro)}</p>` : ""}
+        <ol class="walkthrough-list">${steps}</ol>
+        ${value.conclusion ? `<p class="example-intro walkthrough-conclusion">${formatTextWithMath(value.conclusion)}</p>` : ""}
+      </div>
+    `;
+  }
+
   if (value && typeof value === "object" && value.type === "word-problem") {
     return `
       <div class="worked-example worked-example-word">
@@ -379,11 +404,92 @@ function rightTriangleModelMarkup(model) {
 }
 
 
+function lineGraphModelMarkup(model) {
+  const a = Number(model.a);
+  const b = Number(model.b);
+  const xMin = -5;
+  const xMax = 5;
+  const yMin = -4;
+  const yMax = 4;
+  const unit = 40;
+  const ox = 240;
+  const oy = 200;
+  const mapX = (x) => ox + x * unit;
+  const mapY = (y) => oy - y * unit;
+
+  // 直線 y=ax+b を表示範囲の長方形で切り取り、両端を求める。
+  const candidates = [
+    { x: xMin, y: a * xMin + b },
+    { x: xMax, y: a * xMax + b },
+  ];
+  if (a !== 0) {
+    candidates.push({ x: (yMin - b) / a, y: yMin });
+    candidates.push({ x: (yMax - b) / a, y: yMax });
+  }
+  const eps = 1e-9;
+  const inside = candidates.filter(
+    (p) => p.x >= xMin - eps && p.x <= xMax + eps && p.y >= yMin - eps && p.y <= yMax + eps,
+  );
+  inside.sort((p, q) => p.x - q.x || p.y - q.y);
+  const start = inside[0];
+  const end = inside[inside.length - 1];
+
+  const gridLines = [];
+  for (let x = xMin; x <= xMax; x += 1) {
+    gridLines.push(`<line class="graph-grid" x1="${mapX(x)}" y1="${mapY(yMin)}" x2="${mapX(x)}" y2="${mapY(yMax)}"></line>`);
+  }
+  for (let y = yMin; y <= yMax; y += 1) {
+    gridLines.push(`<line class="graph-grid" x1="${mapX(xMin)}" y1="${mapY(y)}" x2="${mapX(xMax)}" y2="${mapY(y)}"></line>`);
+  }
+
+  const tickLabels = [];
+  for (let x = xMin; x <= xMax; x += 1) {
+    if (x === 0) continue;
+    tickLabels.push(`<text class="graph-tick" x="${mapX(x)}" y="${mapY(0) + 18}" text-anchor="middle">${x}</text>`);
+  }
+  for (let y = yMin; y <= yMax; y += 1) {
+    if (y === 0) continue;
+    tickLabels.push(`<text class="graph-tick" x="${mapX(0) - 10}" y="${mapY(y) + 5}" text-anchor="end">${y}</text>`);
+  }
+
+  // 傾きの三角形：x が1増えると y が a 増えることを見せる（表示に収まるときだけ）。
+  let slopeTriangle = "";
+  if (Math.abs(b) <= yMax && Math.abs(a + b) <= yMax + eps) {
+    slopeTriangle = `
+      <path class="graph-slope-run" d="M ${mapX(0)} ${mapY(b)} L ${mapX(1)} ${mapY(b)}"></path>
+      <path class="graph-slope-rise" d="M ${mapX(1)} ${mapY(b)} L ${mapX(1)} ${mapY(a + b)}"></path>
+      <text class="graph-slope-label" x="${mapX(0.5)}" y="${mapY(b) + (b <= a + b ? 20 : -10)}" text-anchor="middle">右へ1</text>
+      <text class="graph-slope-label" x="${mapX(1) + 8}" y="${mapY((b + (a + b)) / 2) + 5}" text-anchor="start">上へ ${a}</text>
+    `;
+  }
+
+  const interceptLabel = b === 0 ? "b=0 → 原点を通る" : `切片 b=${b}`;
+
+  return geometryModelShell(
+    model,
+    `
+      <svg class="geometry-figure line-graph-figure" viewBox="0 0 480 400" role="img" aria-label="${escapeHtml(`直線 y=${a}x${b === 0 ? "" : b > 0 ? "+" + b : b} のグラフ`)}">
+        ${gridLines.join("")}
+        <line class="graph-axis" x1="${mapX(xMin)}" y1="${mapY(0)}" x2="${mapX(xMax)}" y2="${mapY(0)}"></line>
+        <line class="graph-axis" x1="${mapX(0)}" y1="${mapY(yMin)}" x2="${mapX(0)}" y2="${mapY(yMax)}"></line>
+        <text class="graph-axis-label" x="${mapX(xMax) + 4}" y="${mapY(0) - 8}" text-anchor="end">x</text>
+        <text class="graph-axis-label" x="${mapX(0) + 12}" y="${mapY(yMax) + 4}" text-anchor="start">y</text>
+        ${tickLabels.join("")}
+        <line class="graph-line" x1="${mapX(start.x)}" y1="${mapY(start.y)}" x2="${mapX(end.x)}" y2="${mapY(end.y)}"></line>
+        ${slopeTriangle}
+        <circle class="graph-intercept" cx="${mapX(0)}" cy="${mapY(b)}" r="6"></circle>
+        <text class="graph-intercept-label" x="${mapX(0) + 12}" y="${mapY(b) - 12}" text-anchor="start">${escapeHtml(interceptLabel)}</text>
+      </svg>
+    `,
+  );
+}
+
 function unitModelMarkup(unit) {
   const model = unit.model;
   if (!model) return "";
   if (model.type === "circle-angle") return circleAngleModelMarkup(model);
   if (model.type === "right-triangle") return rightTriangleModelMarkup(model);
+  if (model.type === "line-graph") return lineGraphModelMarkup(model);
   if (model.type !== "area") return "";
 
   const height = Number(model.height);
