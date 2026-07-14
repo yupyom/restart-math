@@ -34,7 +34,7 @@
 
     <header class="site-header">
       <nav class="top-nav" aria-label="メインナビゲーション">
-        <a class="brand" href="#top" aria-label="Math Re:Start ホーム">
+        <a class="brand" href="#home" data-page-link="home" aria-label="Math Re:Start ホーム">
           <span class="brand-mark">M</span>
           <span>
             <strong>Math Re:Start</strong>
@@ -42,16 +42,16 @@
           </span>
         </a>
         <div class="nav-links">
-          <a href="#roadmap">流れ</a>
-          <a href="#scope">範囲</a>
-          <a href="#lessons">単元</a>
-          <a href="#labs">動く図解</a>
-          <a href="#practice">ステップ問題</a>
-          <a href="#map">学習マップ</a>
+          <a href="#home" data-page-link="home">はじめに</a>
+          <a href="#scope" data-page-link="scope">範囲</a>
+          <a href="#lessons" data-page-link="lessons">単元</a>
+          <a href="#labs" data-page-link="labs">図解</a>
+          <a href="#practice" data-page-link="practice">問題</a>
+          <a href="#map" data-page-link="map">マップ</a>
         </div>
       </nav>
 
-      <section class="hero" id="top">
+      <section class="hero app-page" id="home" data-page="home">
         <div class="hero-copy">
           <p class="eyebrow">整数から、ルートへ。ルートから、文字式へ。</p>
           <h1>計算ルールの「なぜそうなる？」を、手で動かして取り戻す。</h1>
@@ -60,8 +60,8 @@
             中学数学の土台から高校数学の入口まで、迷子になりやすい橋の部分を厚めにしました。
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#lessons">最初の単元から始める</a>
-            <a class="button ghost" href="#practice">問題で確認する</a>
+            <a class="button primary" href="#lessons" data-page-link="lessons">最初の単元から始める</a>
+            <a class="button ghost" href="#practice" data-page-link="practice">問題で確認する</a>
           </div>
         </div>
         <aside class="hero-card" aria-label="今日のおさらいメニュー">
@@ -82,9 +82,9 @@
     </header>
 
     <main id="main">
-      <section class="section road-section" id="roadmap">
+      <section class="section road-section app-page" id="roadmap" data-page="home">
         <div class="section-heading">
-          <p class="eyebrow">Learning path</p>
+          <p class="eyebrow">学び方</p>
           <h2>最初に厚めにする計算ルールの流れ</h2>
           <p>
             数学が急に難しく見える原因の多くは、「数のルール」が「文字のルール」に変わったように見える瞬間です。
@@ -114,10 +114,10 @@
         </div>
       </section>
 
-      <section class="section scope-section" id="scope">
+      <section class="section scope-section app-page" id="scope" data-page="scope">
         <div class="section-heading split-heading">
           <div>
-            <p class="eyebrow">Coverage</p>
+            <p class="eyebrow">学習範囲</p>
             <h2>いまの学習範囲の見取り図</h2>
           </div>
           <p>
@@ -160,10 +160,10 @@
         </div>
       </section>
 
-      <section class="section lesson-section" id="lessons">
+      <section class="section lesson-section app-page" id="lessons" data-page="lessons">
         <div class="section-heading split-heading">
           <div>
-            <p class="eyebrow">Paged lessons</p>
+            <p class="eyebrow">単元ノート</p>
             <h2>ページ送りで進む単元ノート</h2>
           </div>
           <p>
@@ -195,10 +195,10 @@
         </div>
       </section>
 
-      <section class="section labs-section" id="labs">
+      <section class="section labs-section app-page" id="labs" data-page="labs">
         <div class="section-heading split-heading">
           <div>
-            <p class="eyebrow">Interactive labs</p>
+            <p class="eyebrow">動く図解</p>
             <h2>動かせる図解</h2>
           </div>
           <p>
@@ -234,7 +234,7 @@
           <article class="lab-card" id="number-line-lab">
             <div class="lab-title-row">
               <div>
-                <p class="eyebrow">Integers</p>
+                <p class="eyebrow">整数</p>
                 <h3>整数の数直線ラボ</h3>
               </div>
               <span class="pill">符号</span>
@@ -260,10 +260,10 @@
             <p class="lab-result" id="number-line-result"></p>
           </article>
 
-          <article class="lab-card">
+          <article class="lab-card" id="distribution-lab">
             <div class="lab-title-row">
               <div>
-                <p class="eyebrow">Distributive law</p>
+                <p class="eyebrow">分配法則</p>
                 <h3>分配法則の面積モデル</h3>
               </div>
               <span class="pill">展開</span>
@@ -286,10 +286,10 @@
             <p class="lab-result" id="distribution-result"></p>
           </article>
 
-          <article class="lab-card">
+          <article class="lab-card" id="radical-lab">
             <div class="lab-title-row">
               <div>
-                <p class="eyebrow">Radicals</p>
+                <p class="eyebrow">平方根</p>
                 <h3>平方根を整理するラボ</h3>
               </div>
               <span class="pill">√</span>
@@ -305,10 +305,10 @@
             <p class="lab-result" id="radical-result"></p>
           </article>
 
-          <article class="lab-card">
+          <article class="lab-card" id="term-lab">
             <div class="lab-title-row">
               <div>
-                <p class="eyebrow">Algebra</p>
+                <p class="eyebrow">文字式</p>
                 <h3>同類項をまとめるラボ</h3>
               </div>
               <span class="pill">文字式</span>
@@ -335,10 +335,10 @@
             <p class="lab-result" id="term-result"></p>
           </article>
 
-          <article class="lab-card">
+          <article class="lab-card" id="equation-lab">
             <div class="lab-title-row">
               <div>
-                <p class="eyebrow">Equations</p>
+                <p class="eyebrow">方程式</p>
                 <h3>一次方程式のブロックモデル</h3>
               </div>
               <span class="pill">ブロック</span>
@@ -361,10 +361,10 @@
             <p class="lab-result" id="equation-result"></p>
           </article>
 
-          <article class="lab-card">
+          <article class="lab-card" id="function-lab">
             <div class="lab-title-row">
               <div>
-                <p class="eyebrow">Functions</p>
+                <p class="eyebrow">関数</p>
                 <h3>関数グラフの係数ラボ</h3>
               </div>
               <span class="pill">関数</span>
@@ -394,10 +394,10 @@
             <p class="lab-result" id="graph-result"></p>
           </article>
 
-          <article class="lab-card">
+          <article class="lab-card" id="quadratic-lab">
             <div class="lab-title-row">
               <div>
-                <p class="eyebrow">Quadratic functions</p>
+                <p class="eyebrow">二次関数</p>
                 <h3>二次関数の頂点ラボ</h3>
               </div>
               <span class="pill">数I</span>
@@ -420,10 +420,10 @@
             <p class="lab-result" id="quadratic-result"></p>
           </article>
 
-          <article class="lab-card">
+          <article class="lab-card" id="trig-lab">
             <div class="lab-title-row">
               <div>
-                <p class="eyebrow">Trigonometry</p>
+                <p class="eyebrow">三角比</p>
                 <h3>三角比ラボ</h3>
               </div>
               <span class="pill">数I</span>
@@ -451,10 +451,10 @@
             <p class="lab-result" id="trig-result"></p>
           </article>
 
-          <article class="lab-card">
+          <article class="lab-card" id="probability-lab">
             <div class="lab-title-row">
               <div>
-                <p class="eyebrow">Probability</p>
+                <p class="eyebrow">確率</p>
                 <h3>確率の木ラボ</h3>
               </div>
               <span class="pill">数A</span>
@@ -482,10 +482,10 @@
         </div>
       </section>
 
-      <section class="section practice-section" id="practice">
+      <section class="section practice-section app-page" id="practice" data-page="practice">
         <div class="section-heading split-heading">
           <div>
-            <p class="eyebrow">Step practice</p>
+            <p class="eyebrow">ステップ問題</p>
             <h2>自動生成されるステップ問題</h2>
           </div>
           <p>
@@ -523,10 +523,10 @@
         </div>
       </section>
 
-      <section class="section map-section" id="map">
+      <section class="section map-section app-page" id="map" data-page="map">
         <div class="section-heading split-heading">
           <div>
-            <p class="eyebrow">Study map</p>
+            <p class="eyebrow">学習マップ</p>
             <h2>学習マップ</h2>
           </div>
           <p>

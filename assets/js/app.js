@@ -2,6 +2,7 @@
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+const pageIds = ["home", "scope", "lessons", "labs", "practice", "map"];
 
 let mathTypesetFrame = null;
 const mathTypesetTargets = new Set();
@@ -158,7 +159,7 @@ const units = [
   },
   {
     id: "sets-propositions",
-    stage: "数I",
+    stage: "論理",
     range: ["数I"],
     title: "集合と命題",
     summary:
@@ -174,7 +175,7 @@ const units = [
   },
   {
     id: "linear-inequalities",
-    stage: "数I",
+    stage: "不等式",
     range: ["中2", "数I"],
     title: "不等式の基本",
     summary:
@@ -250,7 +251,7 @@ const units = [
   },
   {
     id: "quadratic-vertex",
-    stage: "数I",
+    stage: "関数 2",
     range: ["数I"],
     title: "二次関数の頂点と最大・最小",
     summary:
@@ -266,7 +267,7 @@ const units = [
   },
   {
     id: "quadratic-inequalities",
-    stage: "数I",
+    stage: "関数 3",
     range: ["数I"],
     title: "二次方程式・二次不等式とグラフ",
     summary:
@@ -282,7 +283,7 @@ const units = [
   },
   {
     id: "trig-ratios",
-    stage: "数I",
+    stage: "図形 2",
     range: ["数I"],
     title: "三角比 \\(\\sin,\\cos,\\tan\\)",
     summary:
@@ -298,7 +299,7 @@ const units = [
   },
   {
     id: "sine-cosine-rule",
-    stage: "数I",
+    stage: "図形 3",
     range: ["数I"],
     title: "正弦定理・余弦定理の入口",
     summary:
@@ -314,7 +315,7 @@ const units = [
   },
   {
     id: "data-analysis-i",
-    stage: "数I",
+    stage: "データ 2",
     range: ["数I"],
     title: "分散・標準偏差・相関",
     summary:
@@ -330,7 +331,7 @@ const units = [
   },
   {
     id: "counting-principles",
-    stage: "数A",
+    stage: "場合の数",
     range: ["数A"],
     title: "場合の数：和の法則・積の法則",
     summary:
@@ -346,7 +347,7 @@ const units = [
   },
   {
     id: "probability-a",
-    stage: "数A",
+    stage: "確率",
     range: ["数A"],
     title: "確率：独立・条件付き・期待値",
     summary:
@@ -362,7 +363,7 @@ const units = [
   },
   {
     id: "geometry-a",
-    stage: "数A",
+    stage: "図形 4",
     range: ["数A"],
     title: "図形の性質",
     summary:
@@ -378,7 +379,7 @@ const units = [
   },
   {
     id: "math-human-activities",
-    stage: "数A",
+    stage: "整数",
     range: ["数A"],
     title: "数学と人間の活動：整数としくみ",
     summary:
@@ -508,6 +509,42 @@ const categoryLabels = {
   data: "データ・確率",
 };
 
+const labCatalog = {
+  "number-line-lab": { title: "整数の数直線", short: "数直線" },
+  "distribution-lab": { title: "分配法則の面積モデル", short: "分配法則" },
+  "radical-lab": { title: "平方根を整理する", short: "平方根" },
+  "term-lab": { title: "同類項をまとめる", short: "同類項" },
+  "equation-lab": { title: "一次方程式のブロックモデル", short: "方程式" },
+  "function-lab": { title: "関数グラフ", short: "関数" },
+  "quadratic-lab": { title: "二次関数の頂点", short: "二次関数" },
+  "trig-lab": { title: "三角比", short: "三角比" },
+  "probability-lab": { title: "確率の木", short: "確率" },
+};
+
+const unitLabRefs = {
+  "integers-signs": ["number-line-lab"],
+  "integer-rules": ["number-line-lab"],
+  "distribution-numbers": ["distribution-lab"],
+  "powers-roots": ["radical-lab"],
+  "simplify-roots": ["radical-lab"],
+  "root-operations": ["radical-lab", "term-lab"],
+  "letters-as-boxes": ["term-lab"],
+  "like-terms": ["term-lab"],
+  "distribution-letters": ["distribution-lab", "term-lab"],
+  "linear-inequalities": ["number-line-lab"],
+  "linear-equations": ["equation-lab"],
+  "simultaneous-equations": ["function-lab"],
+  functions: ["function-lab"],
+  "quadratic-vertex": ["quadratic-lab"],
+  "quadratic-inequalities": ["quadratic-lab"],
+  "trig-ratios": ["trig-lab"],
+  "sine-cosine-rule": ["trig-lab"],
+  "counting-principles": ["probability-lab"],
+  "probability-a": ["probability-lab"],
+  geometry: ["trig-lab"],
+  data: ["probability-lab"],
+};
+
 let activeUnit = 0;
 let activePracticeMode = "integer";
 let currentProblem = null;
@@ -539,11 +576,33 @@ function linearText(xCoef, constant) {
 }
 
 function rangeTags(unit) {
-  return `<div class="range-tags">${unit.range.map((item) => `<span>${item}</span>`).join("")}</div>`;
+  const uniqueRange = [...new Set(unit.range)];
+  return `<div class="range-tags">${uniqueRange.map((item) => `<span>${item}</span>`).join("")}</div>`;
 }
 
 function mathInline(text) {
   return `\\(${text}\\)`;
+}
+
+function unitMetaLabel(unit) {
+  const range = [...new Set(unit.range)].join("・");
+  return unit.stage === range ? range : `${unit.stage} / ${range}`;
+}
+
+function relatedLabsMarkup(unitId) {
+  const refs = unitLabRefs[unitId] || [];
+  if (!refs.length) return "";
+  return `
+    <div class="related-labs">
+      <h4>この単元で使う図解</h4>
+      <p>説明を読んだら、図解を触って「何が変わるか」を見てみましょう。</p>
+      <div class="related-lab-list">
+        ${refs
+          .map((labId) => `<button class="related-lab-button" type="button" data-open-lab="${labId}">${labCatalog[labId].short}</button>`)
+          .join("")}
+      </div>
+    </div>
+  `;
 }
 
 function gcd(a, b) {
@@ -721,7 +780,7 @@ function renderUnitButtons() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `unit-button${index === activeUnit ? " active" : ""}`;
-    button.innerHTML = `<strong>${index + 1}. ${unit.title}</strong><span>${unit.stage} / ${unit.range.join("・")}</span>`;
+    button.innerHTML = `<strong>${index + 1}. ${unit.title}</strong><span>${unitMetaLabel(unit)}</span>`;
     button.addEventListener("click", () => {
       activeUnit = index;
       renderUnit();
@@ -772,6 +831,7 @@ function renderUnit() {
         <h4>動かして確認</h4>
         <p>${unit.check}</p>
       </div>
+      ${relatedLabsMarkup(unit.id)}
     </div>
   `;
 
@@ -1918,6 +1978,7 @@ function renderMap() {
       if (index >= 0) {
         activeUnit = index;
         renderUnit();
+        activatePage("lessons");
         setHashForUnit(index);
         $("#lessons").scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -1929,15 +1990,78 @@ function renderMap() {
   $("#next-map").disabled = activeMapPage >= totalPages - 1;
 }
 
-function setupSmoothUnitLinks() {
-  window.addEventListener("hashchange", () => {
-    const unitId = decodeURIComponent(location.hash.replace("#", ""));
-    const index = units.findIndex((unit) => unit.id === unitId);
-    if (index >= 0) {
-      activeUnit = index;
-      renderUnit();
+function activatePage(pageId) {
+  const page = pageIds.includes(pageId) ? pageId : "home";
+  $$("[data-page]").forEach((section) => {
+    section.hidden = section.dataset.page !== page;
+  });
+  $$("[data-page-link]").forEach((link) => {
+    link.classList.toggle("active", link.dataset.pageLink === page);
+  });
+}
+
+function focusLab(labId) {
+  const lab = document.getElementById(labId);
+  if (!lab) return;
+  $$(".lab-card").forEach((card) => card.classList.remove("lab-focus"));
+  lab.classList.add("lab-focus");
+  window.setTimeout(() => {
+    lab.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 80);
+  window.setTimeout(() => lab.classList.remove("lab-focus"), 2200);
+}
+
+function pageFromHash(hash) {
+  if (!hash || hash === "top" || hash === "roadmap") return "home";
+  if (pageIds.includes(hash)) return hash;
+  if (units.some((unit) => unit.id === hash)) return "lessons";
+  if (labCatalog[hash]) return "labs";
+  return "home";
+}
+
+function handleRoute() {
+  const hash = decodeURIComponent(location.hash.replace("#", ""));
+  const page = pageFromHash(hash);
+  activatePage(page);
+
+  const unitIndex = units.findIndex((unit) => unit.id === hash);
+  if (unitIndex >= 0) {
+    activeUnit = unitIndex;
+    renderUnit();
+    $("#lessons").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  if (labCatalog[hash]) {
+    focusLab(hash);
+  }
+}
+
+function setupNavigation() {
+  $$("[data-page-link]").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      const page = event.currentTarget.dataset.pageLink;
+      if (location.hash.replace("#", "") === page) {
+        activatePage(page);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        location.hash = page;
+      }
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    const labButton = event.target.closest("[data-open-lab]");
+    if (!labButton) return;
+    const labId = labButton.dataset.openLab;
+    if (labCatalog[labId]) {
+      location.hash = labId;
     }
   });
+
+  window.addEventListener("hashchange", handleRoute);
+  handleRoute();
 }
 
 function init() {
@@ -1953,7 +2077,7 @@ function init() {
   setupProbabilityLab();
   setupPractice();
   setupMap();
-  setupSmoothUnitLinks();
+  setupNavigation();
 }
 
 document.addEventListener("DOMContentLoaded", init);
