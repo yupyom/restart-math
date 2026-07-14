@@ -207,6 +207,29 @@
           </p>
         </div>
 
+        <div class="object-guide" aria-label="式に入る前の物の見方">
+          <article>
+            <span>文字式</span>
+            <h3>xカードと1カード</h3>
+            <p>同じカードだけを集め、反対カードは1組で0にします。</p>
+          </article>
+          <article>
+            <span>方程式</span>
+            <h3>x袋と1ブロック</h3>
+            <p>左右から同じブロックを取り、残りを袋の数で分けます。</p>
+          </article>
+          <article>
+            <span>関数</span>
+            <h3>入力マシン</h3>
+            <p>xを入れるとyが出る機械として、表・式・グラフをつなげます。</p>
+          </article>
+          <article>
+            <span>確率</span>
+            <h3>玉の袋と枝分かれ</h3>
+            <p>袋から取り出す場面として、分母がいつ変わるかを見ます。</p>
+          </article>
+        </div>
+
         <div class="lab-grid">
           <article class="lab-card" id="number-line-lab">
             <div class="lab-title-row">
@@ -316,23 +339,23 @@
             <div class="lab-title-row">
               <div>
                 <p class="eyebrow">Equations</p>
-                <h3>一次方程式の天びん</h3>
+                <h3>一次方程式のブロックモデル</h3>
               </div>
-              <span class="pill">移項</span>
+              <span class="pill">ブロック</span>
             </div>
             <div class="balance-stage" id="balance-stage" aria-label="方程式の左右がつり合う図"></div>
             <div class="control-grid">
               <label>
-                係数 a
-                <input id="eq-a" type="range" min="1" max="8" value="3" />
+                x袋の数
+                <input id="eq-a" type="range" min="1" max="5" value="3" />
               </label>
               <label>
-                本当の x
-                <input id="eq-x" type="range" min="-6" max="8" value="4" />
+                x袋1つの中身
+                <input id="eq-x" type="range" min="1" max="6" value="4" />
               </label>
               <label>
-                足す数 b
-                <input id="eq-b" type="range" min="-12" max="12" value="-5" />
+                左に足す1ブロック
+                <input id="eq-b" type="range" min="0" max="8" value="2" />
               </label>
             </div>
             <p class="lab-result" id="equation-result"></p>

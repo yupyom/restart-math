@@ -209,14 +209,14 @@ const units = [
     range: ["中1", "中2"],
     title: "一次方程式を解く",
     summary:
-      "一次方程式は、天びんを水平に保つように両辺へ同じ操作をして、x を一人にする作業です。",
+      "一次方程式は、左右から同じブロックを取り、残ったブロックをx袋の数で分けて、x袋1つの中身を調べる作業です。",
     points: [
       "足されている数は両辺から引く",
       "かけられている数は両辺を割る",
       "途中式は操作の記録として書く",
     ],
     example: "\\(3x-5=16\\Rightarrow3x=21\\Rightarrow x=7\\)",
-    check: "方程式ラボで a, b, x を変えて、どの操作で x が一人になるか見よう。",
+    check: "方程式ラボで x袋と1ブロックを動かし、ブロック操作が式の操作に変わる様子を見よう。",
   },
   {
     id: "simultaneous-equations",
@@ -1001,6 +1001,22 @@ function renderTerms() {
   scheduleMathTypeset($("#term-result"));
 }
 
+function renderUnitBlocks(count, options = {}) {
+  const { markFirst = 0, maxVisible = 18 } = options;
+  const visible = Math.min(count, maxVisible);
+  const blocks = Array.from({ length: visible }, (_, index) => {
+    const className = index < markFirst ? "unit-block take-away" : "unit-block";
+    return `<span class="${className}">1</span>`;
+  }).join("");
+  const more = count > visible ? `<span class="more-blocks">+${count - visible}</span>` : "";
+  if (count === 0) return `<span class="more-blocks">0こ</span>`;
+  return blocks + more;
+}
+
+function renderXBags(count) {
+  return Array.from({ length: count }, (_, index) => `<span class="x-bag" aria-label="x袋 ${index + 1}">x袋</span>`).join("");
+}
+
 function setupEquation() {
   ["#eq-a", "#eq-x", "#eq-b"].forEach((selector) => {
     $(selector).addEventListener("input", renderEquation);
@@ -1013,16 +1029,45 @@ function renderEquation() {
   const x = Number($("#eq-x").value);
   const b = Number($("#eq-b").value);
   const c = a * x + b;
-  const equation = `${term(a)} ${b < 0 ? "- " + Math.abs(b) : "+ " + b} = ${c}`;
+  const equation = `${term(a)}+${b}=${c}`;
+  const rightAfterRemove = c - b;
   $("#balance-stage").innerHTML = `
-    <div class="balance-beam">
-      <div class="pan">\\(${equation}\\)<br><small>\\(x=${x}\\) のとき \\(${c}\\)</small></div>
-      <div class="fulcrum" aria-hidden="true"></div>
-      <div class="pan">\\(${c}\\)</div>
+    <div class="equation-model">
+      <div class="equation-side">
+        <h4>左：x袋が ${a}こ、1ブロックが ${b}こ</h4>
+        <div class="object-row">${renderXBags(a)}${renderUnitBlocks(b, { markFirst: b })}</div>
+      </div>
+      <div class="equation-equals">=</div>
+      <div class="equation-side">
+        <h4>右：1ブロックが ${c}こ</h4>
+        <div class="object-row">${renderUnitBlocks(c, { markFirst: b })}</div>
+      </div>
+    </div>
+    <div class="equation-step-cards">
+      <div class="equation-step-card">
+        <strong>1</strong>
+        <div>
+          <p>左右から同じ \\(${b}\\) この1ブロックを取りのぞきます。</p>
+          <div class="equation-formula">\\(${equation}\\Rightarrow ${term(a)}=${rightAfterRemove}\\)</div>
+        </div>
+      </div>
+      <div class="equation-step-card">
+        <strong>2</strong>
+        <div>
+          <p>残った \\(${rightAfterRemove}\\) このブロックを、\\(${a}\\) このx袋に同じ数ずつ分けます。</p>
+          <div class="equation-formula">\\(${rightAfterRemove}\\div ${a}=${x}\\)</div>
+        </div>
+      </div>
+      <div class="equation-step-card">
+        <strong>3</strong>
+        <div>
+          <p>x袋1こには \\(${x}\\) こ入っています。</p>
+          <div class="equation-formula">\\(x=${x}\\)</div>
+        </div>
+      </div>
     </div>
   `;
-  const first = b === 0 ? `${term(a)} = ${c}` : `${term(a)} = ${c - b}`;
-  $("#equation-result").textContent = `\\(${equation}\\)。まず両辺に ${b < 0 ? `\\(${Math.abs(b)}\\) を足す` : `\\(${b}\\) を引く`} と \\(${first}\\)、次に \\(${a}\\) で割ると \\(x=${x}\\)。`;
+  $("#equation-result").textContent = `ブロックで見ると、\\(${b}\\) この余分な1ブロックを左右から同じように取るだけです。式では \\(${equation}\\Rightarrow ${term(a)}=${rightAfterRemove}\\Rightarrow x=${x}\\)。`;
   scheduleMathTypeset($("#balance-stage"));
   scheduleMathTypeset($("#equation-result"));
 }
@@ -1496,25 +1541,25 @@ function generateDistributeProblem() {
 
 function generateEquationProblem() {
   const a = randomInt(2, 5);
-  const x = randomInt(-4, 6);
-  const b = randomInt(-6, 6);
+  const x = randomInt(1, 6);
+  const b = randomInt(1, 6);
   const c = a * x + b;
   return {
     modeLabel: "方程式",
-    title: "x を一人にする",
+    title: "x袋を一人にする",
     prompt: `\\(${term(a)}${b < 0 ? "-" + Math.abs(b) : "+" + b}=${c}\\)`,
     steps: [
       {
-        label: "定数項を反対側へ移す",
-        question: `両辺に同じ操作をして、\\(${term(a)}=?\\) の形にすると？`,
-        hint: b < 0 ? `\\(${Math.abs(b)}\\) を両辺に足します。` : `\\(${b}\\) を両辺から引きます。`,
+        label: "余分な1ブロックを取る",
+        question: `左右から \\(${b}\\) この1ブロックを取ると、右辺は？`,
+        hint: `式では、両辺から \\(${b}\\) を引きます。ブロックで見ると、同じ数だけ取りのぞきます。`,
         check: (input) => Number(normalizeText(input).replace(`${a}x=`, "")) === c - b || sameEquation(input, a, -(c - b)),
         answer: `${term(a)} = ${c - b}`,
       },
       {
-        label: "係数で割る",
-        question: "\\(x\\) は？",
-        hint: `両辺を \\(${a}\\) で割ります。`,
+        label: "x袋の数で分ける",
+        question: "\\(x\\) 袋1つの中身は？",
+        hint: `残ったブロックを \\(${a}\\) このx袋に同じ数ずつ分けます。式では両辺を \\(${a}\\) で割ります。`,
         check: (input) => normalizeText(input) === `x=${x}` || Number(normalizeText(input)) === x,
         answer: `x = ${x}`,
       },
