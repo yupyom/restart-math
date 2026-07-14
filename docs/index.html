@@ -415,7 +415,8 @@
               </div>
               <span class="pill">関数</span>
             </div>
-            <canvas id="function-graph" width="900" height="360" aria-label="一次関数と二次関数のグラフ"></canvas>
+            <p class="lab-lead">スライダーで<strong>入力 \(x\)</strong> を動かすと、グラフ上の点と<strong>出力 \(y\)</strong> がいっしょに動きます。「\(x\) を一つ決めると \(y\) が一つ決まる」ようすを目で確かめましょう。グラフの上をドラッグしても点を動かせます。</p>
+            <canvas id="function-graph" width="900" height="360" aria-label="入力xを動かすと点が動く一次関数と二次関数のグラフ"></canvas>
             <div class="control-grid">
               <fieldset class="choice-field">
                 <legend>種類</legend>
@@ -425,6 +426,10 @@
                   <button class="math-choice" type="button" data-choice-value="quadratic" aria-pressed="false">二次関数 \(y=ax^2+bx+c\)</button>
                 </div>
               </fieldset>
+              <label class="highlight-control">
+                入力 \(x\)（動かしてみよう）
+                <input id="graph-x" type="range" min="-10" max="10" step="1" value="3" />
+              </label>
               <label>
                 係数 1
                 <input id="graph-a" type="range" min="-5" max="5" value="1" />
@@ -438,6 +443,7 @@
                 <input id="graph-c" type="range" min="-8" max="8" value="-1" />
               </label>
             </div>
+            <p class="lab-result" id="graph-point"></p>
             <p class="lab-result" id="graph-result"></p>
           </article>
 

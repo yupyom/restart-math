@@ -1390,6 +1390,31 @@ input[type="text"],
   font-weight: 700;
 }
 
+#graph-point {
+  background: #eaf1ff;
+  color: #24406b;
+}
+
+.lab-lead {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-reading);
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: var(--ink);
+}
+
+#function-graph {
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.highlight-control {
+  border-radius: 14px;
+  padding: 0.55rem 0.7rem;
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 2px rgba(242, 153, 74, 0.5);
+}
+
 .practice-policy {
   margin: 0.75rem 0;
   padding: 0.65rem 0.8rem;

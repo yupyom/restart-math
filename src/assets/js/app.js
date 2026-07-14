@@ -1246,11 +1246,48 @@ function renderEquation() {
   scheduleMathTypeset($("#equation-result"));
 }
 
+const GRAPH_MIN = -10;
+const GRAPH_MAX = 10;
+
 function setupGraph() {
-  ["#graph-type", "#graph-a", "#graph-b", "#graph-c"].forEach((selector) => {
+  ["#graph-type", "#graph-x", "#graph-a", "#graph-b", "#graph-c"].forEach((selector) => {
     $(selector).addEventListener("input", drawGraph);
   });
+
+  const canvas = $("#function-graph");
+  const xSlider = $("#graph-x");
+  // グラフ上をドラッグしても入力 x を動かせるようにする。
+  const pointerToX = (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const canvasPx = ((event.clientX - rect.left) / rect.width) * canvas.width;
+    const raw = GRAPH_MIN + (canvasPx / canvas.width) * (GRAPH_MAX - GRAPH_MIN);
+    return Math.max(GRAPH_MIN, Math.min(GRAPH_MAX, Math.round(raw)));
+  };
+  let dragging = false;
+  const applyPointer = (event) => {
+    xSlider.value = String(pointerToX(event));
+    drawGraph();
+  };
+  canvas.addEventListener("pointerdown", (event) => {
+    dragging = true;
+    canvas.setPointerCapture(event.pointerId);
+    applyPointer(event);
+  });
+  canvas.addEventListener("pointermove", (event) => {
+    if (dragging) applyPointer(event);
+  });
+  const stopDrag = () => {
+    dragging = false;
+  };
+  canvas.addEventListener("pointerup", stopDrag);
+  canvas.addEventListener("pointercancel", stopDrag);
+
   drawGraph();
+}
+
+// 負の数はかっこで囲み、代入の式が読み違えられないようにする。
+function bracketNegative(value) {
+  return value < 0 ? `(${value})` : String(value);
 }
 
 function drawGraph() {
@@ -1262,8 +1299,9 @@ function drawGraph() {
   const a = Number($("#graph-a").value);
   const b = Number($("#graph-b").value);
   const c = Number($("#graph-c").value);
-  const min = -10;
-  const max = 10;
+  const inputX = Number($("#graph-x").value);
+  const min = GRAPH_MIN;
+  const max = GRAPH_MAX;
   const mapX = (x) => ((x - min) / (max - min)) * width;
   const mapY = (y) => height - ((y - min) / (max - min)) * height;
 
@@ -1315,6 +1353,58 @@ function drawGraph() {
   }
   ctx.stroke();
 
+  // 入力 x に対応する点 (x, f(x)) と、軸への案内線を描く。
+  const outputY = f(inputX);
+  const px = mapX(inputX);
+  const py = mapY(outputY);
+  const onScreen = outputY >= min && outputY <= max;
+
+  // x 軸上の入力位置（オレンジ）はいつでも見せる。
+  ctx.fillStyle = "#f2994a";
+  ctx.beginPath();
+  ctx.arc(px, mapY(0), 7, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (onScreen) {
+    ctx.save();
+    ctx.setLineDash([6, 6]);
+    ctx.strokeStyle = "#d9468a";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(px, mapY(0));
+    ctx.lineTo(px, py);
+    ctx.moveTo(px, py);
+    ctx.lineTo(mapX(0), py);
+    ctx.stroke();
+    ctx.restore();
+
+    // y 軸上の出力位置。
+    ctx.fillStyle = "#407bff";
+    ctx.beginPath();
+    ctx.arc(mapX(0), py, 7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 対応する点 P=(x, y)。
+    ctx.fillStyle = "#d9468a";
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(px, py, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#184c50";
+    ctx.font = "bold 22px 'Noto Sans JP', sans-serif";
+    ctx.textAlign = px > width - 120 ? "right" : "left";
+    ctx.fillText(`(${inputX}, ${outputY})`, px + (px > width - 120 ? -14 : 14), py - 14);
+  }
+
+  const substitution =
+    type === "linear"
+      ? `${a}\\times${bracketNegative(inputX)}${b === 0 ? "" : b > 0 ? `+${b}` : `-${Math.abs(b)}`}`
+      : `${a}\\times${bracketNegative(inputX)}^2${b === 0 ? "" : b > 0 ? `+${b}\\times${bracketNegative(inputX)}` : `-${Math.abs(b)}\\times${bracketNegative(inputX)}`}${c === 0 ? "" : c > 0 ? `+${c}` : `-${Math.abs(c)}`}`;
+  $("#graph-point").textContent = `入力 \\(x=${inputX}\\) を入れると、出力は \\(y=${substitution}=${outputY}\\)。対応する点は \\((${inputX},\\ ${outputY})\\) です。${onScreen ? "" : "（この点はグラフの表示範囲の外にあります）"}`;
+
   const graphExpression =
     type === "linear"
       ? compactPolynomial([
@@ -1330,6 +1420,7 @@ function drawGraph() {
     type === "linear"
       ? `\\(y=${graphExpression}\\)。係数 \\(${a}\\) は傾き、\\(${b}\\) は \\(y\\) 軸との交点です。`
       : `\\(y=${graphExpression}\\)。\\(x^2\\) の係数で開き方と上下の向きが変わります。`;
+  scheduleMathTypeset($("#graph-point"));
   scheduleMathTypeset($("#graph-result"));
 }
 
