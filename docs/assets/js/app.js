@@ -906,7 +906,11 @@ function choose(values) {
 function setHashForUnit(index) {
   const unit = units[index];
   if (!unit) return;
-  history.replaceState(null, "", routeHash("lessons", unit.id));
+  const hash = routeHash("lessons", unit.id);
+  if (location.hash === hash) return;
+  // ブラウザバックで前の単元へ戻れるよう、履歴に残す。
+  // pushState は hashchange を発火させないので、呼び出し側の描画と二重にはならない。
+  history.pushState(null, "", hash);
 }
 
 function renderUnitButtons() {
@@ -1109,7 +1113,8 @@ function setupLessons() {
   $("#clear-lesson-filter").addEventListener("click", () => {
     activeLessonRange = null;
     renderUnit();
-    history.replaceState(null, "", routeHash("lessons", units[activeUnit].id));
+    const hash = routeHash("lessons", units[activeUnit].id);
+    if (location.hash !== hash) history.pushState(null, "", hash);
   });
 
   renderUnit();
