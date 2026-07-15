@@ -253,6 +253,7 @@ export const unitLabRefs = {
   "geometric-series-sum": ["loan-balance-lab"],
   "prime-factorization": ["radical-lab", "euclidean-algorithm-lab"],
   similarity: ["trig-lab"],
+  "conditional-probability": ["probability-lab"],
   "data-analysis-i": ["data-spread-lab"],
   "box-plots": ["data-spread-lab"],
   "complementary-events": ["probability-lab"],

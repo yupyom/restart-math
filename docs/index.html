@@ -27,7 +27,15 @@
         tex: {
           inlineMath: [["\\(", "\\)"]],
           displayMath: [["\\[", "\\]"]],
-          processEscapes: true
+          processEscapes: true,
+          // 高校までの日本の教科書表記に合わせ、不等号のイコールは
+          // 2本線（≦・≧）で表示する。原稿は \le・\ge のままでよい。
+          macros: {
+            le: "\\leqq",
+            leq: "\\leqq",
+            ge: "\\geqq",
+            geq: "\\geqq"
+          }
         },
         options: {
           skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"]
