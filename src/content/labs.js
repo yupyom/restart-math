@@ -251,6 +251,8 @@ export const unitLabRefs = {
   "function-notation": ["function-lab"],
   "pythagorean-theorem": ["trig-lab", "geometry-properties-lab"],
   "geometric-series-sum": ["loan-balance-lab"],
+  "prime-factorization": ["radical-lab", "euclidean-algorithm-lab"],
+  similarity: ["trig-lab"],
   "data-analysis-i": ["data-spread-lab"],
   "box-plots": ["data-spread-lab"],
   "complementary-events": ["probability-lab"],
