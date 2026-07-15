@@ -7,7 +7,7 @@ import { advancedPracticeGenerators } from "./practice-advanced.js";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-const pageIds = ["home", "scope", "lessons", "labs", "practice", "stories", "map"];
+const pageIds = ["home", "scope", "lessons", "labs", "practice", "stories", "map", "search"];
 
 let mathTypesetFrame = null;
 const mathTypesetTargets = new Set();
@@ -257,6 +257,16 @@ function alignEquationRow(value) {
   return `${source.slice(0, equalIndex).trim()}&=${source.slice(equalIndex + 1).trim()}`;
 }
 
+function hasBalancedBraces(value) {
+  let depth = 0;
+  for (const char of value) {
+    if (char === "{") depth += 1;
+    if (char === "}") depth -= 1;
+    if (depth < 0) return false;
+  }
+  return depth === 0;
+}
+
 function displayEquationTeX(value) {
   const source = value.trim();
   const arrowSteps = source.split("\\Rightarrow").map((step) => step.trim());
@@ -270,6 +280,13 @@ function displayEquationTeX(value) {
       equalSteps.length > 2
         ? [`${equalSteps[0]}&=${equalSteps[1]}`, ...equalSteps.slice(2).map((step) => `&=${step}`)]
         : [alignEquationRow(source)];
+  }
+
+  // \underbrace{x+2=7} のように、かっこの内側に = を含む式を機械的に分割すると
+  // TeX が壊れる。& で区切った各断片のかっこが対応している場合だけ整列する。
+  const splitIsSafe = rows.every((row) => row.split("&").every(hasBalancedBraces));
+  if (!splitIsSafe) {
+    return `\\[${source}\\]`;
   }
 
   return `\\[\\begin{aligned}${rows.join("\\\\")}\\end{aligned}\\]`;
@@ -3605,6 +3622,133 @@ function handleRoute() {
   }
 }
 
+// TeX・記号を落とし、検索照合に使える平文へ直す。
+function plainTextForSearch(value) {
+  return String(value ?? "")
+    .replace(/\\\(|\\\)|\\\[|\\\]/g, "")
+    .replace(/\\[a-zA-Z]+/g, " ")
+    .replace(/[{}^_&~]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+let searchIndex = null;
+
+function buildSearchIndex() {
+  const entries = [];
+
+  units.forEach((unit) => {
+    entries.push({
+      type: "単元",
+      title: unit.title,
+      snippet: unit.summary,
+      body: [unit.title, unit.summary, unit.stage, unit.strand, unit.range.join(" "), ...(unit.points || [])].join(" "),
+      hash: `#lessons/${unit.id}`,
+    });
+    (unit.context?.definitions || []).forEach((definition) => {
+      entries.push({
+        type: "用語",
+        title: definition.term,
+        snippet: `${definition.meaning}（単元「${unit.title}」より）`,
+        body: [definition.term, definition.meaning, definition.example, definition.boundary, unit.title].join(" "),
+        hash: `#lessons/${unit.id}`,
+      });
+    });
+  });
+
+  labs.forEach((lab) => {
+    entries.push({
+      type: "図解",
+      title: lab.title,
+      snippet: `${lab.objectIntro}。${lab.observe}。`,
+      body: [lab.title, lab.short, lab.category, lab.objectIntro, lab.observe].join(" "),
+      hash: `#labs/${lab.id}`,
+    });
+  });
+
+  practiceCatalog.forEach((practice) => {
+    entries.push({
+      type: "問題",
+      title: practice.label,
+      snippet: `${practice.level}：${practice.numberPolicy}`,
+      body: [practice.label, practice.level, practice.numberPolicy, practice.advancedPolicy].join(" "),
+      hash: `#practice/${practice.id}`,
+    });
+  });
+
+  stories.forEach((story) => {
+    entries.push({
+      type: "読み物",
+      title: story.title,
+      snippet: story.lead,
+      body: [story.title, story.menuTitle, story.lead].join(" "),
+      hash: `#stories/${story.id}`,
+    });
+  });
+
+  return entries.map((entry) => ({
+    ...entry,
+    plainTitle: plainTextForSearch(entry.title).toLowerCase(),
+    plainSnippet: plainTextForSearch(entry.snippet),
+    plainBody: plainTextForSearch(entry.body).toLowerCase(),
+  }));
+}
+
+function searchEntries(query) {
+  if (!searchIndex) searchIndex = buildSearchIndex();
+  const terms = plainTextForSearch(query).toLowerCase().split(/[\s、。]+/).filter(Boolean);
+  if (!terms.length) return [];
+  const matches = searchIndex.filter((entry) => terms.every((term) => entry.plainBody.includes(term)));
+  return matches
+    .map((entry) => ({
+      entry,
+      score: terms.every((term) => entry.plainTitle.includes(term)) ? 0 : 1,
+    }))
+    .sort((first, second) => first.score - second.score)
+    .map(({ entry }) => entry);
+}
+
+function renderSearchResults(query) {
+  const resultsWrap = $("#search-results");
+  const status = $("#search-status");
+  if (!resultsWrap || !status) return;
+
+  const trimmed = query.trim();
+  if (!trimmed) {
+    status.textContent = "キーワードを入れると、関係する教材がここに並びます。";
+    resultsWrap.innerHTML = "";
+    return;
+  }
+
+  const results = searchEntries(trimmed);
+  if (!results.length) {
+    status.textContent = "見つかりませんでした。言い方を変える（例：ルート → 平方根）と見つかることがあります。";
+    resultsWrap.innerHTML = "";
+    return;
+  }
+
+  const shown = results.slice(0, 30);
+  status.textContent = `${results.length} 件見つかりました${results.length > shown.length ? `（先頭の ${shown.length} 件を表示）` : ""}。`;
+  resultsWrap.innerHTML = shown
+    .map(
+      (entry) => `
+        <a class="search-result" href="${escapeHtml(entry.hash)}">
+          <span class="pill">${escapeHtml(entry.type)}</span>
+          <strong>${escapeHtml(plainTextForSearch(entry.title))}</strong>
+          <p>${escapeHtml(entry.plainSnippet.slice(0, 110))}${entry.plainSnippet.length > 110 ? "…" : ""}</p>
+        </a>
+      `,
+    )
+    .join("");
+}
+
+function setupSearch() {
+  const input = $("#site-search-input");
+  if (!input) return;
+  input.addEventListener("input", () => renderSearchResults(input.value));
+  renderSearchResults("");
+}
+
 function setupNavigation() {
   $$("[data-page-link]").forEach((link) => {
     link.addEventListener("click", (event) => {
@@ -3692,6 +3836,7 @@ function init() {
   setupPractice();
   setupStories();
   setupMap();
+  setupSearch();
   setupNavigation();
 }
 

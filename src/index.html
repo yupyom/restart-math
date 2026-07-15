@@ -55,6 +55,7 @@
           <a href="#practice" data-page-link="practice">問題</a>
           <a href="#stories" data-page-link="stories">読み物</a>
           <a href="#map" data-page-link="map">マップ</a>
+          <a href="#search" data-page-link="search">検索</a>
         </div>
       </nav>
 
@@ -91,27 +92,32 @@
           <a class="site-index-card" href="#lessons" data-page-link="lessons">
             <span>02</span><strong>単元ノート</strong>
             <p>言葉の定義、計算の理由、例を順に読んで理解する。</p>
-            <em>28単元から選ぶ</em>
+            <em>基礎から順に選ぶ</em>
           </a>
           <a class="site-index-card" href="#labs" data-page-link="labs">
             <span>03</span><strong>動く図解</strong>
             <p>数や図を動かし、式と図のつながりを目で確かめる。</p>
-            <em>17図解から選ぶ</em>
+            <em>動かして確かめる</em>
           </a>
           <a class="site-index-card" href="#practice" data-page-link="practice">
             <span>04</span><strong>ステップ問題</strong>
             <p>答えだけでなく、途中の考え方を一段ずつ練習する。</p>
-            <em>23分野から選ぶ</em>
+            <em>一手ずつ解く</em>
           </a>
           <a class="site-index-card" href="#stories" data-page-link="stories">
             <span>05</span><strong>短い読み物</strong>
             <p>記号の役割、数学の歴史、社会とのつながりを知る。</p>
-            <em>17本から選ぶ</em>
+            <em>背景から知る</em>
           </a>
           <a class="site-index-card" href="#map" data-page-link="map">
             <span>06</span><strong>学習マップ</strong>
             <p>分野と難しさから単元を探し、学ぶ順序を見直す。</p>
             <em>つながりから探す</em>
+          </a>
+          <a class="site-index-card" href="#search" data-page-link="search">
+            <span>07</span><strong>サイト内検索</strong>
+            <p>キーワードで、単元・図解・問題・用語を横断して探す。</p>
+            <em>言葉から探す</em>
           </a>
         </nav>
       </section>
@@ -888,6 +894,30 @@
           <span id="map-page-label">1 / 1</span>
           <button class="button ghost" id="next-map" type="button">次へ</button>
         </div>
+      </section>
+
+      <section class="section search-section app-page" id="search" data-page="search">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow">サイト内検索</p>
+            <h2>キーワードで教材を探す</h2>
+          </div>
+          <p>
+            単元・図解・問題・読み物・用語の定義を横断して探せます。
+            「絶対値」「ベン図」「公差」「循環小数」のように、思いついた言葉をそのまま入れてください。
+          </p>
+        </div>
+        <div class="search-box">
+          <input
+            id="site-search-input"
+            type="search"
+            placeholder="例：絶対値 / ベン図 / 公差 / 循環小数 / とおく"
+            autocomplete="off"
+            aria-label="サイト内検索のキーワード"
+          />
+          <p class="search-status" id="search-status"></p>
+        </div>
+        <div class="search-results" id="search-results" aria-live="polite"></div>
       </section>
     </main>
 

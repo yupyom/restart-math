@@ -1628,6 +1628,74 @@ input[type="text"],
   font-weight: 700;
 }
 
+.search-box {
+  max-width: 640px;
+}
+
+.search-box input[type="search"] {
+  width: 100%;
+  padding: 0.85rem 1.1rem;
+  border: 2px solid #d3cec4;
+  border-radius: 14px;
+  background: #fffdf7;
+  font-family: var(--font-ui);
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.search-box input[type="search"]:focus {
+  outline: none;
+  border-color: #2f6f73;
+}
+
+.search-status {
+  margin: 0.6rem 0 0;
+  font-family: var(--font-reading);
+  font-size: 15.5px;
+  color: #52606d;
+}
+
+.search-results {
+  margin-top: 1.2rem;
+  display: grid;
+  gap: 0.7rem;
+  max-width: 760px;
+}
+
+.search-result {
+  display: block;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid #e3ded3;
+  border-radius: 14px;
+  background: #fffefb;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.search-result:hover {
+  border-color: #2f6f73;
+  transform: translateY(-1px);
+}
+
+.search-result .pill {
+  margin-right: 0.5rem;
+}
+
+.search-result strong {
+  font-family: var(--font-ui);
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.search-result p {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-reading);
+  font-size: 15px;
+  line-height: 1.7;
+  color: #52606d;
+}
+
 .triangle-lab-svg,
 .venn-lab-svg {
   width: 100%;
