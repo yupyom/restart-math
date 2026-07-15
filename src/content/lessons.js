@@ -2045,7 +2045,7 @@ const lessonContexts = {
       },
     ],
     connections: [
-      { kind: "notation", title: "記号の形と意味を分けて読む", summary: "\\(a\\le b\\) と \\(a\\leqq b\\) のように字形が異なる場合もあります。どちらも「\\(a\\) は \\(b\\) 以下」と読むことを、式の前後で確かめましょう。", storyId: "notation-changes-with-the-page" },
+      { kind: "notation", title: "記号の形と意味を分けて読む", summary: "\\(a\\leqq b\\)（2本線）と \\(a\\mathrel{\\unicode{x2264}} b\\)（1本線）のように字形が異なる場合もあります。どちらも「\\(a\\) は \\(b\\) 以下」と読むことを、式の前後で確かめましょう。", storyId: "notation-changes-with-the-page" },
     ],
     storyIds: ["notation-changes-with-the-page"],
   },
