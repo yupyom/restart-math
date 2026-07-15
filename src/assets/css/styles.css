@@ -1002,6 +1002,15 @@ code {
   text-align: left !important;
 }
 
+.walkthrough-sentence {
+  max-width: 100%;
+  padding: 0.1rem 0;
+  color: var(--ink);
+  font-family: var(--font-reading);
+  font-size: 17px;
+  line-height: 1.9;
+}
+
 .walkthrough-note {
   margin: 0;
   padding-left: 1.2rem;

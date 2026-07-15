@@ -42,6 +42,7 @@ const mathTextKeys = new Set([
   "conclusion",
   "intro",
   "note",
+  "text",
   "caption",
 ]);
 
@@ -64,8 +65,10 @@ function validateExample(example, unitId) {
   if (example.type === "walkthrough") {
     assert(Array.isArray(example.steps) && example.steps.length >= 2, `単元 ${unitId} の心の声つき解答には二手以上必要です。`);
     example.steps.forEach((step) => {
-      assert(step && typeof step === "object" && typeof step.equation === "string" && step.equation.trim(), `単元 ${unitId} の心の声つき解答の各手には式が必要です。`);
-      assert(!step.equation.includes(","), `単元 ${unitId} の心の声つき解答は一手ずつ書いてください。`);
+      const hasEquation = typeof step?.equation === "string" && step.equation.trim();
+      const hasText = typeof step?.text === "string" && step.text.trim();
+      assert(hasEquation || hasText, `単元 ${unitId} の心の声つき解答の各手には式または文章が必要です。`);
+      if (hasEquation) assert(!step.equation.includes(","), `単元 ${unitId} の心の声つき解答は一手ずつ書いてください。`);
     });
   }
 

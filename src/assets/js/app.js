@@ -290,13 +290,15 @@ function workedExampleMarkup(value) {
   if (value && typeof value === "object" && value.type === "walkthrough") {
     const steps = value.steps
       .map((step, index) => {
-        const equation = escapeHtml(`\\(${String(step.equation).replace(/^\\\(|\\\)$/g, "")}\\)`);
         const note = step.note ? `<p class="walkthrough-note">${formatTextWithMath(step.note)}</p>` : "";
+        const body = step.text
+          ? `<div class="walkthrough-sentence">${formatTextWithMath(step.text)}</div>`
+          : `<div class="walkthrough-equation">${escapeHtml(`\\(${String(step.equation).replace(/^\\\(|\\\)$/g, "")}\\)`)}</div>`;
         return `
           <li class="walkthrough-step">
             <span class="walkthrough-index" aria-hidden="true">${index + 1}</span>
             <div class="walkthrough-body">
-              <div class="walkthrough-equation">${equation}</div>
+              ${body}
               ${note}
             </div>
           </li>
