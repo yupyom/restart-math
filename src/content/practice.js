@@ -1,4 +1,6 @@
 // 出題の「教材としての設定」。実際の問題生成・採点コードは assets/js/app.js に置く。
+import { units } from "./lessons.js";
+
 const rawPracticeCatalog = [
   {
     id: "integer",
@@ -248,8 +250,15 @@ const advancedPolicies = {
   "geometry-basics": "三平方の定理で未知の短辺を求める",
 };
 
-export const practiceCatalog = rawPracticeCatalog.map((practice) => ({
-  ...practice,
-  advancedLevel: "少し進んだ問題",
-  advancedPolicy: advancedPolicies[practice.id],
-}));
+// 問題の目次は、対応する単元の学習順（learningPath 順）に並べる。
+const unitOrder = new Map(units.map((unit) => [unit.id, unit.order]));
+const firstLessonOrder = (practice) =>
+  Math.min(...practice.lessonIds.map((lessonId) => unitOrder.get(lessonId) ?? Number.MAX_SAFE_INTEGER));
+
+export const practiceCatalog = rawPracticeCatalog
+  .map((practice) => ({
+    ...practice,
+    advancedLevel: "少し進んだ問題",
+    advancedPolicy: advancedPolicies[practice.id],
+  }))
+  .sort((first, second) => firstLessonOrder(first) - firstLessonOrder(second));

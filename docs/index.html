@@ -264,11 +264,11 @@
             <canvas id="number-line" width="900" height="260" aria-label="整数の加法と減法を示す数直線"></canvas>
             <div class="control-grid">
               <label>
-                はじめの数 \(a\)
+                <span>はじめの数 \(a\)</span>
                 <input id="int-a" type="range" min="-12" max="12" value="-3" />
               </label>
               <label>
-                もう一つの数 \(b\)
+                <span>もう一つの数 \(b\)</span>
                 <input id="int-b" type="range" min="-12" max="12" value="5" />
               </label>
               <fieldset class="choice-field">
@@ -301,7 +301,7 @@
             </div>
             <div class="control-grid">
               <label>
-                小さい数 \(a\) <span class="color-tag tag-blue">青の点</span>
+                <span>小さい数 \(a\) <span class="color-tag tag-blue">青の点</span></span>
                 <select id="ineq-a">
                   <option value="-3">−3</option>
                   <option value="-2">−2</option>
@@ -311,7 +311,7 @@
                 </select>
               </label>
               <label>
-                大きい数 \(b\) <span class="color-tag tag-orange">オレンジの点</span>
+                <span>大きい数 \(b\) <span class="color-tag tag-orange">オレンジの点</span></span>
                 <select id="ineq-b">
                   <option value="3">3</option>
                   <option value="4">4</option>
@@ -320,7 +320,7 @@
                 </select>
               </label>
               <label>
-                両辺にかける数
+                <span>両辺にかける数</span>
                 <select id="ineq-factor">
                   <option value="-3">−3</option>
                   <option value="-2">−2</option>
@@ -345,15 +345,15 @@
             <div class="area-model" id="area-model" aria-label="分配法則を示す長方形モデル"></div>
             <div class="control-grid">
               <label>
-                高さ \(a\) <span class="color-tag tag-dark">左の目盛り</span>
+                <span>高さ \(a\) <span class="color-tag tag-dark">左の目盛り</span></span>
                 <input id="dist-a" type="range" min="1" max="8" value="3" />
               </label>
               <label>
-                幅 \(b\) <span class="color-tag tag-teal">緑の部分</span>
+                <span>幅 \(b\) <span class="color-tag tag-teal">緑の部分</span></span>
                 <input id="dist-b" type="range" min="1" max="12" value="4" />
               </label>
               <label>
-                幅 \(c\) <span class="color-tag tag-orange">オレンジの部分</span>
+                <span>幅 \(c\) <span class="color-tag tag-orange">オレンジの部分</span></span>
                 <input id="dist-c" type="range" min="1" max="12" value="2" />
               </label>
             </div>
@@ -373,7 +373,7 @@
               <div class="radical-tiles" id="radical-tiles" aria-label="平方数の因数を表す図"></div>
             </div>
             <label class="wide-label">
-              √の中の数 \(n\)
+              <span>√の中の数 \(n\)</span>
               <input id="radical-n" type="range" min="2" max="200" value="72" />
             </label>
             <p class="lab-result" id="radical-result"></p>
@@ -420,15 +420,15 @@
             <div class="balance-stage" id="balance-stage" aria-label="方程式の左右がつり合う図"></div>
             <div class="control-grid">
               <label>
-                \(x\)袋の数（\(x\) の係数） <span class="color-tag tag-teal">緑の袋</span>
+                <span>\(x\)袋の数（\(x\) の係数） <span class="color-tag tag-teal">緑の袋</span></span>
                 <input id="eq-a" type="range" min="1" max="5" value="3" />
               </label>
               <label>
-                \(x\)袋1つの中身（\(x\) の値＝答え）
+                <span>\(x\)袋1つの中身（\(x\) の値＝答え）</span>
                 <input id="eq-x" type="range" min="1" max="6" value="4" />
               </label>
               <label>
-                左に足す1ブロック <span class="color-tag tag-orange">オレンジのブロック</span>
+                <span>左に足す1ブロック <span class="color-tag tag-orange">オレンジのブロック</span></span>
                 <input id="eq-b" type="range" min="0" max="8" value="2" />
               </label>
             </div>
@@ -455,19 +455,19 @@
                 </div>
               </fieldset>
               <label class="highlight-control">
-                入力 \(x\)（動かしてみよう） <span class="color-tag tag-orange">x軸のオレンジの点</span>
+                <span>入力 \(x\)（動かしてみよう） <span class="color-tag tag-orange">x軸のオレンジの点</span></span>
                 <input id="graph-x" type="range" min="-10" max="10" step="1" value="3" />
               </label>
               <label>
-                係数 \(a\)（一次関数では傾き）
+                <span>係数 \(a\)（一次関数では傾き）</span>
                 <input id="graph-a" type="range" min="-5" max="5" value="1" />
               </label>
               <label>
-                係数 \(b\)（一次関数では切片）
+                <span>係数 \(b\)（一次関数では切片）</span>
                 <input id="graph-b" type="range" min="-8" max="8" value="2" />
               </label>
               <label>
-                定数 \(c\)（二次関数のときだけ使う）
+                <span>定数 \(c\)（二次関数のときだけ使う）</span>
                 <input id="graph-c" type="range" min="-8" max="8" value="-1" />
               </label>
             </div>
@@ -486,15 +486,15 @@
             <canvas id="quadratic-vertex" width="900" height="360" aria-label="二次関数の頂点と最大最小"></canvas>
             <div class="control-grid">
               <label>
-                開き \(a\)
+                <span>開き \(a\)</span>
                 <input id="quad-a" type="range" min="-4" max="4" value="1" />
               </label>
               <label>
-                頂点の横位置 \(p\)
+                <span>頂点の横位置 \(p\)</span>
                 <input id="quad-h" type="range" min="-6" max="6" value="2" />
               </label>
               <label>
-                頂点の高さ \(q\)
+                <span>頂点の高さ \(q\)</span>
                 <input id="quad-k" type="range" min="-6" max="6" value="-3" />
               </label>
             </div>
@@ -510,13 +510,22 @@
               <span class="pill">数I</span>
             </div>
             <canvas id="trig-canvas" width="900" height="360" aria-label="直角三角形と三角比"></canvas>
+            <div class="trig-formula" id="trig-formula" aria-live="polite"></div>
             <div class="control-grid">
               <label>
-                角度 θ
+                <span>角度 θ</span>
                 <input id="trig-angle" type="range" min="10" max="80" value="35" />
               </label>
+              <fieldset class="choice-field">
+                <legend>三角定規の角（有名な比）</legend>
+                <div class="math-choice-group">
+                  <button class="math-choice" type="button" data-trig-preset="30">30°</button>
+                  <button class="math-choice" type="button" data-trig-preset="45">45°</button>
+                  <button class="math-choice" type="button" data-trig-preset="60">60°</button>
+                </div>
+              </fieldset>
               <label>
-                斜辺
+                <span>斜辺</span>
                 <input id="trig-hyp" type="range" min="4" max="10" value="7" />
               </label>
               <fieldset class="choice-field">
@@ -659,7 +668,7 @@
             </div>
             <div class="geometry-lab-stage" id="circle-angle-stage" aria-live="polite"></div>
             <label class="wide-label">
-              観察点 (B) の位置
+              <span>観察点 \(B\) を、円周にそって動かす</span>
               <input id="circle-observer" type="range" min="30" max="150" step="10" value="40" />
             </label>
             <p class="lab-result" id="circle-angle-result"></p>
@@ -711,7 +720,7 @@
               </label>
               <label>
                 年率
-                <input id="loan-rate" type="range" min="0" max="10" step="1" value="2" />
+                <input id="loan-rate" type="range" min="0" max="18" step="1" value="2" />
               </label>
               <label>
                 期間
@@ -827,7 +836,7 @@
                 <p class="eyebrow" id="problem-mode-label">整数</p>
                 <h3 id="problem-title">問題</h3>
               </div>
-              <button class="button ghost" id="new-problem" type="button">新しい問題</button>
+              <button class="button primary" id="new-problem" type="button">別の問題を作る</button>
             </div>
             <div class="practice-level-tabs" id="practice-levels" aria-label="問題の難しさ">
               <button class="practice-level-button active" type="button" data-practice-level="starter" aria-pressed="true">はじめの一問</button>

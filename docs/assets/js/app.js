@@ -79,7 +79,6 @@ const rangeValueFormatters = {
   "data-center": (value) => `${value}`,
   "data-spread": (value) => `${value}`,
   "data-outlier": (value) => `+${value}`,
-  "circle-observer": (value) => `位置 ${value}`,
   "gcd-a": (value) => `${value}`,
   "gcd-b": (value) => `${value}`,
   "venn-a": (value) => `${value} 人`,
@@ -1645,6 +1644,12 @@ function setupTrigLab() {
   ["#trig-angle", "#trig-hyp", "#trig-focus"].forEach((selector) => {
     $(selector).addEventListener("input", drawTrigLab);
   });
+  $$("[data-trig-preset]").forEach((button) => {
+    button.addEventListener("click", () => {
+      $("#trig-angle").value = button.dataset.trigPreset;
+      $("#trig-angle").dispatchEvent(new Event("input"));
+    });
+  });
   drawTrigLab();
 }
 
@@ -1679,21 +1684,26 @@ function drawTrigLab() {
   ctx.closePath();
   ctx.fill();
 
+  // 選んだ比で使う2辺だけを強調する（sin＝対辺と斜辺、cos＝隣辺と斜辺、tan＝対辺と隣辺）
+  const useOpposite = focus === "sin" || focus === "tan" || focus === "all";
+  const useAdjacent = focus === "cos" || focus === "tan" || focus === "all";
+  const useHypotenuse = focus === "sin" || focus === "cos" || focus === "all";
+
   ctx.lineWidth = 6;
   ctx.lineCap = "round";
-  ctx.strokeStyle = focus === "cos" || focus === "all" ? "#407bff" : "#b9c2cf";
+  ctx.strokeStyle = useAdjacent ? "#407bff" : "#ccd3db";
   ctx.beginPath();
   ctx.moveTo(ax, ay);
   ctx.lineTo(bx, by);
   ctx.stroke();
 
-  ctx.strokeStyle = focus === "sin" || focus === "all" ? "#d9468a" : "#b9c2cf";
+  ctx.strokeStyle = useOpposite ? "#d9468a" : "#ccd3db";
   ctx.beginPath();
   ctx.moveTo(bx, by);
   ctx.lineTo(cx, cy);
   ctx.stroke();
 
-  ctx.strokeStyle = focus === "all" ? "#2f6f73" : "#b9c2cf";
+  ctx.strokeStyle = useHypotenuse ? "#2f6f73" : "#ccd3db";
   ctx.beginPath();
   ctx.moveTo(ax, ay);
   ctx.lineTo(cx, cy);
@@ -1704,19 +1714,36 @@ function drawTrigLab() {
   ctx.strokeRect(bx - 24, by - 24, 24, 24);
 
   ctx.font = '700 22px "Noto Sans JP", "Hiragino Sans", sans-serif';
+  ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "left";
   ctx.fillStyle = "#1f2933";
-  ctx.fillText(`θ = ${degree}°`, ax + 26, ay - 18);
-  ctx.fillStyle = "#407bff";
-  ctx.fillText(`隣辺 ≒ ${adjacent.toFixed(2)}`, (ax + bx) / 2 - 60, ay + 34);
-  ctx.fillStyle = "#d9468a";
-  ctx.fillText(`対辺 ≒ ${opposite.toFixed(2)}`, bx + 18, (by + cy) / 2);
-  ctx.fillStyle = "#2f6f73";
-  ctx.fillText(`斜辺 = ${hyp}`, (ax + cx) / 2 - 30, (ay + cy) / 2 - 14);
+  ctx.fillText(`θ = ${degree}°`, ax + 30, ay - 16);
+  ctx.textAlign = "center";
+  ctx.fillStyle = useAdjacent ? "#2c56b8" : "#8b95a1";
+  ctx.fillText(`隣辺 ≒ ${adjacent.toFixed(2)}`, (ax + bx) / 2, ay + 36);
+  ctx.textAlign = "left";
+  ctx.fillStyle = useOpposite ? "#a42c68" : "#8b95a1";
+  ctx.fillText(`対辺 ≒ ${opposite.toFixed(2)}`, bx + 16, (by + cy) / 2 + 8);
+  ctx.textAlign = "center";
+  ctx.fillStyle = useHypotenuse ? "#184c50" : "#8b95a1";
+  ctx.fillText(`斜辺 = ${hyp}`, (ax + cx) / 2 - 52, (ay + cy) / 2 - 16);
 
+  // 図の下に、いま見ている比の定義式を数値つきで示す
+  const sinFormula = `\\(\\sin${degree}^{\\circ}=\\dfrac{\\text{対辺}}{\\text{斜辺}}=\\dfrac{${opposite.toFixed(2)}}{${hyp}}\\approx${(opposite / hyp).toFixed(3)}\\)`;
+  const cosFormula = `\\(\\cos${degree}^{\\circ}=\\dfrac{\\text{隣辺}}{\\text{斜辺}}=\\dfrac{${adjacent.toFixed(2)}}{${hyp}}\\approx${(adjacent / hyp).toFixed(3)}\\)`;
+  const tanFormula = `\\(\\tan${degree}^{\\circ}=\\dfrac{\\text{対辺}}{\\text{隣辺}}=\\dfrac{${opposite.toFixed(2)}}{${adjacent.toFixed(2)}}\\approx${(opposite / adjacent).toFixed(3)}\\)`;
+  $("#trig-formula").textContent =
+    focus === "sin" ? sinFormula : focus === "cos" ? cosFormula : focus === "tan" ? tanFormula : `${sinFormula}　${cosFormula}　${tanFormula}`;
+
+  const famousRatio =
+    degree === 45
+      ? "いまの形は直角二等辺三角形（三角定規の一つ）。3辺の比はちょうど \\(1:1:\\sqrt{2}\\) です。"
+      : degree === 30 || degree === 60
+        ? "いまの形はもう一つの三角定規。3辺の比はちょうど \\(1:2:\\sqrt{3}\\) です。"
+        : "";
   $("#trig-result").textContent =
-    `\\(\\sin${degree}^{\\circ}\\approx${(opposite / hyp).toFixed(3)}\\)、` +
-    `\\(\\cos${degree}^{\\circ}\\approx${(adjacent / hyp).toFixed(3)}\\)、` +
-    `\\(\\tan${degree}^{\\circ}\\approx${(opposite / adjacent).toFixed(3)}\\)。斜辺を変えても、角度が同じなら比は同じです。`;
+    `色のついた2辺の比が、選んだ三角比です。斜辺を変えても、角度が同じなら比は変わりません。${famousRatio}`;
+  scheduleMathTypeset($("#trig-formula"));
   scheduleMathTypeset($("#trig-result"));
 }
 
@@ -1962,6 +1989,7 @@ function renderVennLab() {
   $("#venn-result").textContent =
     `そのまま足すと \\(${sizeA}+${sizeB}=${sizeA + sizeB}\\) 人ですが、これは重なりの \\(${both}\\) 人を2回数えた数です。` +
     `1回分を引いて \\(n(A\\cup B)=${sizeA}+${sizeB}-${both}=${union}\\) 人。どちらでもない人は \\(${total}-${union}=${outside}\\) 人です。`;
+  scheduleMathTypeset($("#venn-stage"));
   scheduleMathTypeset($("#venn-result"));
 }
 
@@ -2012,24 +2040,42 @@ function euclidTilingMarkup(first, second) {
     }
     depth += 1;
   }
+  const originX = 74;
+  const originY = 40;
   const rects = squares
     .map((square) => {
-      const px = 10 + square.x * scale;
-      const py = 10 + square.y * scale;
+      const px = originX + square.x * scale;
+      const py = originY + square.y * scale;
       const side = square.size * scale;
       const color = colors[square.depth % colors.length];
       const label =
-        side > 34
-          ? `<text x="${px + side / 2}" y="${py + side / 2 + 7}" text-anchor="middle" fill="${color}" font-size="19" font-weight="700">${square.size}</text>`
-          : "";
+        side > 58
+          ? `<text x="${px + side / 2}" y="${py + side / 2 + 7}" text-anchor="middle" fill="${color}" font-size="18" font-weight="700">一辺 ${square.size}</text>`
+          : side > 30
+            ? `<text x="${px + side / 2}" y="${py + side / 2 + 7}" text-anchor="middle" fill="${color}" font-size="16" font-weight="700">${square.size}</text>`
+            : "";
       return `<rect x="${px}" y="${py}" width="${side}" height="${side}" fill="${color}" fill-opacity="0.14" stroke="${color}" stroke-width="2.5"></rect>${label}`;
     })
     .join("");
-  const width = rectWidth * scale + 20;
-  const height = rectHeight * scale + 20;
+  const drawnWidth = rectWidth * scale;
+  const drawnHeight = rectHeight * scale;
+  const width = originX + drawnWidth + 14;
+  const height = originY + drawnHeight + 14;
+  // 面積の図と誤解されないよう、外側に「横」「たて」の寸法線を添える
+  const dimensions = `
+    <line x1="${originX}" y1="${originY - 16}" x2="${originX + drawnWidth}" y2="${originY - 16}" stroke="#52606d" stroke-width="2"></line>
+    <line x1="${originX}" y1="${originY - 22}" x2="${originX}" y2="${originY - 10}" stroke="#52606d" stroke-width="2"></line>
+    <line x1="${originX + drawnWidth}" y1="${originY - 22}" x2="${originX + drawnWidth}" y2="${originY - 10}" stroke="#52606d" stroke-width="2"></line>
+    <text x="${originX + drawnWidth / 2}" y="${originY - 24}" text-anchor="middle" fill="#1f2933" font-size="17" font-weight="700">横 ${rectWidth}</text>
+    <line x1="${originX - 16}" y1="${originY}" x2="${originX - 16}" y2="${originY + drawnHeight}" stroke="#52606d" stroke-width="2"></line>
+    <line x1="${originX - 22}" y1="${originY}" x2="${originX - 10}" y2="${originY}" stroke="#52606d" stroke-width="2"></line>
+    <line x1="${originX - 22}" y1="${originY + drawnHeight}" x2="${originX - 10}" y2="${originY + drawnHeight}" stroke="#52606d" stroke-width="2"></line>
+    <text x="${originX - 28}" y="${originY + drawnHeight / 2}" text-anchor="middle" fill="#1f2933" font-size="17" font-weight="700" transform="rotate(-90 ${originX - 28} ${originY + drawnHeight / 2})">たて ${rectHeight}</text>
+  `;
   return `
     <svg class="euclid-tiling-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="横${rectWidth}・たて${rectHeight}の長方形を正方形で敷きつめた図">
-      <rect x="10" y="10" width="${rectWidth * scale}" height="${rectHeight * scale}" fill="none" stroke="#1f2933" stroke-width="3"></rect>
+      ${dimensions}
+      <rect x="${originX}" y="${originY}" width="${drawnWidth}" height="${drawnHeight}" fill="none" stroke="#1f2933" stroke-width="3"></rect>
       ${rects}
     </svg>
   `;

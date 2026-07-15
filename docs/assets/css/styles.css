@@ -2740,7 +2740,32 @@ input[type="text"],
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 0.8rem 1rem;
+  margin-bottom: 1.1rem;
   background: #fffaf1;
+}
+
+.hint-box[open] summary {
+  margin-bottom: 0.6rem;
+}
+
+/* ラベル全体は grid（文字列の行＋入力の行）だが、
+   回答ラベルは文中にインライン数式を含むため1つの段落として流す */
+.answer-form label {
+  display: block;
+  line-height: 1.7;
+}
+
+.tree-branch mjx-container {
+  font-size: 1.4em;
+}
+
+.trig-formula {
+  margin: 0.4rem 0 0.2rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 12px;
+  background: #f4f8f7;
+  font-size: 1.15rem;
+  line-height: 2;
 }
 
 .hint-box summary {
