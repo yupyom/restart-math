@@ -2103,6 +2103,10 @@ function setupLabs() {
 
 const practiceGenerators = {
   integer: generateIntegerProblem,
+  "absolute-value": generateAbsoluteValueProblem,
+  exponent: generateExponentProblem,
+  "arithmetic-sequence": generateArithmeticSequenceProblem,
+  "venn-count": generateVennCountProblem,
   radical: generateRadicalProblem,
   "square-root-meaning": generateSquareRootMeaningProblem,
   "root-operations": generateRootOperationsProblem,
@@ -2132,6 +2136,121 @@ const practiceModes = practiceCatalog.map((mode) => ({
   generator: practiceGenerators[mode.id],
   advancedGenerator: advancedPracticeGenerators[mode.id],
 }));
+
+function generateAbsoluteValueProblem() {
+  const negative = choose([-9, -8, -7, -6, -5, -4, -3]);
+  const positive = choose([2, 3, 4, 5, 6, 7]);
+  const distance = Math.abs(negative - positive);
+  return {
+    modeLabel: "絶対値",
+    title: "0からの距離を読む",
+    prompt: `数直線上の \\(${negative}\\) と \\(${positive}\\) について考える`,
+    steps: [
+      {
+        label: "絶対値を読む",
+        question: `\\(|${negative}|\\) は？`,
+        hint: "絶対値は0からの距離。向きのマイナスは距離には付きません。",
+        check: (input) => Number(normalizeText(input)) === Math.abs(negative),
+        answer: String(Math.abs(negative)),
+      },
+      {
+        label: "2数の距離",
+        question: `\\(${negative}\\) と \\(${positive}\\) の距離は？`,
+        hint: `2数の距離は \\(|${negative}-${positive}|\\) で求められます。`,
+        check: (input) => Number(normalizeText(input)) === distance,
+        answer: String(distance),
+      },
+    ],
+  };
+}
+
+function generateExponentProblem() {
+  const base = choose(["a", "x", "2", "3"]);
+  const m = choose([2, 3, 4, 5]);
+  const n = choose([2, 3, 4]);
+  const productExponent = m + n;
+  const powerExponent = m * n;
+  return {
+    modeLabel: "指数法則",
+    title: "かけ算の回数を数える",
+    prompt: `\\(${base}^{${m}}\\) を使った計算`,
+    steps: [
+      {
+        label: "積の指数",
+        question: `\\(${base}^{${m}}\\times ${base}^{${n}}=${base}^{\\Box}\\) の \\(\\Box\\) は？`,
+        hint: `\\(${m}\\) 回かけて、さらに \\(${n}\\) 回かけます。回数を足しましょう。`,
+        check: (input) => Number(normalizeText(input)) === productExponent,
+        answer: String(productExponent),
+      },
+      {
+        label: "累乗の累乗",
+        question: `\\((${base}^{${m}})^{${n}}=${base}^{\\Box}\\) の \\(\\Box\\) は？`,
+        hint: `\\(${m}\\) 回かけたものを、まるごと \\(${n}\\) セット。回数はかけ算です。`,
+        check: (input) => Number(normalizeText(input)) === powerExponent,
+        answer: String(powerExponent),
+      },
+    ],
+  };
+}
+
+function generateArithmeticSequenceProblem() {
+  const first = randomInt(1, 9);
+  const difference = randomInt(2, 7);
+  const targetIndex = randomInt(8, 15);
+  const targetValue = first + (targetIndex - 1) * difference;
+  const firstTerms = [0, 1, 2, 3].map((step) => first + step * difference).join("\\ ");
+  return {
+    modeLabel: "等差数列",
+    title: "公差を見つけて一般項を使う",
+    prompt: `数列 \\(${firstTerms}\\ \\dots\\) の第 \\(${targetIndex}\\) 項を求める`,
+    steps: [
+      {
+        label: "公差を読む",
+        question: "隣どうしの差（公差）は？",
+        hint: "2番目から1番目を引きます。どの隣どうしでも同じ差になっています。",
+        check: (input) => Number(normalizeText(input)) === difference,
+        answer: String(difference),
+      },
+      {
+        label: "一般項で一気に",
+        question: `第 \\(${targetIndex}\\) 項は？`,
+        hint: `\\(a_{${targetIndex}}=${first}+(${targetIndex}-1)\\times${difference}\\)。足す回数は \\(${targetIndex - 1}\\) 回です。`,
+        check: (input) => Number(normalizeText(input)) === targetValue,
+        answer: String(targetValue),
+      },
+    ],
+  };
+}
+
+function generateVennCountProblem() {
+  const total = 40;
+  const sizeA = randomInt(12, 20);
+  const sizeB = randomInt(10, 18);
+  const overlap = randomInt(4, Math.min(sizeA, sizeB) - 2);
+  const union = sizeA + sizeB - overlap;
+  const neither = total - union;
+  return {
+    modeLabel: "ベン図の個数",
+    title: "重なりの二重カウントを防ぐ",
+    prompt: `${total}人のクラスで、電車を使う人が \\(${sizeA}\\) 人、バスを使う人が \\(${sizeB}\\) 人、両方使う人が \\(${overlap}\\) 人いる`,
+    steps: [
+      {
+        label: "少なくとも一方",
+        question: "電車かバスの少なくとも一方を使う人は何人？",
+        hint: `そのまま足すと両方の \\(${overlap}\\) 人を2回数えます。\\(${sizeA}+${sizeB}-${overlap}\\) を計算しましょう。`,
+        check: (input) => Number(normalizeText(input)) === union,
+        answer: String(union),
+      },
+      {
+        label: "どちらでもない",
+        question: "どちらも使わない人は何人？",
+        hint: `全体の \\(${total}\\) 人から、少なくとも一方を使う人を引きます。`,
+        check: (input) => Number(normalizeText(input)) === neither,
+        answer: String(neither),
+      },
+    ],
+  };
+}
 
 function generateIntegerProblem() {
   const a = choose([-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6]);

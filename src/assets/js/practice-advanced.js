@@ -541,8 +541,140 @@ function geometryBasicsAdvanced() {
   };
 }
 
+function absoluteValueAdvanced() {
+  const first = choose([-12, -9, -8, -7, 7, 8, 9, 12]);
+  const second = choose([-6, -5, -4, 4, 5, 6]);
+  const product = first * second;
+  const difference = Math.abs(first) - Math.abs(second);
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "計算してから距離を読む",
+    prompt: `\\(${first}\\) と \\(${second < 0 ? `(${second})` : second}\\) を使った絶対値の計算`,
+    steps: [
+      {
+        label: "積の絶対値",
+        question: `\\(|${first}\\times${second < 0 ? `(${second})` : second}|\\) は？`,
+        hint: "先に中の積を計算してから、0からの距離を読みます。",
+        check: (input) => numericAnswer(input, Math.abs(product)),
+        answer: String(Math.abs(product)),
+      },
+      {
+        label: "絶対値どうしの差",
+        question: `\\(|${first}|-|${second}|\\) は？`,
+        hint: "それぞれの絶対値を先に求めてから引きます。結果は負になることもあります。",
+        check: (input) => numericAnswer(input, difference),
+        answer: String(difference),
+      },
+    ],
+  };
+}
+
+function exponentAdvanced() {
+  const m = randomInt(3, 6);
+  const n = randomInt(2, 4);
+  const p = randomInt(2, Math.min(4, m + n - 2));
+  const combined = m + n - p;
+  const valueBase = 2;
+  const valueExponent = randomInt(4, 7);
+  const value = valueBase ** valueExponent;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "積・商をまとめて指数を整理する",
+    prompt: `\\(a^{${m}}\\times a^{${n}}\\div a^{${p}}\\) を整理する`,
+    steps: [
+      {
+        label: "指数をまとめる",
+        question: `\\(a^{${m}}\\times a^{${n}}\\div a^{${p}}=a^{\\Box}\\) の \\(\\Box\\) は？`,
+        hint: `かけ算は回数を足し、わり算は回数を引きます。\\(${m}+${n}-${p}\\)。`,
+        check: (input) => numericAnswer(input, combined),
+        answer: String(combined),
+      },
+      {
+        label: "値も求める",
+        question: `\\(${valueBase}^{${valueExponent}}\\) の値は？`,
+        hint: `\\(${valueBase}\\) を \\(${valueExponent}\\) 回かけます。\\(${valueBase}^{4}=16\\) を足場にすると速い。`,
+        check: (input) => numericAnswer(input, value),
+        answer: String(value),
+      },
+    ],
+  };
+}
+
+function arithmeticSequenceAdvanced() {
+  const first = randomInt(2, 12);
+  const difference = choose([3, 4, 5, 6, 7]);
+  const earlyIndex = randomInt(3, 5);
+  const lateIndex = earlyIndex + choose([3, 4, 5]);
+  const earlyValue = first + (earlyIndex - 1) * difference;
+  const lateValue = first + (lateIndex - 1) * difference;
+  const targetIndex = randomInt(20, 40);
+  const targetValue = first + (targetIndex - 1) * difference;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "離れた2項から数列を復元する",
+    prompt: `等差数列で、第 \\(${earlyIndex}\\) 項が \\(${earlyValue}\\)、第 \\(${lateIndex}\\) 項が \\(${lateValue}\\)`,
+    steps: [
+      {
+        label: "公差を逆算",
+        question: "公差は？",
+        hint: `\\(${lateIndex}-${earlyIndex}=${lateIndex - earlyIndex}\\) 回分で \\(${lateValue - earlyValue}\\) 増えています。`,
+        check: (input) => numericAnswer(input, difference),
+        answer: String(difference),
+      },
+      {
+        label: "初項を逆算",
+        question: "初項は？",
+        hint: `第 \\(${earlyIndex}\\) 項から公差を \\(${earlyIndex - 1}\\) 回分引き戻します。`,
+        check: (input) => numericAnswer(input, first),
+        answer: String(first),
+      },
+      {
+        label: "遠くの項へ",
+        question: `第 \\(${targetIndex}\\) 項は？`,
+        hint: `\\(a_{${targetIndex}}=${first}+(${targetIndex}-1)\\times${difference}\\)。`,
+        check: (input) => numericAnswer(input, targetValue),
+        answer: String(targetValue),
+      },
+    ],
+  };
+}
+
+function vennCountAdvanced() {
+  const total = 40;
+  const sizeA = randomInt(14, 22);
+  const sizeB = randomInt(12, 20);
+  const overlap = randomInt(5, Math.min(sizeA, sizeB) - 3);
+  const union = sizeA + sizeB - overlap;
+  const neither = total - union;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "どちらでもない人数から逆算する",
+    prompt: `${total}人のクラスで、電車を使う人が \\(${sizeA}\\) 人、バスを使う人が \\(${sizeB}\\) 人、どちらも使わない人が \\(${neither}\\) 人いる`,
+    steps: [
+      {
+        label: "少なくとも一方",
+        question: "少なくとも一方を使う人は何人？",
+        hint: `全体 \\(${total}\\) 人から、どちらも使わない \\(${neither}\\) 人を引きます。`,
+        check: (input) => numericAnswer(input, union),
+        answer: String(union),
+      },
+      {
+        label: "重なりを逆算",
+        question: "両方使う人は何人？",
+        hint: `\\(n(A\\cup B)=n(A)+n(B)-n(A\\cap B)\\) を逆向きに使います：\\(${sizeA}+${sizeB}-${union}\\)。`,
+        check: (input) => numericAnswer(input, overlap),
+        answer: String(overlap),
+      },
+    ],
+  };
+}
+
 export const advancedPracticeGenerators = {
   integer: integerAdvanced,
+  "absolute-value": absoluteValueAdvanced,
+  exponent: exponentAdvanced,
+  "arithmetic-sequence": arithmeticSequenceAdvanced,
+  "venn-count": vennCountAdvanced,
   radical: radicalAdvanced,
   "square-root-meaning": squareRootAdvanced,
   "root-operations": rootOperationsAdvanced,
