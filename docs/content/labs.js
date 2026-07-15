@@ -249,6 +249,8 @@ export const unitLabRefs = {
   "equation-modeling": ["equation-lab", "speed-distance-lab", "loan-balance-lab"],
   functions: ["function-lab", "speed-distance-lab", "accounting-balance-lab"],
   "data-analysis-i": ["data-spread-lab"],
+  "box-plots": ["data-spread-lab"],
+  "complementary-events": ["probability-lab"],
   data: ["data-spread-lab", "probability-lab"],
   "exam-review": ["accounting-balance-lab"],
 };

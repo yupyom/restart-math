@@ -846,7 +846,7 @@ const rawUnits = [
   },
   {
     id: "data-analysis-i",
-    stage: "データ 2",
+    stage: "データ 3",
     range: ["数I"],
     title: "分散・標準偏差・相関",
     summary:
@@ -1006,6 +1006,33 @@ const rawUnits = [
     check: "確率の木ラボで、戻す・戻さないで2回目の分母が変わることを確認しましょう。",
   },
   {
+    id: "complementary-events",
+    stage: "確率 2",
+    range: ["数A"],
+    title: "余事象と確率の足し算：『少なくとも1回』の攻略",
+    summary:
+      "余事象とは、事がら \\(A\\) に対して『\\(A\\) が起こらない』という事がらのことで、記号では \\(\\overline{A}\\) と書きます。起こりうるすべての確率を合わせると必ず1なので、\\(P(\\overline{A})=1-P(A)\\) が成り立ちます。この単純な式が大活躍するのが『少なくとも1回』という問題——まともに数えると場合分けだらけですが、裏返した『1回も起こらない』は1本道で数えられるのです。",
+    points: [
+      "余事象の定義：『\\(A\\) が起こらない』という事がら。記号は \\(\\overline{A}\\)",
+      "全体の確率は1。だから \\(P(\\overline{A})=1-P(A)\\)、逆に \\(P(A)=1-P(\\overline{A})\\)",
+      "『少なくとも1回』と読んだら余事象を疑う。『1回も起こらない』の方がずっと数えやすい",
+      "加法定理：\\(P(A\\cup B)=P(A)+P(B)-P(A\\cap B)\\)。ベン図の個数の公式とまったく同じ形",
+      "同時に起こらない（排反という）事がらどうしなら、重なりが0なのでそのまま足せる",
+    ],
+    example: {
+      type: "walkthrough",
+      intro: "サイコロを2回投げて、少なくとも1回は6が出る確率を求めます。正面から数えず、裏側（余事象）から攻めます。",
+      steps: [
+        { equation: "P(\\text{少なくとも1回6})=1-P(\\text{1回も6が出ない})", note: "正面から行くと『1回目だけ6』『2回目だけ6』『両方6』の3つの場合分け。裏返した『1回も出ない』は1種類しかない。" },
+        { equation: "P(\\text{1回目が6でない})=\\frac56", note: "6以外の目は5通り。サイコロの2回は独立（前の結果が次に影響しない）なので、2回目も同じ \\(\\frac56\\)。" },
+        { equation: "P(\\text{2回とも6でない})=\\frac56\\times\\frac56=\\frac{25}{36}", note: "独立な試行はかけ算。これで『1回も6が出ない』確率が出た。" },
+        { equation: "1-\\frac{25}{36}=\\frac{11}{36}", note: "全体の1から引いて完成。3つに場合分けして足しても同じ答えになるが、こちらの方が速くて数えもれもない。" },
+      ],
+      conclusion: "検算として正面から数えると、『1回目が6』6通り＋『2回目が6』6通り−『両方6』1通り＝11通りで \\(\\frac{11}{36}\\)。引き算しているのは二重に数えた重なり——ベン図の加法定理がここにも現れています。",
+    },
+    check: "確率の木ラボで『6が出る・出ない』の枝を思い浮かべ、『少なくとも1回』が『全部の枝 − 出ない出ないの1本』であることを確かめましょう。",
+  },
+  {
     id: "geometry-a",
     stage: "図形 4",
     range: ["数A"],
@@ -1092,6 +1119,33 @@ const rawUnits = [
       equation: "\\(\\text{平均}=30\\div5=6\\quad\\text{中央値}=2\\quad\\text{範囲}=20-1=19\\)",
     },
     check: "平均と散らばりラボで、5個の値を数直線に置き、定義どおりに平均・中央値・範囲を求めましょう。",
+  },
+  {
+    id: "box-plots",
+    stage: "データ 2",
+    range: ["中2", "数I"],
+    title: "四分位数と箱ひげ図：分布を5つの数で要約する",
+    summary:
+      "箱ひげ図とは、データを小さい順に並べて『最小値・第1四分位数・中央値・第3四分位数・最大値』の5つの数に要約し、箱とひげの形に描いた図です。その前提になる四分位数とは、並べたデータを4等分する3つの境目のこと。平均という1つの数では見えない『散らばり方』を、複数のクラスやグループで横に並べて比べられるのが、この図のいちばんの強みです。",
+    points: [
+      "四分位数の定義：データを小さい順に並べて4等分する3つの境目。\\(Q_1\\)（第1四分位数）・\\(Q_2\\)（中央値）・\\(Q_3\\)（第3四分位数）",
+      "求め方：まず全体の中央値を出し、\\(Q_1\\) は下半分の中央値、\\(Q_3\\) は上半分の中央値",
+      "四分位範囲 \\(Q_3-Q_1\\) は『まん中の50%が収まる幅』。極端な値（外れ値）の影響を受けにくい散らばりの指標",
+      "箱ひげ図の読み方：箱の両端が \\(Q_1\\) と \\(Q_3\\)、箱の中の線が中央値、ひげの先が最小値と最大値",
+      "1つのデータより、複数のグループの分布を並べて比べるときに真価を発揮する",
+    ],
+    example: {
+      type: "walkthrough",
+      intro: "データ \\(2\\ 3\\ 5\\ 7\\ 8\\ 9\\ 11\\)（7個・小さい順）から、5つの数を順に求めて箱ひげ図の材料をそろえます。",
+      steps: [
+        { equation: "\\text{中央値}=4\\text{番目の値}=7", note: "7個並んでいたら真ん中は4番目。これが \\(Q_2\\)。まず全体を半分に割る。" },
+        { equation: "Q_1=\\text{下半分}\\ 2\\ 3\\ 5\\ \\text{の中央値}=3", note: "中央値より下の3個の、さらに真ん中。データの下から4分の1の境目。" },
+        { equation: "Q_3=\\text{上半分}\\ 8\\ 9\\ 11\\ \\text{の中央値}=9", note: "上の3個の真ん中。これで5つの数——最小2・\\(Q_1{=}3\\)・中央値7・\\(Q_3{=}9\\)・最大11——がそろった。" },
+        { equation: "\\text{四分位範囲}=Q_3-Q_1=9-3=6", note: "箱の長さにあたる部分。データのまん中の50%が、この幅6の中に収まっている。" },
+      ],
+      conclusion: "図にすると、2から3までひげ、3から9までの箱、箱の中の7に線、9から11までひげ。たった5つの数で『どこに集まって、どれくらい広がっているか』が一目で伝わります。",
+    },
+    check: "平均と散らばりラボで散らばりを変えたとき、もし箱ひげ図を描いたら箱の長さがどう変わるかを想像してみましょう。",
   },
   {
     id: "arithmetic-sequences",
@@ -1784,6 +1838,8 @@ const lessonMetadata = {
   combinations: { strand: "場合の数と確率", practiceIds: ["counting"] },
   "combinations-repetition": { strand: "場合の数と確率", practiceIds: ["counting"] },
   "probability-a": { strand: "場合の数と確率", practiceIds: ["probability"] },
+  "complementary-events": { strand: "場合の数と確率", practiceIds: ["probability"] },
+  "box-plots": { strand: "データの分析", practiceIds: ["data-summary"] },
   "geometry-a": { strand: "図形の性質", practiceIds: ["geometry-properties"] },
   "math-human-activities": { strand: "数学と人間の活動", practiceIds: ["number-theory"] },
   "arithmetic-sequences": { strand: "数列", practiceIds: [] },
@@ -1831,6 +1887,7 @@ export const learningPath = [
   "sine-cosine-rule",
   "geometry-a",
   "data",
+  "box-plots",
   "data-analysis-i",
   "sets-propositions",
   "venn-diagrams",
@@ -1842,6 +1899,7 @@ export const learningPath = [
   "combinations",
   "combinations-repetition",
   "probability-a",
+  "complementary-events",
   "math-human-activities",
   "arithmetic-sequences",
   "geometric-sequences",
