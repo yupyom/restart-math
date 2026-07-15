@@ -292,6 +292,18 @@ function hasBalancedBraces(value) {
 
 function displayEquationTeX(value) {
   const source = value.trim();
+
+  // 表示は2モードに分ける。
+  // ①並記モード：\quad・矢印・下かっこなどで「複数の式」や「注釈つきの式」を
+  //   1行に並べているものは、= で機械的に揃えず、そのまま表示する。
+  // ②チェーンモード：3a=3×120=360 のような1本の変形の連鎖だけを、= を縦に揃えて表示する。
+  const isSideBySide = /\\quad|\\qquad|\\Longrightarrow|\\Longleftrightarrow|\\Leftrightarrow|\\iff|\\underbrace|\\overbrace/.test(
+    source,
+  );
+  if (isSideBySide) {
+    return `\\[${source}\\]`;
+  }
+
   const arrowSteps = source.split("\\Rightarrow").map((step) => step.trim());
   let rows;
 
