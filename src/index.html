@@ -83,6 +83,17 @@
           </aside>
         </div>
 
+        <form class="home-search" id="home-search-form" role="search" aria-label="サイト内検索">
+          <input
+            id="home-search-input"
+            type="search"
+            placeholder="キーワードで教材を探す（例：絶対値 / ベン図 / 公差）"
+            autocomplete="off"
+            aria-label="サイト内検索のキーワード"
+          />
+          <button class="button primary" type="submit">検索</button>
+        </form>
+
         <nav class="site-index-grid" aria-label="全ページの索引">
           <a class="site-index-card" href="#scope" data-page-link="scope">
             <span>01</span><strong>学習範囲</strong>
@@ -290,7 +301,7 @@
             </div>
             <div class="control-grid">
               <label>
-                小さい数 (a)
+                小さい数 \(a\) <span class="color-tag tag-blue">青の点</span>
                 <select id="ineq-a">
                   <option value="-3">−3</option>
                   <option value="-2">−2</option>
@@ -300,7 +311,7 @@
                 </select>
               </label>
               <label>
-                大きい数 (b)
+                大きい数 \(b\) <span class="color-tag tag-orange">オレンジの点</span>
                 <select id="ineq-b">
                   <option value="3">3</option>
                   <option value="4">4</option>
@@ -313,8 +324,8 @@
                 <select id="ineq-factor">
                   <option value="-3">−3</option>
                   <option value="-2">−2</option>
-                  <option value="-1" selected>−1</option>
-                  <option value="1">1</option>
+                  <option value="-1">−1</option>
+                  <option value="1" selected>1</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
                 </select>
@@ -334,15 +345,15 @@
             <div class="area-model" id="area-model" aria-label="分配法則を示す長方形モデル"></div>
             <div class="control-grid">
               <label>
-                高さ \(a\)
+                高さ \(a\) <span class="color-tag tag-dark">左の目盛り</span>
                 <input id="dist-a" type="range" min="1" max="8" value="3" />
               </label>
               <label>
-                幅 \(b\)
+                幅 \(b\) <span class="color-tag tag-teal">緑の部分</span>
                 <input id="dist-b" type="range" min="1" max="12" value="4" />
               </label>
               <label>
-                幅 \(c\)
+                幅 \(c\) <span class="color-tag tag-orange">オレンジの部分</span>
                 <input id="dist-c" type="range" min="1" max="12" value="2" />
               </label>
             </div>
@@ -379,19 +390,19 @@
             <div class="term-board" id="term-board" aria-label="文字式の項を色分けした図"></div>
             <div class="control-grid">
               <label>
-                <span>たす \(x\)カード <strong id="term-p-count">5枚</strong></span>
+                <span>たす \(x\)カード <span class="color-tag tag-teal">緑</span> <strong id="term-p-count">5枚</strong></span>
                 <input id="term-p" type="range" min="0" max="9" value="5" />
               </label>
               <label>
-                <span>ひく \(x\)カード <strong id="term-q-count">2枚</strong></span>
+                <span>ひく \(x\)カード <span class="color-tag tag-red">赤</span> <strong id="term-q-count">2枚</strong></span>
                 <input id="term-q" type="range" min="0" max="9" value="2" />
               </label>
               <label>
-                <span>たす 1 カード <strong id="term-r-count">6枚</strong></span>
+                <span>たす 1 カード <span class="color-tag tag-orange">オレンジ</span> <strong id="term-r-count">6枚</strong></span>
                 <input id="term-r" type="range" min="0" max="9" value="6" />
               </label>
               <label>
-                <span>ひく 1 カード <strong id="term-s-count">0枚</strong></span>
+                <span>ひく 1 カード <span class="color-tag tag-red">赤</span> <strong id="term-s-count">0枚</strong></span>
                 <input id="term-s" type="range" min="0" max="9" value="0" />
               </label>
             </div>
@@ -409,15 +420,15 @@
             <div class="balance-stage" id="balance-stage" aria-label="方程式の左右がつり合う図"></div>
             <div class="control-grid">
               <label>
-                \(x\)袋の数
+                \(x\)袋の数（\(x\) の係数） <span class="color-tag tag-teal">緑の袋</span>
                 <input id="eq-a" type="range" min="1" max="5" value="3" />
               </label>
               <label>
-                \(x\)袋1つの中身
+                \(x\)袋1つの中身（\(x\) の値＝答え）
                 <input id="eq-x" type="range" min="1" max="6" value="4" />
               </label>
               <label>
-                左に足す1ブロック
+                左に足す1ブロック <span class="color-tag tag-orange">オレンジのブロック</span>
                 <input id="eq-b" type="range" min="0" max="8" value="2" />
               </label>
             </div>
@@ -432,31 +443,31 @@
               </div>
               <span class="pill">関数</span>
             </div>
-            <p class="lab-lead">スライダーで<strong>入力 \(x\)</strong> を動かすと、グラフ上の点と<strong>出力 \(y\)</strong> がいっしょに動きます。「\(x\) を一つ決めると \(y\) が一つ決まる」ようすを目で確かめましょう。グラフの上をドラッグしても点を動かせます。</p>
+            <p class="lab-lead">スライダーで<strong>入力 \(x\)</strong>（x軸上の<span class="color-tag tag-orange">オレンジの点</span>）を動かすと、グラフ上の<span class="color-tag tag-pink">ピンクの点 \((x,\ y)\)</span> と、y軸上の<span class="color-tag tag-blue">青い点（出力 \(y\)）</span>がいっしょに動きます。「\(x\) を一つ決めると \(y\) が一つ決まる」ようすを目で確かめましょう。グラフの上をドラッグしても点を動かせます。</p>
             <canvas id="function-graph" width="900" height="360" aria-label="入力xを動かすと点が動く一次関数と二次関数のグラフ"></canvas>
             <div class="control-grid">
               <fieldset class="choice-field">
                 <legend>種類</legend>
                 <input id="graph-type" type="hidden" value="linear" />
                 <div class="math-choice-group stacked" data-math-choice-group="graph-type">
-                  <button class="math-choice active" type="button" data-choice-value="linear" aria-pressed="true">一次関数 \(y=mx+b\)</button>
+                  <button class="math-choice active" type="button" data-choice-value="linear" aria-pressed="true">一次関数 \(y=ax+b\)</button>
                   <button class="math-choice" type="button" data-choice-value="quadratic" aria-pressed="false">二次関数 \(y=ax^2+bx+c\)</button>
                 </div>
               </fieldset>
               <label class="highlight-control">
-                入力 \(x\)（動かしてみよう）
+                入力 \(x\)（動かしてみよう） <span class="color-tag tag-orange">x軸のオレンジの点</span>
                 <input id="graph-x" type="range" min="-10" max="10" step="1" value="3" />
               </label>
               <label>
-                係数 1
+                係数 \(a\)（一次関数では傾き）
                 <input id="graph-a" type="range" min="-5" max="5" value="1" />
               </label>
               <label>
-                係数 2
+                係数 \(b\)（一次関数では切片）
                 <input id="graph-b" type="range" min="-8" max="8" value="2" />
               </label>
               <label>
-                定数
+                定数 \(c\)（二次関数のときだけ使う）
                 <input id="graph-c" type="range" min="-8" max="8" value="-1" />
               </label>
             </div>
@@ -479,11 +490,11 @@
                 <input id="quad-a" type="range" min="-4" max="4" value="1" />
               </label>
               <label>
-                頂点の横位置
+                頂点の横位置 \(p\)
                 <input id="quad-h" type="range" min="-6" max="6" value="2" />
               </label>
               <label>
-                頂点の高さ
+                頂点の高さ \(q\)
                 <input id="quad-k" type="range" min="-6" max="6" value="-3" />
               </label>
             </div>
@@ -665,11 +676,11 @@
             <div class="euclid-stage" id="euclid-stage" aria-live="polite"></div>
             <div class="control-grid">
               <label>
-                一つ目の長さ
+                長方形の横の長さ
                 <input id="gcd-a" type="range" min="12" max="120" step="6" value="84" />
               </label>
               <label>
-                二つ目の長さ
+                長方形のたての長さ
                 <input id="gcd-b" type="range" min="6" max="60" step="6" value="30" />
               </label>
             </div>
@@ -686,6 +697,14 @@
             </div>
             <div class="applied-stage" id="loan-stage" aria-live="polite"></div>
             <div class="control-grid">
+              <fieldset class="choice-field">
+                <legend>利息の付き方</legend>
+                <input id="loan-mode" type="hidden" value="simple" />
+                <div class="math-choice-group" data-math-choice-group="loan-mode">
+                  <button class="math-choice active" type="button" data-choice-value="simple" aria-pressed="true">単利</button>
+                  <button class="math-choice" type="button" data-choice-value="compound" aria-pressed="false">複利（年1回）</button>
+                </div>
+              </fieldset>
               <label>
                 借入額
                 <input id="loan-principal" type="range" min="10" max="100" step="10" value="60" />
@@ -696,7 +715,7 @@
               </label>
               <label>
                 期間
-                <input id="loan-months" type="range" min="6" max="24" step="6" value="12" />
+                <input id="loan-months" type="range" min="6" max="60" step="6" value="12" />
               </label>
             </div>
             <p class="lab-result" id="loan-result"></p>
@@ -721,7 +740,7 @@
                 <input id="account-quantity" type="range" min="1" max="20" value="8" />
               </label>
               <label>
-                1個の費用（100円）
+                1個の製造費用（100円）
                 <input id="account-cost" type="range" min="1" max="10" value="3" />
               </label>
             </div>
@@ -771,6 +790,10 @@
               <label>
                 散らばり
                 <input id="data-spread" type="range" min="0" max="20" step="2" value="8" />
+              </label>
+              <label>
+                外れ値（一番大きい値だけを引き上げる）
+                <input id="data-outlier" type="range" min="0" max="40" step="5" value="0" />
               </label>
             </div>
             <p class="lab-result" id="data-spread-result"></p>

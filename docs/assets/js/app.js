@@ -78,6 +78,7 @@ const rangeValueFormatters = {
   "speed-hours": (value) => `${value} 時間`,
   "data-center": (value) => `${value}`,
   "data-spread": (value) => `${value}`,
+  "data-outlier": (value) => `+${value}`,
   "circle-observer": (value) => `位置 ${value}`,
   "gcd-a": (value) => `${value}`,
   "gcd-b": (value) => `${value}`,
@@ -1105,11 +1106,11 @@ function renderInequalityLab() {
 }
 
 function drawArrow(ctx, x1, y1, x2, y2, color) {
-  const head = 10;
+  const head = 20;
   const angle = Math.atan2(y2 - y1, x2 - x1);
   ctx.strokeStyle = color;
   ctx.fillStyle = color;
-  ctx.lineWidth = 5;
+  ctx.lineWidth = 6;
   ctx.lineCap = "round";
   ctx.beginPath();
   ctx.moveTo(x1, y1);
@@ -1201,12 +1202,23 @@ function renderDistribution() {
   const c = Number($("#dist-c").value);
   const model = $("#area-model");
   model.innerHTML = `
-    <div class="area-row" style="grid-template-columns: ${b}fr ${c}fr; min-height: ${110 + a * 8}px">
-      <div class="area-part">\\(${a}\\times${b}\\)<br>\\(${a * b}\\)</div>
-      <div class="area-part">\\(${a}\\times${c}\\)<br>\\(${a * c}\\)</div>
+    <div class="area-figure">
+      <div class="area-height-label" style="min-height: ${110 + a * 8}px"><span>\\(a=${a}\\)</span></div>
+      <div class="area-body">
+        <div class="area-row" style="grid-template-columns: ${b}fr ${c}fr; min-height: ${110 + a * 8}px">
+          <div class="area-part">\\(${a}\\times${b}\\)<br>\\(${a * b}\\)</div>
+          <div class="area-part">\\(${a}\\times${c}\\)<br>\\(${a * c}\\)</div>
+        </div>
+        <div class="area-width-labels" style="grid-template-columns: ${b}fr ${c}fr">
+          <span class="width-b">\\(b=${b}\\)</span>
+          <span class="width-c">\\(c=${c}\\)</span>
+        </div>
+      </div>
     </div>
   `;
-  $("#distribution-result").textContent = `\\(${a}(${b}+${c})=${a}\\times${b}+${a}\\times${c}=${a * (b + c)}\\)。分けても全体は同じです。`;
+  // 答案の模範のように、= を縦にそろえて1段ずつ展開する。
+  $("#distribution-result").textContent =
+    `\\[\\begin{aligned}${a}(${b}+${c})&=${a}\\times${b}+${a}\\times${c}\\\\&=${a * b}+${a * c}\\\\&=${a * (b + c)}\\end{aligned}\\] 分けて計算しても、全体の面積 \\(${a}\\times${b + c}=${a * (b + c)}\\) と同じです。`;
   scheduleMathTypeset($("#area-model"));
   scheduleMathTypeset($("#distribution-result"));
 }
@@ -1926,6 +1938,7 @@ function renderVennLab() {
   const outside = total - union;
 
   $("#venn-stage").innerHTML = `
+    <p class="lab-question">問題：${total}人のクラスで通学の方法を調べると、電車を使う人（\\(A\\)）が \\(${sizeA}\\) 人、バスを使う人（\\(B\\)）が \\(${sizeB}\\) 人、両方使う人が \\(${both}\\) 人いました。どちらも使わない人は何人でしょう？</p>
     <svg class="venn-lab-svg" viewBox="0 0 520 320" role="img" aria-label="2つの集合の人数を示すベン図">
       <rect class="venn-universe" x="25" y="35" width="470" height="250" rx="14"></rect>
       <circle class="venn-circle-a" cx="205" cy="160" r="95"></circle>
@@ -1973,6 +1986,55 @@ function setupEuclideanAlgorithmLab() {
   renderEuclideanAlgorithmLab();
 }
 
+// 長方形を「なるべく大きな正方形」で端から埋めていく図。互除法の各手順が正方形の大きさに対応する。
+function euclidTilingMarkup(first, second) {
+  const rectWidth = Math.max(first, second);
+  const rectHeight = Math.min(first, second);
+  const scale = Math.min(460 / rectWidth, 200 / rectHeight);
+  const colors = ["#2f6f73", "#db8d3d", "#d9468a", "#407bff", "#7b8794"];
+  const squares = [];
+  let x = 0;
+  let y = 0;
+  let w = rectWidth;
+  let h = rectHeight;
+  let depth = 0;
+  while (w > 0 && h > 0 && depth < 8) {
+    if (w >= h) {
+      const count = Math.floor(w / h);
+      for (let i = 0; i < count; i += 1) squares.push({ x: x + i * h, y, size: h, depth });
+      x += count * h;
+      w -= count * h;
+    } else {
+      const count = Math.floor(h / w);
+      for (let i = 0; i < count; i += 1) squares.push({ x, y: y + i * w, size: w, depth });
+      y += count * w;
+      h -= count * w;
+    }
+    depth += 1;
+  }
+  const rects = squares
+    .map((square) => {
+      const px = 10 + square.x * scale;
+      const py = 10 + square.y * scale;
+      const side = square.size * scale;
+      const color = colors[square.depth % colors.length];
+      const label =
+        side > 34
+          ? `<text x="${px + side / 2}" y="${py + side / 2 + 7}" text-anchor="middle" fill="${color}" font-size="19" font-weight="700">${square.size}</text>`
+          : "";
+      return `<rect x="${px}" y="${py}" width="${side}" height="${side}" fill="${color}" fill-opacity="0.14" stroke="${color}" stroke-width="2.5"></rect>${label}`;
+    })
+    .join("");
+  const width = rectWidth * scale + 20;
+  const height = rectHeight * scale + 20;
+  return `
+    <svg class="euclid-tiling-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="横${rectWidth}・たて${rectHeight}の長方形を正方形で敷きつめた図">
+      <rect x="10" y="10" width="${rectWidth * scale}" height="${rectHeight * scale}" fill="none" stroke="#1f2933" stroke-width="3"></rect>
+      ${rects}
+    </svg>
+  `;
+}
+
 function renderEuclideanAlgorithmLab() {
   const first = Number($("#gcd-a").value);
   const second = Number($("#gcd-b").value);
@@ -1989,15 +2051,17 @@ function renderEuclideanAlgorithmLab() {
     .join("");
 
   $("#euclid-stage").innerHTML = `
+    <p class="lab-question">問題：横 \\(${Math.max(first, second)}\\) cm・たて \\(${Math.min(first, second)}\\) cm の長方形の紙を、同じ大きさの正方形ですき間なく敷きつめたい。正方形の一辺は最大で何cmにできる？——この答えが2つの数の最大公約数です。</p>
+    ${euclidTilingMarkup(first, second)}
     <div class="applied-metrics">
-      <div class="applied-metric"><span>一つ目</span><strong>${first}</strong></div>
-      <div class="applied-metric"><span>二つ目</span><strong>${second}</strong></div>
-      <div class="applied-metric positive"><span>最大公約数</span><strong>${commonDivisor}</strong></div>
+      <div class="applied-metric"><span>横の長さ</span><strong>${Math.max(first, second)}</strong></div>
+      <div class="applied-metric"><span>たての長さ</span><strong>${Math.min(first, second)}</strong></div>
+      <div class="applied-metric positive"><span>最大公約数（一辺の最大）</span><strong>${commonDivisor}</strong></div>
     </div>
     <ol class="euclid-step-list">${equations}</ol>
   `;
   $("#euclid-result").textContent =
-    `\\(${first}\\) と \\(${second}\\) をどちらも余りなく区切れる最大の幅は \\(${commonDivisor}\\) です。大きい数を余りへ置き換えても、共通の区切り幅は変わりません。`;
+    `図のように、まず一辺 \\(${Math.min(first, second)}\\) の正方形で埋め、余った部分をまた正方形で埋め……と繰り返すと、最後に残る一番小さい正方形の一辺が \\(${commonDivisor}\\)。これが最大公約数で、上の割り算の各行が図の各段階に対応しています。`;
   scheduleMathTypeset($("#euclid-stage"));
   scheduleMathTypeset($("#euclid-result"));
 }
@@ -2034,7 +2098,7 @@ function stackLegendMarkup(segments) {
 }
 
 function setupAppliedLabs() {
-  ["#loan-principal", "#loan-rate", "#loan-months"].forEach((selector) => {
+  ["#loan-mode", "#loan-principal", "#loan-rate", "#loan-months"].forEach((selector) => {
     $(selector).addEventListener("input", renderLoanLab);
   });
   ["#account-price", "#account-quantity", "#account-cost", "#account-fixed"].forEach((selector) => {
@@ -2043,7 +2107,7 @@ function setupAppliedLabs() {
   ["#speed-rate", "#speed-hours"].forEach((selector) => {
     $(selector).addEventListener("input", renderSpeedLab);
   });
-  ["#data-center", "#data-spread"].forEach((selector) => {
+  ["#data-center", "#data-spread", "#data-outlier"].forEach((selector) => {
     $(selector).addEventListener("input", renderDataSpreadLab);
   });
   renderLoanLab();
@@ -2053,12 +2117,17 @@ function setupAppliedLabs() {
 }
 
 function renderLoanLab() {
+  const mode = $("#loan-mode").value;
+  const isCompound = mode === "compound";
   const principalInMan = Number($("#loan-principal").value);
   const rate = Number($("#loan-rate").value);
   const months = Number($("#loan-months").value);
   const years = months / 12;
-  const interestInMan = principalInMan * (rate / 100) * years;
-  const totalInMan = principalInMan + interestInMan;
+  // 単利は「元金 × 年率 × 年数」。複利は「元金 ×（1＋年率）^年数」で、利息が元金に組み入れられていく。
+  const totalInMan = isCompound
+    ? principalInMan * (1 + rate / 100) ** years
+    : principalInMan + principalInMan * (rate / 100) * years;
+  const interestInMan = totalInMan - principalInMan;
   const principal = principalInMan * 10000;
   const interest = interestInMan * 10000;
   const total = totalInMan * 10000;
@@ -2071,15 +2140,20 @@ function renderLoanLab() {
   $("#loan-stage").innerHTML = `
     <div class="applied-metrics">
       <div class="applied-metric"><span>借入額</span><strong>${formatYen(principal)}</strong></div>
-      <div class="applied-metric"><span>利息（単利）</span><strong>${formatYen(interest)}</strong></div>
+      <div class="applied-metric"><span>利息（${isCompound ? "複利" : "単利"}）</span><strong>${formatYen(interest)}</strong></div>
       <div class="applied-metric positive"><span>合計</span><strong>${formatYen(total)}</strong></div>
     </div>
     ${stackedBarMarkup(segments, `元金 ${formatYen(principal)} と利息 ${formatYen(interest)} の内訳`)}
     ${stackLegendMarkup(segments)}
-    <p class="applied-caution">これは「元金 × 年率 × 年数」で利息を置く単利の教材モデルです。実際のローンは契約・返済方式・手数料で変わるため、商品比較や返済判断には使いません。</p>
+    <p class="applied-caution">${
+      isCompound
+        ? "複利は、付いた利息を元金に組み入れて翌年の利率をかける方式です。残高は等比数列（初項＝元金、公比＝1＋年率）として増えます。期間を長くして、単利との差を見比べてみましょう。"
+        : "単利は「元金 × 年率 × 年数」で利息を置く方式です。利息は一次関数的（同じ額ずつ）にしか増えません。複利に切り替えて違いを見てみましょう。"
+    }</p>
   `;
-  $("#loan-result").textContent =
-    `単利のモデルでは、利息は \\(${principalInMan}\\times${(rate / 100).toFixed(2)}\\times${compactNumber(years)}=${compactNumber(interestInMan)}\\) 万円です。合計 \\(${compactNumber(totalInMan)}\\) 万円を ${months} か月で等しく分けると、1か月あたりは約 ${formatYen(monthly)} です。`;
+  $("#loan-result").textContent = isCompound
+    ? `複利のモデルでは、合計は \\(${principalInMan}\\times${(1 + rate / 100).toFixed(2)}^{${compactNumber(years)}}\\approx${compactNumber(Math.round(totalInMan * 10) / 10)}\\) 万円です。利息が利息を生むので、同じ年率でも期間が長いほど単利との差が開きます。`
+    : `単利のモデルでは、利息は \\(${principalInMan}\\times${(rate / 100).toFixed(2)}\\times${compactNumber(years)}=${compactNumber(Math.round(interestInMan * 10) / 10)}\\) 万円です。合計 \\(${compactNumber(Math.round(totalInMan * 10) / 10)}\\) 万円を ${months} か月で等しく分けると、1か月あたりは約 ${formatYen(monthly)} です。`;
   scheduleMathTypeset($("#loan-result"));
 }
 
@@ -2093,7 +2167,7 @@ function renderAccountingLab() {
   const cost = variableCost + fixedCost;
   const profit = sales - cost;
   const segments = [
-    { label: "品物ごとの費用", kind: "variable", value: variableCost, valueText: formatYen(variableCost) },
+    { label: "製造費用（1個ごと）", kind: "variable", value: variableCost, valueText: formatYen(variableCost) },
     { label: "固定の費用", kind: "fixed", value: fixedCost, valueText: formatYen(fixedCost) },
     { label: profit >= 0 ? "利益" : "費用が上回る分", kind: profit >= 0 ? "profit" : "interest", value: Math.abs(profit), valueText: formatYen(Math.abs(profit)) },
   ];
@@ -2109,7 +2183,7 @@ function renderAccountingLab() {
     <p class="applied-caution">この図は、売上から費用を引くという会計の基本関係だけを示す教材例です。税金・在庫・実際の事業判断は扱いません。</p>
   `;
   $("#accounting-result").textContent =
-    `売上は \\(${price}\\times${quantity}=${sales}\\) 円です。費用は \\(${unitCost}\\times${quantity}+${fixedCost}=${cost}\\) 円なので、${profit >= 0 ? "利益" : "損失"}は \\(${sales}-${cost}=${profit}\\) 円です。`;
+    `売上は \\(${price}\\times${quantity}=${sales}\\) 円です。費用（作る・売るのにかかるお金）は、1個ごとの製造費用と固定の費用を合わせて \\(${unitCost}\\times${quantity}+${fixedCost}=${cost}\\) 円。${profit >= 0 ? "利益" : "損失"}は \\(${sales}-${cost}=${profit}\\) 円です。`;
   scheduleMathTypeset($("#accounting-result"));
 }
 
@@ -2126,8 +2200,8 @@ function renderSpeedLab() {
       <div class="applied-metric positive"><span>道のり</span><strong>${distance} km</strong></div>
     </div>
     <div class="speed-road" style="--distance-ratio: ${distanceRatio}%" role="img" aria-label="${rate} km/h で ${hours} 時間進み、${distance} km の道のりを表すバー">
-      <span class="speed-marker">${distance} km</span>
-      <div class="speed-road-labels"><span>出発</span><span>同じ速さで進む</span><span>${distance} km</span></div>
+      <span class="speed-marker">ここまで ${distance} km</span>
+      <div class="speed-road-labels"><span>出発 0 km</span><span>同じ速さで進む</span><span>目盛りの右端 600 km</span></div>
     </div>
   `;
   $("#speed-result").textContent = `速さが一定なら、道のりは \\(${rate}\\times${hours}=${distance}\\) km です。時間を1時間増やすごとに、道のりは ${rate} km ずつ増えます。`;
@@ -2137,35 +2211,47 @@ function renderSpeedLab() {
 function renderDataSpreadLab() {
   const center = Number($("#data-center").value);
   const spread = Number($("#data-spread").value);
+  const outlier = Number($("#data-outlier").value);
   const halfSpread = spread / 2;
-  const values = [center - spread, center - halfSpread, center, center + halfSpread, center + spread];
+  // 外れ値は一番大きい値だけを引き上げる。平均は動くが、中央値（3番目）は動かない。
+  const values = [center - spread, center - halfSpread, center, center + halfSpread, center + spread + outlier];
+  const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
   const min = center - Math.max(spread + 10, 30);
-  const max = center + Math.max(spread + 10, 30);
+  const max = center + Math.max(spread + outlier + 10, 30);
   const range = values.at(-1) - values[0];
   const median = values[2];
-  const squaredDeviations = values.map((value) => (value - center) ** 2);
+  const squaredDeviations = values.map((value) => Math.round((value - mean) ** 2 * 100) / 100);
   const variance = squaredDeviations.reduce((sum, value) => sum + value, 0) / values.length;
   const standardDeviation = Math.sqrt(variance);
+  const meanText = compactNumber(Math.round(mean * 10) / 10);
   const points = values
     .map((value, index) => {
       const position = ((value - min) / (max - min)) * 100;
       return `<span class="data-point" style="left: ${position}%" aria-label="${index + 1}番目の値 ${value}">${value}</span>`;
     })
     .join("");
+  const meanPosition = ((mean - min) / (max - min)) * 100;
+  const medianPosition = ((median - min) / (max - min)) * 100;
 
   $("#data-spread-stage").innerHTML = `
     <div class="applied-metrics">
-      <div class="applied-metric"><span>5つの値の平均</span><strong>${center}</strong></div>
+      <div class="applied-metric"><span>平均</span><strong>${meanText}</strong></div>
       <div class="applied-metric"><span>中央値</span><strong>${median}</strong></div>
       <div class="applied-metric"><span>範囲</span><strong>${range}</strong></div>
-      <div class="applied-metric"><span>分散</span><strong>${compactNumber(variance)}</strong></div>
+      <div class="applied-metric"><span>分散</span><strong>${compactNumber(Math.round(variance * 10) / 10)}</strong></div>
       <div class="applied-metric positive"><span>標準偏差</span><strong>${standardDeviation.toFixed(2)}</strong></div>
     </div>
-    <div class="data-axis" role="img" aria-label="平均 ${center}、最小 ${values[0]}、最大 ${values.at(-1)} の五つの値を並べた数直線">${points}</div>
-    <div class="data-axis-labels"><span>${min}</span><span>平均・中央値 ${center}</span><span>${max}</span></div>
+    <div class="data-axis" role="img" aria-label="最小 ${values[0]}、最大 ${values.at(-1)} の五つの値を並べた数直線">
+      ${points}
+      <span class="data-mean-marker" style="left: ${meanPosition}%" title="平均 ${meanText}">▲</span>
+      <span class="data-median-marker" style="left: ${medianPosition}%" title="中央値 ${median}">▼</span>
+    </div>
+    <div class="data-axis-labels"><span>${min}</span><span><span class="tag-teal-text">▼中央値 ${median}</span>｜<span class="tag-orange-text">▲平均 ${meanText}</span></span><span>${max}</span></div>
   `;
   $("#data-spread-result").textContent =
-    `平均は合計を個数で割って \\((${values.join("+")})\\div5=${center}\\) です。中央値は小さい順の中央なので \\(${median}\\)、範囲は \\(${values.at(-1)}-${values[0]}=${range}\\) です。分散は偏差の2乗 \\(${squaredDeviations.join("+")}\\) の平均で \\(${compactNumber(variance)}\\)、標準偏差はその平方根で約 \\(${standardDeviation.toFixed(2)}\\) です。`;
+    outlier > 0
+      ? `外れ値で一番大きい値だけを \\(${outlier}\\) 引き上げました。平均は \\((${values.join("+")})\\div5=${meanText}\\) と右へ動きますが、中央値（小さい順で3番目）は \\(${median}\\) のまま動きません。極端な値に平均は引っぱられ、中央値は動きにくい——これが2つの代表値の性格の違いです。`
+      : `平均は合計を個数で割って \\((${values.join("+")})\\div5=${meanText}\\) です。いまは値が左右対称なので、平均と中央値 \\(${median}\\) が一致しています。「外れ値」スライダーを動かして、2つがずれる様子を見てみましょう。範囲は \\(${values.at(-1)}-${values[0]}=${range}\\) です。`;
   scheduleMathTypeset($("#data-spread-result"));
 }
 
@@ -3847,6 +3933,23 @@ function setupSearch() {
   if (!input) return;
   input.addEventListener("input", () => renderSearchResults(input.value));
   renderSearchResults("");
+
+  // ホームの検索窓：送信すると検索ページへ移り、同じキーワードで結果を出す。
+  const homeForm = $("#home-search-form");
+  const homeInput = $("#home-search-input");
+  if (homeForm && homeInput) {
+    homeForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      input.value = homeInput.value;
+      renderSearchResults(homeInput.value);
+      if (location.hash.replace("#", "") !== "search") {
+        location.hash = "search";
+      } else {
+        activatePage("search");
+      }
+      window.setTimeout(() => input.focus(), 120);
+    });
+  }
 }
 
 function setupNavigation() {
