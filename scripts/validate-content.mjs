@@ -5,6 +5,7 @@ import { labs, labCatalog, unitLabRefs } from "../src/content/labs.js";
 import { practiceCatalog } from "../src/content/practice.js";
 import { topics } from "../src/content/topics.js";
 import { stories, storyCatalog, storySourcePolicy } from "../src/content/stories.js";
+import { glossaryTerms } from "../src/content/glossary.js";
 
 const root = resolve(import.meta.dirname, "..");
 
@@ -187,6 +188,14 @@ export async function validateContent({ outputRoot } = {}) {
 
   topics.forEach((topic) => assert(lessonIds.has(topic.lessonId), `学習マップ ${topic.title} の単元 ${topic.lessonId} が見つかりません。`));
 
+  const glossarySeen = new Set();
+  glossaryTerms.forEach(({ term, lessonId }) => {
+    assert(typeof term === "string" && term.trim().length >= 2, `用語集に短すぎる用語があります: ${term}`);
+    assert(!glossarySeen.has(term), `用語集の用語が重複しています: ${term}`);
+    glossarySeen.add(term);
+    assert(lessonIds.has(lessonId), `用語集「${term}」の単元 ${lessonId} が見つかりません。`);
+  });
+
   assert(storySourcePolicy.history && storySourcePolicy.society, "読み物の出典方針がありません。");
   stories.forEach((story) => {
     assert(story.type && story.title && story.lead, `読み物 ${story.id} の基本情報が不足しています。`);
@@ -204,7 +213,7 @@ export async function validateContent({ outputRoot } = {}) {
     });
   });
 
-  const sourceFiles = ["content/lessons.js", "content/topics.js", "content/labs.js", "content/practice.js", "content/stories.js"];
+  const sourceFiles = ["content/lessons.js", "content/topics.js", "content/labs.js", "content/practice.js", "content/stories.js", "content/glossary.js"];
   for (const sourceFile of sourceFiles) {
     const source = await readFile(resolve(root, "src", sourceFile), "utf8");
     assert(
