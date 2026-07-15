@@ -49,6 +49,20 @@ function scheduleMathTypeset(target = document.body) {
   mathTypesetFrame = window.setTimeout(flushMathTypeset, 16);
 }
 
+// ページ移動のスクロールは即時に行う。html の scroll-behavior: smooth のままだと、
+// 移動直後の MathJax 描画で本文の高さが変わってスムーズスクロールが途中で止まり、
+// ページの途中から表示される（特にスマホ）。behavior: "instant" の明示指定が必要
+// （インラインで scroll-behavior を上書きしても同期的には効かない）。
+function jumpToTop(element = null) {
+  try {
+    if (element) element.scrollIntoView({ behavior: "instant", block: "start" });
+    else window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  } catch {
+    if (element) element.scrollIntoView(true);
+    else window.scrollTo(0, 0);
+  }
+}
+
 let activeUnit = 0;
 let activeLabId = "number-line-lab";
 let activePracticeMode = "integer";
@@ -908,7 +922,7 @@ function renderUnitButtons() {
       activeUnit = index;
       renderUnit();
       setHashForUnit(index);
-      $("#lessons").scrollIntoView({ behavior: "smooth", block: "start" });
+      jumpToTop();
     });
     wrap.append(button);
   });
@@ -928,6 +942,7 @@ function renderDots() {
       activeUnit = index;
       renderUnit();
       setHashForUnit(index);
+      jumpToTop();
     });
     wrap.append(button);
   });
@@ -1081,6 +1096,7 @@ function setupLessons() {
     activeUnit = units.findIndex((unit) => unit.id === availableUnits[Math.max(0, index - 1)].id);
     renderUnit();
     setHashForUnit(activeUnit);
+    jumpToTop();
   });
   $("#next-unit").addEventListener("click", () => {
     const availableUnits = visibleUnits();
@@ -1088,6 +1104,7 @@ function setupLessons() {
     activeUnit = units.findIndex((unit) => unit.id === availableUnits[Math.min(availableUnits.length - 1, index + 1)].id);
     renderUnit();
     setHashForUnit(activeUnit);
+    jumpToTop();
   });
   $("#clear-lesson-filter").addEventListener("click", () => {
     activeLessonRange = null;
@@ -2391,7 +2408,7 @@ function selectLab(labId, { scroll = false } = {}) {
   renderLabPicker();
   renderLabLearningActions(labId);
   if (scroll && lab) {
-    window.setTimeout(() => lab.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    window.setTimeout(() => jumpToTop(lab), 80);
   }
 }
 
@@ -3893,7 +3910,7 @@ function renderMap() {
         renderUnit();
         activatePage("lessons");
         setHashForUnit(index);
-        $("#lessons").scrollIntoView({ behavior: "smooth", block: "start" });
+        jumpToTop();
       }
     });
   });
@@ -3957,7 +3974,7 @@ function handleRoute() {
       if (unitIndex >= 0) activeUnit = unitIndex;
     }
     renderUnit();
-    $("#lessons").scrollIntoView({ behavior: "smooth", block: "start" });
+    jumpToTop();
     return;
   }
 
@@ -3967,8 +3984,9 @@ function handleRoute() {
     return;
   }
 
-  if (route.page === "practice" && route.id && route.id !== activePracticeMode) {
-    setActivePracticeMode(route.id);
+  if (route.page === "practice") {
+    if (route.id && route.id !== activePracticeMode) setActivePracticeMode(route.id);
+    if (route.id) jumpToTop();
     return;
   }
 
@@ -3976,7 +3994,7 @@ function handleRoute() {
     activeStoryId = route.id || activeStoryId;
     renderStoryPicker();
     renderStory();
-    if (route.id) $("#stories").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (route.id) jumpToTop();
   }
 }
 
