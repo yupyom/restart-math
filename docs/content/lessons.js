@@ -1970,7 +1970,7 @@ const lessonMetadata = {
   functions: { strand: "関数", practiceIds: ["function-values"] },
   "quadratic-vertex": { strand: "関数", practiceIds: ["quadratic"] },
   "quadratic-inequalities": { strand: "関数", practiceIds: ["quadratic-sign"] },
-  "trig-ratios": { strand: "図形と計量", practiceIds: ["trig"] },
+  "trig-ratios": { strand: "図形と計量", practiceIds: ["trig", "trig-survey"] },
   "parallel-lines-angles": { strand: "図形", practiceIds: ["geometry-basics"] },
   "trig-extension": { strand: "図形と計量", practiceIds: ["sine-cosine-rule"] },
   "sine-cosine-rule": { strand: "図形と計量", practiceIds: ["sine-cosine-rule"] },

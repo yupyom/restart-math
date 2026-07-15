@@ -163,6 +163,14 @@ const rawPracticeCatalog = [
     numberPolicy: "直角や60度を含む計算しやすい三角形",
   },
   {
+    id: "trig-survey",
+    label: "三角比で測る",
+    lessonIds: ["trig-ratios", "sine-cosine-rule"],
+    labIds: ["trig-lab"],
+    level: "はじめの一問",
+    numberPolicy: "sin30°・cos60°・tan45° など、ちょうどの値になる角だけを使う",
+  },
+  {
     id: "counting",
     label: "場合の数",
     lessonIds: ["counting-principles"],
@@ -240,6 +248,7 @@ const advancedPolicies = {
   "function-values": "2点から一次関数の式を決める",
   "quadratic-sign": "2次不等式の向きと根の内外を使い分ける",
   trig: "代表角と辺の長さから未知の辺を求める",
+  "trig-survey": "60°の見上げで √3 が残る、木の高さの測量",
   "sine-cosine-rule": "辺と角の対応を自分で選んで定理を使う",
   counting: "重複を除く順列・組合せ",
   probability: "少なくとも1回起こる確率を余事象で求める",

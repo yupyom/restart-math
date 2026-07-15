@@ -22,10 +22,11 @@
     />
     <link rel="stylesheet" href="assets/css/styles.css" />
     <script>
+      // MathJax は挙動が安定している v3 系に固定する。
       window.MathJax = {
         tex: {
-          inlineMath: { "[+]": [["\\(", "\\)"]] },
-          displayMath: { "[+]": [["\\[", "\\]"]] },
+          inlineMath: [["\\(", "\\)"]],
+          displayMath: [["\\[", "\\]"]],
           processEscapes: true
         },
         options: {
@@ -33,7 +34,7 @@
         }
       };
     </script>
-    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">本文へスキップ</a>
@@ -524,9 +525,18 @@
                   <button class="math-choice" type="button" data-trig-preset="60">60°</button>
                 </div>
               </fieldset>
+              <fieldset class="choice-field">
+                <legend>長さを決める辺</legend>
+                <input id="trig-base" type="hidden" value="hyp" />
+                <div class="math-choice-group" data-math-choice-group="trig-base">
+                  <button class="math-choice active" type="button" data-choice-value="hyp" aria-pressed="true">斜辺</button>
+                  <button class="math-choice" type="button" data-choice-value="opposite" aria-pressed="false">対辺</button>
+                  <button class="math-choice" type="button" data-choice-value="adjacent" aria-pressed="false">隣辺</button>
+                </div>
+              </fieldset>
               <label>
-                <span>斜辺</span>
-                <input id="trig-hyp" type="range" min="4" max="10" value="7" />
+                <span>選んだ辺の長さ</span>
+                <input id="trig-hyp" type="range" min="1" max="12" value="7" />
               </label>
               <fieldset class="choice-field">
                 <legend>表示</legend>

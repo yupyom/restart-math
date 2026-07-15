@@ -669,9 +669,43 @@ function vennCountAdvanced() {
   };
 }
 
+function trigSurveyAdvanced() {
+  const distance = choose([4, 5, 6, 8, 10]);
+  const approx = Math.round(distance * 1.73 * 100) / 100;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "木の高さを60°で見上げる",
+    prompt: `木から \\(${distance}\\) m離れた地点で、てっぺんを見上げる角度を測ったら \\(60^\\circ\\) でした。木の高さを求めます（目の高さは考えません）。`,
+    steps: [
+      {
+        label: "使う三角比",
+        question: "sin・cos・tan のどれを使う？",
+        hint: "水平距離（隣辺）から高さ（対辺）を求めます。",
+        check: (input) => normalizeText(input).includes("tan"),
+        answer: "tan",
+      },
+      {
+        label: "根号のまま表す",
+        question: `高さは \\(${distance}\\times\\tan60^\\circ\\)。\\(\\tan60^\\circ=\\sqrt3\\) なので、高さを根号のまま表すと？`,
+        hint: `\\(${distance}\\sqrt3\\) の形になります。「${distance}√3」のように入力してください。`,
+        check: (input) => sameRadical(input, distance, 3),
+        answer: `\\(${radicalText(distance, 3)}\\)`,
+      },
+      {
+        label: "およその値",
+        question: `\\(\\sqrt3\\approx1.73\\) として、高さはおよそ何m？（\\(${distance}\\times1.73\\) を計算）`,
+        hint: `\\(${distance}\\times1.73=${approx}\\) です。`,
+        check: (input) => numericAnswer(input, approx),
+        answer: String(approx),
+      },
+    ],
+  };
+}
+
 export const advancedPracticeGenerators = {
   integer: integerAdvanced,
   "absolute-value": absoluteValueAdvanced,
+  "trig-survey": trigSurveyAdvanced,
   exponent: exponentAdvanced,
   "arithmetic-sequence": arithmeticSequenceAdvanced,
   "venn-count": vennCountAdvanced,

@@ -13,18 +13,40 @@ const pageIds = ["home", "scope", "lessons", "labs", "practice", "stories", "map
 let mathTypesetFrame = null;
 const mathTypesetTargets = new Set();
 
-function scheduleMathTypeset(target = document.body) {
-  if (!window.MathJax || typeof window.MathJax.typesetPromise !== "function") return;
-  mathTypesetTargets.add(target);
-  if (mathTypesetFrame) return;
-  mathTypesetFrame = window.requestAnimationFrame(() => {
-    const targets = Array.from(mathTypesetTargets).filter(Boolean);
-    mathTypesetTargets.clear();
-    mathTypesetFrame = null;
-    window.MathJax.typesetPromise(targets).catch((error) => {
+let mathTypesetQueue = Promise.resolve();
+
+function flushMathTypeset() {
+  mathTypesetFrame = null;
+  // MathJax 本体（CDN・defer）の読み込みが済んでいなければ、ターゲットを捨てずに少し待って再試行する。
+  if (!window.MathJax || typeof window.MathJax.typesetPromise !== "function") {
+    mathTypesetFrame = window.setTimeout(flushMathTypeset, 200);
+    return;
+  }
+  const connected = Array.from(mathTypesetTargets).filter((element) => element && element.isConnected);
+  mathTypesetTargets.clear();
+  // 親と子を同じバッチに渡すと、同じ数式が二重に処理されて
+  // splitText の IndexSizeError で描画が壊れる。他のターゲットに含まれる要素は外す。
+  const targets = connected.filter(
+    (element) => !connected.some((other) => other !== element && other.contains(element)),
+  );
+  if (!targets.length) return;
+  // typesetPromise は並行呼び出しに弱いので直列化し、
+  // 再描画で入れ替わった要素の古い管理情報は typesetClear で先に消す。
+  mathTypesetQueue = mathTypesetQueue
+    .then(() => {
+      window.MathJax.typesetClear?.(targets);
+      return window.MathJax.typesetPromise(targets);
+    })
+    .catch((error) => {
       console.warn("MathJax typeset failed:", error);
     });
-  });
+}
+
+function scheduleMathTypeset(target = document.body) {
+  mathTypesetTargets.add(target);
+  if (mathTypesetFrame) return;
+  // requestAnimationFrame はバックグラウンドのタブで止まるため、タイマーでまとめる。
+  mathTypesetFrame = window.setTimeout(flushMathTypeset, 16);
 }
 
 let activeUnit = 0;
@@ -1641,7 +1663,7 @@ function drawQuadraticVertex() {
 }
 
 function setupTrigLab() {
-  ["#trig-angle", "#trig-hyp", "#trig-focus"].forEach((selector) => {
+  ["#trig-angle", "#trig-hyp", "#trig-base", "#trig-focus"].forEach((selector) => {
     $(selector).addEventListener("input", drawTrigLab);
   });
   $$("[data-trig-preset]").forEach((button) => {
@@ -1659,11 +1681,22 @@ function drawTrigLab() {
   const width = canvas.width;
   const height = canvas.height;
   const degree = Number($("#trig-angle").value);
-  const hyp = Number($("#trig-hyp").value);
+  const baseLength = Number($("#trig-hyp").value);
+  const baseSide = $("#trig-base").value;
   const focus = $("#trig-focus").value;
   const rad = (degree * Math.PI) / 180;
+  // 角度と1辺が決まれば、残りの2辺は自動的に決まる。どの辺を「決めた辺」にするかを選べる。
+  let hyp;
+  if (baseSide === "opposite") {
+    hyp = baseLength / Math.sin(rad);
+  } else if (baseSide === "adjacent") {
+    hyp = baseLength / Math.cos(rad);
+  } else {
+    hyp = baseLength;
+  }
   const adjacent = hyp * Math.cos(rad);
   const opposite = hyp * Math.sin(rad);
+  const sideText = (value, isBase) => (isBase ? `= ${compactNumber(baseLength)}` : `≒ ${value.toFixed(2)}`);
   const scale = Math.min(62, (width - 230) / adjacent, (height - 90) / opposite);
   const ax = 110;
   const ay = height - 55;
@@ -1718,28 +1751,32 @@ function drawTrigLab() {
   ctx.textAlign = "left";
   ctx.fillStyle = "#1f2933";
   ctx.fillText(`θ = ${degree}°`, ax + 30, ay - 16);
+  const hypText = baseSide === "hyp" ? compactNumber(baseLength) : hyp.toFixed(2);
+  const oppText = baseSide === "opposite" ? compactNumber(baseLength) : opposite.toFixed(2);
+  const adjText = baseSide === "adjacent" ? compactNumber(baseLength) : adjacent.toFixed(2);
+
   ctx.textAlign = "center";
   ctx.fillStyle = useAdjacent ? "#2c56b8" : "#8b95a1";
-  ctx.fillText(`隣辺 ≒ ${adjacent.toFixed(2)}`, (ax + bx) / 2, ay + 36);
+  ctx.fillText(`隣辺 ${sideText(adjacent, baseSide === "adjacent")}`, (ax + bx) / 2, ay + 36);
   ctx.textAlign = "left";
   ctx.fillStyle = useOpposite ? "#a42c68" : "#8b95a1";
-  ctx.fillText(`対辺 ≒ ${opposite.toFixed(2)}`, bx + 16, (by + cy) / 2 + 8);
+  ctx.fillText(`対辺 ${sideText(opposite, baseSide === "opposite")}`, bx + 16, (by + cy) / 2 + 8);
   ctx.textAlign = "center";
   ctx.fillStyle = useHypotenuse ? "#184c50" : "#8b95a1";
-  ctx.fillText(`斜辺 = ${hyp}`, (ax + cx) / 2 - 52, (ay + cy) / 2 - 16);
+  ctx.fillText(`斜辺 ${sideText(hyp, baseSide === "hyp")}`, (ax + cx) / 2 - 52, (ay + cy) / 2 - 16);
 
   // 図の下に、いま見ている比の定義式を数値つきで示す
-  const sinFormula = `\\(\\sin${degree}^{\\circ}=\\dfrac{\\text{対辺}}{\\text{斜辺}}=\\dfrac{${opposite.toFixed(2)}}{${hyp}}\\approx${(opposite / hyp).toFixed(3)}\\)`;
-  const cosFormula = `\\(\\cos${degree}^{\\circ}=\\dfrac{\\text{隣辺}}{\\text{斜辺}}=\\dfrac{${adjacent.toFixed(2)}}{${hyp}}\\approx${(adjacent / hyp).toFixed(3)}\\)`;
-  const tanFormula = `\\(\\tan${degree}^{\\circ}=\\dfrac{\\text{対辺}}{\\text{隣辺}}=\\dfrac{${opposite.toFixed(2)}}{${adjacent.toFixed(2)}}\\approx${(opposite / adjacent).toFixed(3)}\\)`;
+  const sinFormula = `\\(\\sin${degree}^{\\circ}=\\dfrac{\\text{対辺}}{\\text{斜辺}}=\\dfrac{${oppText}}{${hypText}}\\approx${(opposite / hyp).toFixed(3)}\\)`;
+  const cosFormula = `\\(\\cos${degree}^{\\circ}=\\dfrac{\\text{隣辺}}{\\text{斜辺}}=\\dfrac{${adjText}}{${hypText}}\\approx${(adjacent / hyp).toFixed(3)}\\)`;
+  const tanFormula = `\\(\\tan${degree}^{\\circ}=\\dfrac{\\text{対辺}}{\\text{隣辺}}=\\dfrac{${oppText}}{${adjText}}\\approx${(opposite / adjacent).toFixed(3)}\\)`;
   $("#trig-formula").textContent =
     focus === "sin" ? sinFormula : focus === "cos" ? cosFormula : focus === "tan" ? tanFormula : `${sinFormula}　${cosFormula}　${tanFormula}`;
 
   const famousRatio =
     degree === 45
-      ? "いまの形は直角二等辺三角形（三角定規の一つ）。3辺の比はちょうど \\(1:1:\\sqrt{2}\\) です。"
+      ? "いまの形は直角二等辺三角形（三角定規の一つ）。3辺の比はちょうど \\(1:1:\\sqrt{2}\\) です。対辺を \\(1\\) に決めると、隣辺も \\(1\\)、斜辺は \\(\\sqrt2\\approx1.41\\) になります。"
       : degree === 30 || degree === 60
-        ? "いまの形はもう一つの三角定規。3辺の比はちょうど \\(1:2:\\sqrt{3}\\) です。"
+        ? `いまの形はもう一つの三角定規。3辺の比はちょうど \\(1:2:\\sqrt{3}\\) です。斜辺を \\(2\\) に決めると、${degree === 30 ? "対辺" : "隣辺"}はちょうど \\(1\\)、残りの辺は \\(\\sqrt3\\approx1.73\\) になります。`
         : "";
   $("#trig-result").textContent =
     `色のついた2辺の比が、選んだ三角比です。斜辺を変えても、角度が同じなら比は変わりません。${famousRatio}`;
@@ -2371,6 +2408,7 @@ const practiceGenerators = {
   "function-values": generateFunctionValuesProblem,
   "quadratic-sign": generateQuadraticSignProblem,
   trig: generateTrigProblem,
+  "trig-survey": generateTrigSurveyProblem,
   "sine-cosine-rule": generateSineCosineRuleProblem,
   counting: generateCountingProblem,
   probability: generateProbabilityProblem,
@@ -2816,6 +2854,82 @@ function generateTrigProblem() {
         hint: "\\(\\tan\\theta=\\dfrac{\\text{対辺}}{\\text{隣辺}}\\) です。",
         check: (input) => sameRational(input, tri.opposite, tri.adjacent),
         answer: `\\(${fractionText(tri.opposite, tri.adjacent)}\\)`,
+      },
+    ],
+  };
+}
+
+function generateTrigSurveyProblem() {
+  const scenarios = [
+    () => {
+      const length = choose([6, 8, 10, 12]);
+      return {
+        prompt: `長さ \\(${length}\\) mのはしごを、地面から \\(30^\\circ\\) の角度で壁に立てかけました。はしごの先が届く高さは何mでしょう。`,
+        ratio: "sin",
+        ratioQuestion: "\\(\\sin30^\\circ\\) の値は？",
+        ratioHint: "三角定規の比 \\(1:2:\\sqrt3\\) で、\\(30^\\circ\\) の対辺は斜辺の半分です。",
+        ratioCheck: (input) => sameRational(input, 1, 2),
+        ratioAnswer: "1/2",
+        formula: `${length}\\times\\sin30^\\circ=${length}\\times\\dfrac12`,
+        answer: length / 2,
+        why: "はしご（斜辺）と角度から高さ（対辺）を求めるので \\(\\sin\\)",
+      };
+    },
+    () => {
+      const distance = choose([5, 7, 9, 12]);
+      return {
+        prompt: `木から \\(${distance}\\) m離れた地点で、木のてっぺんを見上げる角度を測ったら、ちょうど \\(45^\\circ\\) でした。木の高さは何mでしょう（目の高さは考えません）。`,
+        ratio: "tan",
+        ratioQuestion: "\\(\\tan45^\\circ\\) の値は？",
+        ratioHint: "\\(45^\\circ\\) の直角二等辺三角形では、対辺と隣辺が同じ長さです。",
+        ratioCheck: (input) => Number(normalizeText(input)) === 1,
+        ratioAnswer: "1",
+        formula: `${distance}\\times\\tan45^\\circ=${distance}\\times1`,
+        answer: distance,
+        why: "水平距離（隣辺）から高さ（対辺）を求めるので \\(\\tan\\)",
+      };
+    },
+    () => {
+      const length = choose([6, 8, 10, 14]);
+      return {
+        prompt: `長さ \\(${length}\\) mのロープを、支柱の先から地面へ \\(60^\\circ\\) の角度でピンと張りました。ロープの根元は、支柱の真下から何m離れているでしょう。`,
+        ratio: "cos",
+        ratioQuestion: "\\(\\cos60^\\circ\\) の値は？",
+        ratioHint: "三角定規の比 \\(1:2:\\sqrt3\\) で、\\(60^\\circ\\) の隣辺は斜辺の半分です。",
+        ratioCheck: (input) => sameRational(input, 1, 2),
+        ratioAnswer: "1/2",
+        formula: `${length}\\times\\cos60^\\circ=${length}\\times\\dfrac12`,
+        answer: length / 2,
+        why: "ロープ（斜辺）と角度から水平方向の距離（隣辺）を求めるので \\(\\cos\\)",
+      };
+    },
+  ];
+  const scenario = choose(scenarios)();
+  return {
+    modeLabel: "三角比の応用",
+    title: "三角比で長さを測る",
+    prompt: scenario.prompt,
+    steps: [
+      {
+        label: "使う三角比",
+        question: "sin・cos・tan のどれを使う？",
+        hint: "分かっている辺と求めたい辺が、角から見て「対辺・隣辺・斜辺」のどれとどれかを考えます。",
+        check: (input) => normalizeText(input).includes(scenario.ratio),
+        answer: scenario.ratio,
+      },
+      {
+        label: "比の値",
+        question: scenario.ratioQuestion,
+        hint: scenario.ratioHint,
+        check: scenario.ratioCheck,
+        answer: scenario.ratioAnswer,
+      },
+      {
+        label: "長さを求める",
+        question: "求める長さは何m？",
+        hint: `${scenario.why}。\\(${scenario.formula}\\) を計算します。`,
+        check: (input) => Number(normalizeText(input).replace(/m$/, "")) === scenario.answer,
+        answer: String(scenario.answer),
       },
     ],
   };
