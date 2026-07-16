@@ -702,6 +702,237 @@ function trigSurveyAdvanced() {
   };
 }
 
+function signedTerm(value) {
+  return value < 0 ? String(value) : `+${value}`;
+}
+
+function expansionAdvanced() {
+  const a = randomInt(2, 3);
+  const c = randomInt(2, 3);
+  const b = choose([-5, -4, -3, 2, 3, 4, 5]);
+  const d = choose([-5, -4, -3, 2, 3, 4, 5]);
+  const squareCoefficient = a * c;
+  const xCoefficient = a * d + b * c;
+  const constant = b * d;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "係数つきのかっこを展開する",
+    prompt: `\\((${a}x${signedTerm(b)})(${c}x${signedTerm(d)})\\) を展開する`,
+    steps: [
+      {
+        label: "x²の係数",
+        question: "\\(x^2\\) の係数は？",
+        hint: `\\(x\\) の項どうしの積 \\(${a}x\\times${c}x\\) から出ます。`,
+        check: (input) => numericAnswer(input, squareCoefficient),
+        answer: String(squareCoefficient),
+      },
+      {
+        label: "xの係数",
+        question: "\\(x\\) の係数は？",
+        hint: `外どうし \\(${a}\\times(${d})\\) と内どうし \\((${b})\\times${c}\\) の和です。符号ごと計算します。`,
+        check: (input) => numericAnswer(input, xCoefficient),
+        answer: String(xCoefficient),
+      },
+      {
+        label: "定数項",
+        question: "定数項は？",
+        hint: `数どうしの積 \\((${b})\\times(${d})\\)。符号のかけ算に注意。`,
+        check: (input) => numericAnswer(input, constant),
+        answer: String(constant),
+      },
+    ],
+  };
+}
+
+function factoringAdvanced() {
+  const p = randomInt(2, 7);
+  let q = -randomInt(2, 7);
+  while (Math.abs(q) === p) q = -randomInt(2, 7);
+  const sum = p + q;
+  const product = p * q;
+  const expectedA = `(x${signedTerm(p)})(x${signedTerm(q)})`;
+  const expectedB = `(x${signedTerm(q)})(x${signedTerm(p)})`;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "符号の組を見極める因数分解",
+    prompt: `\\(x^2${signedTerm(sum)}x${signedTerm(product)}\\) を因数分解する`,
+    steps: [
+      {
+        label: "2数をさがす",
+        question: `かけて \\(${product}\\)、たして \\(${sum}\\) になる2つの数は？（カンマ区切り・符号つき）`,
+        hint: `積が負なので、2数は正と負の組です。差が \\(${Math.abs(sum)}\\) になる組を探し、たして \\(${sum}\\) になるよう符号を割り当てます。`,
+        check: (input) => sameNumberList(input, [p, q]),
+        answer: `${Math.min(p, q)}, ${Math.max(p, q)}`,
+      },
+      {
+        label: "式にまとめる",
+        question: "因数分解した式は？（例：(x+1)(x-2)）",
+        hint: `見つけた2数を符号ごと入れて \\((x${signedTerm(p)})(x${signedTerm(q)})\\) の形にします。`,
+        check: (input) => {
+          const text = normalizeText(input);
+          return text === expectedA || text === expectedB;
+        },
+        answer: expectedA,
+      },
+    ],
+  };
+}
+
+function quadraticSolveAdvanced() {
+  const rootA = randomInt(-5, 3);
+  let rootB = randomInt(-2, 6);
+  while (rootB === rootA) rootB = randomInt(-2, 6);
+  const b = -(rootA + rootB);
+  const c = rootA * rootB;
+  const discriminant = b * b - 4 * c;
+  const sqrtD = Math.abs(rootA - rootB);
+  const low = Math.min(rootA, rootB);
+  const high = Math.max(rootA, rootB);
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "判別式と解の公式で解く",
+    prompt: `二次方程式 \\(x^2${signedTerm(b)}x${signedTerm(c)}=0\\) を、解の公式 \\(x=\\dfrac{-b\\pm\\sqrt{D}}{2a}\\) で解く`,
+    steps: [
+      {
+        label: "判別式",
+        question: "判別式 \\(D=b^2-4ac\\) の値は？",
+        hint: `\\(a=1,\\ b=${b},\\ c=${c}\\)。\\(D=(${b})^2-4\\times1\\times(${c})\\) を符号ごと計算します。`,
+        check: (input) => numericAnswer(input, discriminant),
+        answer: String(discriminant),
+      },
+      {
+        label: "ルートを外す",
+        question: "\\(\\sqrt{D}\\) の値は？",
+        hint: `\\(D=${discriminant}\\) は平方数です。2乗すると \\(${discriminant}\\) になる正の数を探します。`,
+        check: (input) => numericAnswer(input, sqrtD),
+        answer: String(sqrtD),
+      },
+      {
+        label: "解を求める",
+        question: "解は？（カンマ区切りで2つ）",
+        hint: `\\(x=\\dfrac{${-b}\\pm${sqrtD}}{2}\\)。プラスとマイナスの両方を計算します。`,
+        check: (input) => sameNumberList(String(input).replace(/x=/gi, ""), [rootA, rootB]),
+        answer: `x=${low}, ${high}`,
+      },
+    ],
+  };
+}
+
+function factorialOf(value) {
+  let result = 1;
+  for (let i = 2; i <= value; i += 1) result *= i;
+  return result;
+}
+
+function permCombAdvanced() {
+  const tableSize = randomInt(4, 6);
+  const circular = factorialOf(tableSize - 1);
+  const duplicateCount = randomInt(2, 3);
+  const letters = `${"A".repeat(duplicateCount)}BB C`.replace(" ", "");
+  const totalLetters = duplicateCount + 3;
+  const arrangements = factorialOf(totalLetters) / (factorialOf(duplicateCount) * 2);
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "円順列と、同じものを含む順列",
+    prompt: `前半は \\(${tableSize}\\) 人の円卓、後半は ${totalLetters} 文字 \\(\\mathrm{${letters}}\\) の並べ替えを数える`,
+    steps: [
+      {
+        label: "円順列",
+        question: `\\(${tableSize}\\) 人が円卓に座る座り方は何通り？`,
+        hint: `回して重なる配置は同じとみなします。1人の席を固定して、残り \\(${tableSize - 1}\\) 人の順列 \\((${tableSize}-1)!\\) を計算。`,
+        check: (input) => numericAnswer(input, circular),
+        answer: String(circular),
+      },
+      {
+        label: "同じものを含む順列",
+        question: `\\(\\mathrm{${letters}}\\) の ${totalLetters} 文字を一列に並べる方法は何通り？`,
+        hint: `一列の \\(${totalLetters}!\\) を、同じ文字どうしの入れ替え（Aが \\(${duplicateCount}!\\)、Bが \\(2!\\)）で割ります。`,
+        check: (input) => numericAnswer(input, arrangements),
+        answer: String(arrangements),
+      },
+    ],
+  };
+}
+
+function sequenceSumAdvanced() {
+  const first = randomInt(1, 2);
+  const ratio = choose([2, 3]);
+  const count = ratio === 2 ? 5 : 4;
+  const geometricSum = (first * (ratio ** count - 1)) / (ratio - 1);
+  const sigmaN = randomInt(5, 9);
+  const addend = randomInt(1, 5);
+  const sigmaValue = sigmaN * (sigmaN + 1) + addend * sigmaN;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "等比の和とΣの計算",
+    prompt: `前半は初項 \\(${first}\\)・公比 \\(${ratio}\\) の等比数列、後半は \\(\\displaystyle\\sum_{k=1}^{${sigmaN}}(2k+${addend})\\) を計算する`,
+    steps: [
+      {
+        label: "等比数列の和",
+        question: `初項から第 \\(${count}\\) 項までの和は？`,
+        hint: `公式 \\(S_n=\\dfrac{a(r^n-1)}{r-1}\\) に \\(a=${first},\\ r=${ratio},\\ n=${count}\\)。「ずらして引く」の結果です。`,
+        check: (input) => numericAnswer(input, geometricSum),
+        answer: String(geometricSum),
+      },
+      {
+        label: "Σを分ける",
+        question: `\\(\\displaystyle\\sum_{k=1}^{${sigmaN}}(2k+${addend})\\) の値は？`,
+        hint: `\\(2\\sum k+\\sum ${addend}\\) に分けます。\\(2\\times\\dfrac{${sigmaN}\\times${sigmaN + 1}}{2}+${addend}\\times${sigmaN}\\)。定数 \\(${addend}\\) は \\(${sigmaN}\\) 回足されます。`,
+        check: (input) => numericAnswer(input, sigmaValue),
+        answer: String(sigmaValue),
+      },
+    ],
+  };
+}
+
+function quartilesAdvanced() {
+  let value = randomInt(2, 5) * 2;
+  const values = [value];
+  for (let i = 0; i < 7; i += 1) {
+    value += randomInt(1, 3) * 2;
+    values.push(value);
+  }
+  const q1 = (values[1] + values[2]) / 2;
+  const median = (values[3] + values[4]) / 2;
+  const q3 = (values[5] + values[6]) / 2;
+  const iqr = q3 - q1;
+  return {
+    modeLabel: "少し進んだ問題",
+    title: "偶数個のデータの四分位数",
+    prompt: `小さい順に並んだ8個のデータ \\(${values.join("\\ ")}\\) を要約する（真ん中が2つあるときは平均をとる）`,
+    steps: [
+      {
+        label: "中央値",
+        question: "中央値は？",
+        hint: "8個の真ん中は4番目と5番目の間。2つの値の平均をとります。",
+        check: (input) => numericAnswer(input, median),
+        answer: String(median),
+      },
+      {
+        label: "第1四分位数",
+        question: "\\(Q_1\\) は？",
+        hint: "下半分は1〜4番目の4個。その中央値なので、2番目と3番目の平均です。",
+        check: (input) => numericAnswer(input, q1),
+        answer: String(q1),
+      },
+      {
+        label: "第3四分位数",
+        question: "\\(Q_3\\) は？",
+        hint: "上半分は5〜8番目の4個。その中央値なので、6番目と7番目の平均です。",
+        check: (input) => numericAnswer(input, q3),
+        answer: String(q3),
+      },
+      {
+        label: "四分位範囲",
+        question: "四分位範囲は？",
+        hint: `\\(Q_3-Q_1=${q3}-${q1}\\)。外れ値の影響を受けにくい散らばりの指標です。`,
+        check: (input) => numericAnswer(input, iqr),
+        answer: String(iqr),
+      },
+    ],
+  };
+}
+
 export const advancedPracticeGenerators = {
   integer: integerAdvanced,
   "absolute-value": absoluteValueAdvanced,
@@ -731,4 +962,10 @@ export const advancedPracticeGenerators = {
   "geometry-properties": geometryPropertiesAdvanced,
   "number-theory": numberTheoryAdvanced,
   "geometry-basics": geometryBasicsAdvanced,
+  expansion: expansionAdvanced,
+  factoring: factoringAdvanced,
+  "quadratic-solve": quadraticSolveAdvanced,
+  "perm-comb": permCombAdvanced,
+  "sequence-sum": sequenceSumAdvanced,
+  quartiles: quartilesAdvanced,
 };

@@ -2753,6 +2753,232 @@ function setupLabs() {
   selectLab(activeLabId);
 }
 
+function generateExpansionProblem() {
+  const a = randomInt(1, 6);
+  const b = randomInt(1, 6);
+  const c = randomInt(2, 9);
+  return {
+    modeLabel: "展開・乗法公式",
+    title: "乗法公式で係数を読む",
+    prompt: `\\((x+${a})(x+${b})\\) を展開して \\(x^2+\\square x+\\triangle\\) の形にする`,
+    steps: [
+      {
+        label: "x の係数",
+        question: `\\(x\\) の係数 \\(\\square\\) は？`,
+        hint: `外どうし・内どうしの積を足します。\\(x\\times${b}\\) と \\(${a}\\times x\\) で、係数は \\(${a}+${b}\\)。`,
+        check: (input) => Number(normalizeText(input)) === a + b,
+        answer: String(a + b),
+      },
+      {
+        label: "定数項",
+        question: "定数項 \\(\\triangle\\) は？",
+        hint: `数どうしの積 \\(${a}\\times${b}\\) です。`,
+        check: (input) => Number(normalizeText(input)) === a * b,
+        answer: String(a * b),
+      },
+      {
+        label: "和と差の積",
+        question: `\\((x+${c})(x-${c})\\) を展開すると \\(x^2-\\square\\)。ひかれる数 \\(\\square\\) は？`,
+        hint: `和と差の積は \\((x+a)(x-a)=x^2-a^2\\)。\\(x\\) の項は \\(-${c}x\\) と \\(+${c}x\\) で打ち消し合います。`,
+        check: (input) => Number(normalizeText(input)) === c * c,
+        answer: String(c * c),
+      },
+    ],
+  };
+}
+
+function generateFactoringProblem() {
+  const p = randomInt(1, 6);
+  let q = randomInt(2, 7);
+  while (q === p) q = randomInt(2, 7);
+  const sum = p + q;
+  const product = p * q;
+  const low = Math.min(p, q);
+  const high = Math.max(p, q);
+  return {
+    modeLabel: "因数分解",
+    title: "かけて c・たして b の2数さがし",
+    prompt: `\\(x^2+${sum}x+${product}\\) を因数分解する`,
+    steps: [
+      {
+        label: "2数をさがす",
+        question: `かけて \\(${product}\\)、たして \\(${sum}\\) になる2つの数は？（カンマ区切り）`,
+        hint: `かけて \\(${product}\\) になる組を書き出し、その中からたして \\(${sum}\\) になる組を選びます。`,
+        check: (input) => sameNumberList(input, [p, q]),
+        answer: `${low}, ${high}`,
+      },
+      {
+        label: "式にまとめる",
+        question: "因数分解した式は？（例：(x+1)(x+2)）",
+        hint: "見つけた2数をそのまま入れて \\((x+\\square)(x+\\triangle)\\) の形に書きます。かっこの順番はどちらでも正解です。",
+        check: (input) => {
+          const text = normalizeText(input);
+          return text === `(x+${p})(x+${q})` || text === `(x+${q})(x+${p})`;
+        },
+        answer: `(x+${low})(x+${high})`,
+      },
+    ],
+  };
+}
+
+function generateQuadraticSolveProblem() {
+  const p = randomInt(1, 6);
+  let q = randomInt(2, 7);
+  while (q === p) q = randomInt(2, 7);
+  const sum = p + q;
+  const product = p * q;
+  const low = Math.min(p, q);
+  const high = Math.max(p, q);
+  return {
+    modeLabel: "二次方程式",
+    title: "因数分解で二次方程式を解く",
+    prompt: `二次方程式 \\(x^2-${sum}x+${product}=0\\) を解く`,
+    steps: [
+      {
+        label: "因数分解",
+        question: "左辺を因数分解すると？（例：(x-1)(x-2)）",
+        hint: `かけて \\(+${product}\\)、たして \\(-${sum}\\) になる2数は \\(-${low}\\) と \\(-${high}\\) です。`,
+        check: (input) => {
+          const text = normalizeText(input).replace(/=0$/, "");
+          return text === `(x-${p})(x-${q})` || text === `(x-${q})(x-${p})`;
+        },
+        answer: `(x-${low})(x-${high})`,
+      },
+      {
+        label: "解を読む",
+        question: "解は？（カンマ区切りで2つ）",
+        hint: `かけ算が \\(0\\) になるのは、どちらかのかっこが \\(0\\) のとき。\\(x-${low}=0\\) または \\(x-${high}=0\\)。かっこの中の符号が反転して \\(x=${low},\\ ${high}\\)——ここが要注意。`,
+        check: (input) => sameNumberList(String(input).replace(/x=/gi, ""), [p, q]),
+        answer: `x=${low}, ${high}`,
+      },
+    ],
+  };
+}
+
+function generatePermCombProblem() {
+  const n = randomInt(5, 7);
+  const r = randomInt(2, 3);
+  let perm = 1;
+  for (let i = 0; i < r; i += 1) perm *= n - i;
+  let rFactorial = 1;
+  for (let i = 2; i <= r; i += 1) rFactorial *= i;
+  const comb = perm / rFactorial;
+  return {
+    modeLabel: "順列と組合せ",
+    title: "並べる P と選ぶ C",
+    prompt: `\\(${n}\\) 人のグループで、順番をつけて \\(${r}\\) 人並べる場合と、区別なく \\(${r}\\) 人選ぶ場合を比べる`,
+    steps: [
+      {
+        label: "順列",
+        question: `\\({}_{${n}}P_{${r}}\\) の値は？`,
+        hint: `\\(${n}\\) から始めて、1ずつ減らしながら \\(${r}\\) 個かけます。`,
+        check: (input) => Number(normalizeText(input)) === perm,
+        answer: String(perm),
+      },
+      {
+        label: "組合せ",
+        question: `\\({}_{${n}}C_{${r}}\\) の値は？`,
+        hint: `順列 \\(${perm}\\) には、同じ \\(${r}\\) 人の並べ替え \\(${r}!=${rFactorial}\\) 通りが重複しています。\\(${perm}\\div${rFactorial}\\)。`,
+        check: (input) => Number(normalizeText(input)) === comb,
+        answer: String(comb),
+      },
+      {
+        label: "使い分け",
+        question: `${n}人から「代表${r}人」を選ぶときに使うのは P と C のどちら？`,
+        hint: "代表どうしに順番や役割の区別はありません。区別がないなら、並べ替えのぶんを割った方を使います。",
+        check: (input) => ["c", "組合せ", "組み合わせ", `${n}c${r}`].includes(normalizeText(input)),
+        answer: "C（組合せ）",
+      },
+    ],
+  };
+}
+
+function generateSequenceSumProblem() {
+  const first = randomInt(1, 3);
+  const ratio = choose([2, 3]);
+  const targetIndex = ratio === 2 ? randomInt(5, 7) : randomInt(4, 5);
+  const nth = first * ratio ** (targetIndex - 1);
+  const firstTerms = [0, 1, 2, 3].map((k) => first * ratio ** k).join("\\ ");
+  const sigmaN = randomInt(6, 12);
+  const sigmaValue = (sigmaN * (sigmaN + 1)) / 2;
+  return {
+    modeLabel: "等比数列とΣ",
+    title: "かけ算の繰り返しと和の公式",
+    prompt: `数列 \\(${firstTerms}\\ \\dots\\) について調べ、最後にΣの公式を使う`,
+    steps: [
+      {
+        label: "公比を読む",
+        question: "隣どうしの比（公比）は？",
+        hint: "2番目÷1番目を計算します。どの隣どうしでも同じ比になっています。",
+        check: (input) => Number(normalizeText(input)) === ratio,
+        answer: String(ratio),
+      },
+      {
+        label: "一般項で一気に",
+        question: `第 \\(${targetIndex}\\) 項は？`,
+        hint: `\\(a_{${targetIndex}}=${first}\\times${ratio}^{${targetIndex - 1}}\\)。かける回数は番号より1つ少ない \\(${targetIndex - 1}\\) 回です。`,
+        check: (input) => Number(normalizeText(input)) === nth,
+        answer: String(nth),
+      },
+      {
+        label: "Σの公式",
+        question: `\\(\\displaystyle\\sum_{k=1}^{${sigmaN}}k\\)（\\(1\\) から \\(${sigmaN}\\) までの和）は？`,
+        hint: `公式 \\(\\dfrac{n(n+1)}{2}\\) に \\(n=${sigmaN}\\) を入れます。「逆順に足して2で割る」工夫の結晶です。`,
+        check: (input) => Number(normalizeText(input)) === sigmaValue,
+        answer: String(sigmaValue),
+      },
+    ],
+  };
+}
+
+function generateQuartilesProblem() {
+  let value = randomInt(3, 10);
+  const values = [value];
+  for (let i = 0; i < 6; i += 1) {
+    value += randomInt(2, 6);
+    values.push(value);
+  }
+  const q1 = values[1];
+  const median = values[3];
+  const q3 = values[5];
+  const iqr = q3 - q1;
+  return {
+    modeLabel: "四分位数",
+    title: "5つの数でデータを要約する",
+    prompt: `小さい順に並んだ7個のデータ \\(${values.join("\\ ")}\\) を、箱ひげ図の材料に要約する`,
+    steps: [
+      {
+        label: "中央値",
+        question: "中央値（第2四分位数）は？",
+        hint: "7個の真ん中は4番目の値です。",
+        check: (input) => Number(normalizeText(input)) === median,
+        answer: String(median),
+      },
+      {
+        label: "第1四分位数",
+        question: "第1四分位数 \\(Q_1\\) は？",
+        hint: "中央値より下の3個（1〜3番目）の真ん中、つまり2番目の値です。",
+        check: (input) => Number(normalizeText(input)) === q1,
+        answer: String(q1),
+      },
+      {
+        label: "第3四分位数",
+        question: "第3四分位数 \\(Q_3\\) は？",
+        hint: "中央値より上の3個（5〜7番目）の真ん中、つまり6番目の値です。",
+        check: (input) => Number(normalizeText(input)) === q3,
+        answer: String(q3),
+      },
+      {
+        label: "四分位範囲",
+        question: "四分位範囲（箱の長さ）は？",
+        hint: `\\(Q_3-Q_1=${q3}-${q1}\\)。データのまん中の約半分が収まる幅です。`,
+        check: (input) => Number(normalizeText(input)) === iqr,
+        answer: String(iqr),
+      },
+    ],
+  };
+}
+
 const practiceGenerators = {
   integer: generateIntegerProblem,
   "absolute-value": generateAbsoluteValueProblem,
@@ -2782,6 +3008,12 @@ const practiceGenerators = {
   "geometry-properties": generateGeometryPropertiesProblem,
   "number-theory": generateNumberTheoryProblem,
   "geometry-basics": generateGeometryBasicsProblem,
+  expansion: generateExpansionProblem,
+  factoring: generateFactoringProblem,
+  "quadratic-solve": generateQuadraticSolveProblem,
+  "perm-comb": generatePermCombProblem,
+  "sequence-sum": generateSequenceSumProblem,
+  quartiles: generateQuartilesProblem,
 };
 
 const practiceModes = practiceCatalog.map((mode) => ({

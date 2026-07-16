@@ -226,6 +226,54 @@ const rawPracticeCatalog = [
     level: "はじめの一問",
     numberPolicy: "三角形の角と3・4・5の直角三角形",
   },
+  {
+    id: "expansion",
+    label: "展開・乗法公式",
+    lessonIds: ["expansion-formulas"],
+    labIds: ["distribution-lab"],
+    level: "はじめの一問",
+    numberPolicy: "(x+a)(x+b) 型・数は1桁",
+  },
+  {
+    id: "factoring",
+    label: "因数分解",
+    lessonIds: ["factoring"],
+    labIds: ["distribution-lab", "term-lab"],
+    level: "はじめの一問",
+    numberPolicy: "かけて c・たして b の2数さがし（まず正の数から）",
+  },
+  {
+    id: "quadratic-solve",
+    label: "二次方程式を解く",
+    lessonIds: ["quadratic-equations"],
+    labIds: ["quadratic-lab"],
+    level: "はじめの一問",
+    numberPolicy: "因数分解で解ける形・解は1桁の整数",
+  },
+  {
+    id: "perm-comb",
+    label: "順列と組合せ",
+    lessonIds: ["permutations", "combinations", "circular-permutations"],
+    labIds: ["probability-lab", "lattice-path-lab"],
+    level: "はじめの一問",
+    numberPolicy: "nは7以下・PとCの値を並べて比べる",
+  },
+  {
+    id: "sequence-sum",
+    label: "等比数列とΣ",
+    lessonIds: ["geometric-sequences", "sigma-notation", "geometric-series-sum"],
+    labIds: ["sigma-stairs-lab"],
+    level: "はじめの一問",
+    numberPolicy: "公比は2か3・Σは書き出して確かめられる大きさ",
+  },
+  {
+    id: "quartiles",
+    label: "四分位数と箱ひげ図",
+    lessonIds: ["box-plots"],
+    labIds: ["box-plot-lab"],
+    level: "はじめの一問",
+    numberPolicy: "整列済みの7個のデータから5つの数を読む",
+  },
 ];
 
 const advancedPolicies = {
@@ -257,6 +305,12 @@ const advancedPolicies = {
   "geometry-properties": "円周角から弧・中心角を逆算する",
   "number-theory": "3桁の整数で互除法を4段階以上使う",
   "geometry-basics": "三平方の定理で未知の短辺を求める",
+  expansion: "係数つきの (ax+b)(cx+d) を展開する",
+  factoring: "定数項が負になる因数分解・2数の符号を見極める",
+  "quadratic-solve": "因数分解が見えにくい形を、判別式と解の公式で解く",
+  "perm-comb": "円順列と、同じものを含む順列",
+  "sequence-sum": "等比数列の和と Σ(2k+m) 型を公式で計算する",
+  quartiles: "8個（偶数個）のデータで、真ん中2つの平均が要る四分位数",
 };
 
 // 問題の目次は、対応する単元の学習順（learningPath 順）に並べる。
