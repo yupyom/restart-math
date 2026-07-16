@@ -1939,6 +1939,224 @@ input[type="text"],
   fill: #52606d;
 }
 
+/* 追加ラボ共通のSVG。文字はUIフォントで大きめにそろえる。 */
+.lab-diagram-svg {
+  width: 100%;
+  font-family: var(--font-ui);
+  font-size: 17px;
+}
+
+.lattice-figure {
+  min-width: 0;
+}
+
+/* 単位半円の三角比ラボ */
+.semi-axis {
+  stroke: #9aa5b1;
+  stroke-width: 2.5;
+}
+
+.semi-arc {
+  fill: rgba(47, 111, 115, 0.05);
+  stroke: #7b8794;
+  stroke-width: 3;
+}
+
+.semi-radius {
+  stroke: #1f2933;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.semi-cos {
+  stroke: #5c7cfa;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.semi-sin {
+  stroke: #e99043;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.semi-angle-arc {
+  fill: none;
+  stroke: #a42c68;
+  stroke-width: 3;
+}
+
+.semi-angle-label {
+  fill: #a42c68;
+  font-weight: 700;
+}
+
+.semi-point {
+  fill: #2f6f73;
+  stroke: white;
+  stroke-width: 3;
+}
+
+.semi-point-label {
+  fill: #2f6f73;
+  font-weight: 700;
+}
+
+.semi-mirror {
+  fill: white;
+  stroke: #9aa5b1;
+  stroke-width: 3;
+  stroke-dasharray: 4 4;
+}
+
+.semi-mirror-label,
+.semi-tick {
+  fill: #667085;
+  font-size: 15px;
+}
+
+/* 格子の道の最短経路ラボ */
+.lattice-grid {
+  stroke: #cbd2d9;
+  stroke-width: 2.5;
+}
+
+.lattice-step {
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+
+.lattice-step.right {
+  stroke: #2f6f73;
+}
+
+.lattice-step.upward {
+  stroke: #e99043;
+}
+
+.lattice-node.start {
+  fill: #2f6f73;
+  stroke: white;
+  stroke-width: 3;
+}
+
+.lattice-node.goal {
+  fill: #a42c68;
+  stroke: white;
+  stroke-width: 3;
+}
+
+.lattice-label {
+  fill: #1f2933;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.lattice-arrows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+}
+
+.lattice-arrow {
+  display: inline-grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 10px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+.lattice-arrow.right {
+  background: #2f6f73;
+}
+
+.lattice-arrow.upward {
+  background: #e99043;
+}
+
+/* 箱ひげ図ラボ */
+.boxplot-axis,
+.boxplot-tick {
+  stroke: #9aa5b1;
+  stroke-width: 2.5;
+}
+
+.boxplot-tick-label {
+  fill: #667085;
+  font-size: 14px;
+}
+
+.boxplot-dot {
+  fill: #2f6f73;
+  stroke: white;
+  stroke-width: 2;
+}
+
+.boxplot-guide {
+  stroke: #9aa5b1;
+  stroke-width: 2;
+  stroke-dasharray: 4 5;
+}
+
+.boxplot-guide-label {
+  fill: #52606d;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.boxplot-box {
+  fill: rgba(47, 111, 115, 0.16);
+  stroke: #2f6f73;
+  stroke-width: 3.5;
+}
+
+.boxplot-median {
+  stroke: #a42c68;
+  stroke-width: 4;
+}
+
+.boxplot-whisker {
+  stroke: #2f6f73;
+  stroke-width: 3.5;
+}
+
+.boxplot-cap {
+  stroke: #2f6f73;
+  stroke-width: 3.5;
+}
+
+/* Σの階段ラボ */
+.stairs-block.original {
+  fill: #5c7cfa;
+  opacity: 0.85;
+}
+
+.stairs-block.flipped {
+  fill: #e99043;
+  opacity: 0.8;
+}
+
+.stairs-count {
+  fill: #52606d;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.stairs-side-label {
+  fill: #1f2933;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.lattice-shuffle-field {
+  display: grid;
+  align-content: end;
+}
+
 .euclid-step-list {
   display: grid;
   gap: 0.55rem;

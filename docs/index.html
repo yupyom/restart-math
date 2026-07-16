@@ -560,6 +560,35 @@
             <p class="lab-result" id="trig-result"></p>
           </article>
 
+          <article class="lab-card" id="unit-semicircle-lab">
+            <div class="lab-title-row">
+              <div>
+                <p class="eyebrow">三角比の拡張</p>
+                <h3>単位半円の三角比</h3>
+              </div>
+              <span class="pill">数I</span>
+            </div>
+            <div class="geometry-lab-stage" id="semicircle-stage" aria-live="polite"></div>
+            <div class="control-grid">
+              <label class="wide-label">
+                <span>角 θ（0°〜180°）</span>
+                <input id="semicircle-angle" type="range" min="0" max="180" step="5" value="120" />
+              </label>
+              <fieldset class="choice-field">
+                <legend>有名な角へジャンプ</legend>
+                <div class="math-choice-group">
+                  <button class="math-choice" type="button" data-semicircle-preset="30">30°</button>
+                  <button class="math-choice" type="button" data-semicircle-preset="45">45°</button>
+                  <button class="math-choice" type="button" data-semicircle-preset="60">60°</button>
+                  <button class="math-choice" type="button" data-semicircle-preset="120">120°</button>
+                  <button class="math-choice" type="button" data-semicircle-preset="135">135°</button>
+                  <button class="math-choice" type="button" data-semicircle-preset="150">150°</button>
+                </div>
+              </fieldset>
+            </div>
+            <p class="lab-result" id="semicircle-result"></p>
+          </article>
+
           <article class="lab-card" id="probability-lab">
             <div class="lab-title-row">
               <div>
@@ -587,6 +616,31 @@
               </label>
             </div>
             <p class="lab-result" id="probability-result"></p>
+          </article>
+
+          <article class="lab-card" id="lattice-path-lab">
+            <div class="lab-title-row">
+              <div>
+                <p class="eyebrow">場合の数</p>
+                <h3>格子の道の最短経路</h3>
+              </div>
+              <span class="pill">数A</span>
+            </div>
+            <div class="geometry-lab-stage" id="lattice-stage" aria-live="polite"></div>
+            <div class="control-grid">
+              <label>
+                <span>右へ進むマス数</span>
+                <input id="lattice-right" type="range" min="1" max="6" step="1" value="4" />
+              </label>
+              <label>
+                <span>上へ進むマス数</span>
+                <input id="lattice-up" type="range" min="1" max="5" step="1" value="3" />
+              </label>
+              <div class="choice-field lattice-shuffle-field">
+                <button class="button ghost" id="lattice-shuffle" type="button">別の道順にする</button>
+              </div>
+            </div>
+            <p class="lab-result" id="lattice-result"></p>
           </article>
 
           <article class="lab-card" id="set-sort-lab">
@@ -824,6 +878,58 @@
               </label>
             </div>
             <p class="lab-result" id="data-spread-result"></p>
+          </article>
+
+          <article class="lab-card" id="box-plot-lab">
+            <div class="lab-title-row">
+              <div>
+                <p class="eyebrow">データの分析</p>
+                <h3>箱ひげ図と四分位数</h3>
+              </div>
+              <span class="pill">中2・数I</span>
+            </div>
+            <div class="geometry-lab-stage" id="box-plot-stage" aria-live="polite"></div>
+            <div class="control-grid">
+              <label>
+                <span>中央値の位置</span>
+                <input id="box-median" type="range" min="40" max="60" step="5" value="50" />
+              </label>
+              <label>
+                <span>下側の広がり（中央値より小さい値の間隔）</span>
+                <input id="box-lower" type="range" min="2" max="8" step="1" value="4" />
+              </label>
+              <label>
+                <span>上側の広がり（中央値より大きい値の間隔）</span>
+                <input id="box-upper" type="range" min="2" max="8" step="1" value="4" />
+              </label>
+            </div>
+            <p class="lab-result" id="box-plot-result"></p>
+          </article>
+
+          <article class="lab-card" id="sigma-stairs-lab">
+            <div class="lab-title-row">
+              <div>
+                <p class="eyebrow">数列</p>
+                <h3>Σの階段：1+2+…+n</h3>
+              </div>
+              <span class="pill">数B</span>
+            </div>
+            <div class="geometry-lab-stage" id="sigma-stairs-stage" aria-live="polite"></div>
+            <div class="control-grid">
+              <label>
+                <span>段の数 n</span>
+                <input id="stairs-n" type="range" min="2" max="10" step="1" value="5" />
+              </label>
+              <fieldset class="choice-field">
+                <legend>見方</legend>
+                <input id="stairs-mode" type="hidden" value="stairs" />
+                <div class="math-choice-group" data-math-choice-group="stairs-mode">
+                  <button class="math-choice active" type="button" data-choice-value="stairs" aria-pressed="true">階段だけ</button>
+                  <button class="math-choice" type="button" data-choice-value="pair" aria-pressed="false">逆さの階段を重ねる</button>
+                </div>
+              </fieldset>
+            </div>
+            <p class="lab-result" id="sigma-stairs-result"></p>
           </article>
             </div>
           </div>

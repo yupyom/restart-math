@@ -122,6 +122,13 @@ const rangeValueFormatters = {
   "venn-both": (value) => `${value} 人`,
   "triangle-apex-x": (value) => `位置 ${value}`,
   "triangle-apex-y": (value) => `高さ ${value}`,
+  "semicircle-angle": (value) => `θ = ${value}°`,
+  "lattice-right": (value) => `右へ ${value}`,
+  "lattice-up": (value) => `上へ ${value}`,
+  "box-median": (value) => `中央値 ${value}`,
+  "box-lower": (value) => `間隔 ${value}`,
+  "box-upper": (value) => `間隔 ${value}`,
+  "stairs-n": (value) => `n = ${value}`,
 };
 
 function setupRangeValueLabels() {
@@ -2204,6 +2211,325 @@ function stackedBarMarkup(segments, label) {
   return `<div class="stacked-bar" role="img" aria-label="${escapeHtml(label)}">${parts}</div>`;
 }
 
+// ---- 単位半円の三角比ラボ ----
+
+// 有名角は近似値でなく正確な値も添える。
+const semicircleExactValues = {
+  0: { sin: "0", cos: "1" },
+  30: { sin: "\\frac{1}{2}", cos: "\\frac{\\sqrt3}{2}" },
+  45: { sin: "\\frac{\\sqrt2}{2}", cos: "\\frac{\\sqrt2}{2}" },
+  60: { sin: "\\frac{\\sqrt3}{2}", cos: "\\frac{1}{2}" },
+  90: { sin: "1", cos: "0" },
+  120: { sin: "\\frac{\\sqrt3}{2}", cos: "-\\frac{1}{2}" },
+  135: { sin: "\\frac{\\sqrt2}{2}", cos: "-\\frac{\\sqrt2}{2}" },
+  150: { sin: "\\frac{1}{2}", cos: "-\\frac{\\sqrt3}{2}" },
+  180: { sin: "0", cos: "-1" },
+};
+
+function setupUnitSemicircleLab() {
+  $("#semicircle-angle").addEventListener("input", renderUnitSemicircleLab);
+  $$("[data-semicircle-preset]").forEach((button) => {
+    button.addEventListener("click", () => {
+      $("#semicircle-angle").value = button.dataset.semicirclePreset;
+      $("#semicircle-angle").dispatchEvent(new Event("input"));
+    });
+  });
+  renderUnitSemicircleLab();
+}
+
+function renderUnitSemicircleLab() {
+  const angle = Number($("#semicircle-angle").value);
+  const radian = (angle * Math.PI) / 180;
+  const cos = Math.cos(radian);
+  const sin = Math.sin(radian);
+  const cx = 260;
+  const cy = 250;
+  const r = 190;
+  const px = cx + r * cos;
+  const py = cy - r * sin;
+  const mirrorAngle = 180 - angle;
+  const mx = cx + r * Math.cos((mirrorAngle * Math.PI) / 180);
+  const my = cy - r * Math.sin((mirrorAngle * Math.PI) / 180);
+  const arcR = 34;
+  const arcEndX = cx + arcR * cos;
+  const arcEndY = cy - arcR * sin;
+  const round2 = (value) => (Math.abs(value) < 0.005 ? 0 : Math.round(value * 100) / 100);
+
+  $("#semicircle-stage").innerHTML = `
+    <svg class="lab-diagram-svg" viewBox="0 0 520 300" role="img" aria-label="半径1の半円上で角θの点の座標を見る図">
+      <line class="semi-axis" x1="40" y1="${cy}" x2="490" y2="${cy}"></line>
+      <line class="semi-axis" x1="${cx}" y1="${cy + 8}" x2="${cx}" y2="36"></line>
+      <path class="semi-arc" d="M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}"></path>
+      <text class="semi-tick" x="${cx - r - 6}" y="${cy + 24}">-1</text>
+      <text class="semi-tick" x="${cx - 16}" y="${cy + 24}">0</text>
+      <text class="semi-tick" x="${cx + r - 4}" y="${cy + 24}">1</text>
+      <text class="semi-tick" x="${cx + 10}" y="${cy - r + 4}">1</text>
+      ${angle !== 90 && angle !== 0 && angle !== 180 ? `<circle class="semi-mirror" cx="${mx}" cy="${my}" r="7"></circle><text class="semi-mirror-label" x="${mx + (mirrorAngle > 90 ? -76 : 14)}" y="${my - 10}">${mirrorAngle}°の点</text>` : ""}
+      <line class="semi-cos" x1="${cx}" y1="${cy}" x2="${px}" y2="${cy}"></line>
+      <line class="semi-sin" x1="${px}" y1="${cy}" x2="${px}" y2="${py}"></line>
+      <line class="semi-radius" x1="${cx}" y1="${cy}" x2="${px}" y2="${py}"></line>
+      <path class="semi-angle-arc" d="M ${cx + arcR} ${cy} A ${arcR} ${arcR} 0 0 0 ${arcEndX} ${arcEndY}"></path>
+      <text class="semi-angle-label" x="${cx + 44}" y="${cy - 14}">θ=${angle}°</text>
+      <circle class="semi-point" cx="${px}" cy="${py}" r="9"></circle>
+      <text class="semi-point-label" x="${px + (angle > 90 ? -150 : 16)}" y="${py - 14}">P(${round2(cos)}, ${round2(sin)})</text>
+    </svg>
+    <div class="applied-metrics">
+      <div class="applied-metric${cos < 0 ? " negative" : ""}"><span>cos θ（x 座標・青）</span><strong>${round2(cos)}</strong></div>
+      <div class="applied-metric positive"><span>sin θ（y 座標・橙）</span><strong>${round2(sin)}</strong></div>
+      <div class="applied-metric"><span>対称の角 180°−θ</span><strong>${mirrorAngle}°</strong></div>
+    </div>
+  `;
+
+  const exact = semicircleExactValues[angle];
+  const exactText = exact
+    ? `この角は正確な値が分かります：\\(\\sin${angle}^\\circ=${exact.sin}\\)、\\(\\cos${angle}^\\circ=${exact.cos}\\)。`
+    : "";
+  const signText =
+    angle < 90
+      ? "点は \\(y\\) 軸の右側にあり、\\(\\sin\\) も \\(\\cos\\) も正——直角三角形の定義と同じ値です。"
+      : angle === 90
+        ? "点は \\(y\\) 軸の真上。\\(\\cos90^\\circ=0\\) になり、ここが符号の変わり目です。"
+        : "点が \\(y\\) 軸の左側へ移ったので \\(\\cos\\theta\\)（\\(x\\) 座標）は負、\\(\\sin\\theta\\) は半円の上側だから正のままです。";
+  $("#semicircle-result").textContent =
+    `角 \\(\\theta=${angle}^\\circ\\) の点の座標は \\((\\cos\\theta,\\ \\sin\\theta)=(${round2(cos)},\\ ${round2(sin)})\\)。${signText}${exactText}`;
+  scheduleMathTypeset($("#semicircle-result"));
+}
+
+// ---- 格子の道の最短経路ラボ ----
+
+let latticePathSteps = [];
+
+function binomial(n, k) {
+  let result = 1;
+  for (let i = 1; i <= k; i += 1) {
+    result = (result * (n - k + i)) / i;
+  }
+  return Math.round(result);
+}
+
+function shuffleLatticePath() {
+  const right = Number($("#lattice-right").value);
+  const up = Number($("#lattice-up").value);
+  const steps = [...Array(right).fill("R"), ...Array(up).fill("U")];
+  for (let i = steps.length - 1; i > 0; i -= 1) {
+    const j = randomInt(0, i);
+    [steps[i], steps[j]] = [steps[j], steps[i]];
+  }
+  latticePathSteps = steps;
+}
+
+function setupLatticePathLab() {
+  ["#lattice-right", "#lattice-up"].forEach((selector) => {
+    $(selector).addEventListener("input", () => {
+      shuffleLatticePath();
+      renderLatticePathLab();
+    });
+  });
+  $("#lattice-shuffle").addEventListener("click", () => {
+    shuffleLatticePath();
+    renderLatticePathLab();
+  });
+  shuffleLatticePath();
+  renderLatticePathLab();
+}
+
+function renderLatticePathLab() {
+  const right = Number($("#lattice-right").value);
+  const up = Number($("#lattice-up").value);
+  const total = right + up;
+  const count = binomial(total, up);
+  const cell = Math.min(60, Math.floor(420 / right), Math.floor(230 / up));
+  const gridW = right * cell;
+  const gridH = up * cell;
+  const x0 = Math.round((520 - gridW) / 2);
+  const y0 = gridH + 34;
+  const viewH = gridH + 74;
+
+  const gridLines = [];
+  for (let i = 0; i <= right; i += 1) {
+    gridLines.push(`<line class="lattice-grid" x1="${x0 + i * cell}" y1="${y0}" x2="${x0 + i * cell}" y2="${y0 - gridH}"></line>`);
+  }
+  for (let j = 0; j <= up; j += 1) {
+    gridLines.push(`<line class="lattice-grid" x1="${x0}" y1="${y0 - j * cell}" x2="${x0 + gridW}" y2="${y0 - j * cell}"></line>`);
+  }
+
+  let cursorX = 0;
+  let cursorY = 0;
+  const pathLines = latticePathSteps
+    .map((step) => {
+      const fromX = x0 + cursorX * cell;
+      const fromY = y0 - cursorY * cell;
+      if (step === "R") cursorX += 1;
+      else cursorY += 1;
+      const toX = x0 + cursorX * cell;
+      const toY = y0 - cursorY * cell;
+      return `<line class="lattice-step ${step === "R" ? "right" : "upward"}" x1="${fromX}" y1="${fromY}" x2="${toX}" y2="${toY}"></line>`;
+    })
+    .join("");
+
+  const arrowChips = latticePathSteps
+    .map((step) => `<span class="lattice-arrow ${step === "R" ? "right" : "upward"}">${step === "R" ? "→" : "↑"}</span>`)
+    .join("");
+
+  $("#lattice-stage").innerHTML = `
+    <div class="lattice-figure">
+      <svg class="lab-diagram-svg" viewBox="0 0 520 ${viewH}" role="img" aria-label="碁盤の目の道と、1本の最短経路">
+        ${gridLines.join("")}
+        ${pathLines}
+        <circle class="lattice-node start" cx="${x0}" cy="${y0}" r="9"></circle>
+        <circle class="lattice-node goal" cx="${x0 + gridW}" cy="${y0 - gridH}" r="9"></circle>
+        <text class="lattice-label" x="${x0 - 14}" y="${y0 + 28}">スタート</text>
+        <text class="lattice-label" x="${x0 + gridW - 30}" y="${y0 - gridH - 14}">ゴール</text>
+      </svg>
+      <div class="lattice-arrows" aria-label="この道順を矢印の列で表したもの">${arrowChips}</div>
+    </div>
+    <div class="applied-metrics">
+      <div class="applied-metric"><span>→ の数</span><strong>${right} 個</strong></div>
+      <div class="applied-metric positive"><span>↑ の数</span><strong>${up} 個</strong></div>
+      <div class="applied-metric"><span>矢印の合計</span><strong>${total} 歩</strong></div>
+      <div class="applied-metric"><span>道順の総数</span><strong>${count} 通り</strong></div>
+    </div>
+  `;
+  $("#lattice-result").textContent =
+    `どの道順も「→ を \\(${right}\\) 個、↑ を \\(${up}\\) 個ならべた列」とちょうど1対1に対応します。` +
+    `だから道順の総数は、同じものを含む順列 \\(\\dfrac{${total}!}{${right}!\\,${up}!}={}_{${total}}C_{${up}}=${count}\\) 通り——` +
+    `「\\(${total}\\) 歩のうち、どの \\(${up}\\) 歩で上へ進むか」を選ぶ組合せです。`;
+  scheduleMathTypeset($("#lattice-result"));
+}
+
+// ---- 箱ひげ図ラボ ----
+
+function setupBoxPlotLab() {
+  ["#box-median", "#box-lower", "#box-upper"].forEach((selector) => {
+    $(selector).addEventListener("input", renderBoxPlotLab);
+  });
+  renderBoxPlotLab();
+}
+
+function renderBoxPlotLab() {
+  const median = Number($("#box-median").value);
+  const lower = Number($("#box-lower").value);
+  const upper = Number($("#box-upper").value);
+  // 11個のデータ：中央値の左右に、それぞれ等間隔で5個ずつ置く。
+  const values = [];
+  for (let k = -5; k <= 5; k += 1) {
+    values.push(median + k * (k < 0 ? lower : upper));
+  }
+  const min = values[0];
+  const q1 = values[2];
+  const q3 = values[8];
+  const max = values[10];
+  const iqr = q3 - q1;
+  const toX = (value) => 40 + value * 4.4;
+
+  const dotY = 92;
+  const boxTop = 170;
+  const boxBottom = 230;
+  const whiskerY = (boxTop + boxBottom) / 2;
+  // ラベルは上下2段の互い違いにして、値が近いときの重なりを避ける。
+  const guides = [
+    { value: min, label: "最小値", tier: 0 },
+    { value: q1, label: "Q1", tier: 1 },
+    { value: median, label: "中央値", tier: 0 },
+    { value: q3, label: "Q3", tier: 1 },
+    { value: max, label: "最大値", tier: 0 },
+  ];
+
+  $("#box-plot-stage").innerHTML = `
+    <svg class="lab-diagram-svg" viewBox="0 0 520 320" role="img" aria-label="11個のデータの点と、対応する箱ひげ図">
+      ${[0, 20, 40, 60, 80, 100]
+        .map((tick) => `<line class="boxplot-tick" x1="${toX(tick)}" y1="278" x2="${toX(tick)}" y2="286"></line><text class="boxplot-tick-label" x="${toX(tick) - 10}" y="304">${tick}</text>`)
+        .join("")}
+      <line class="boxplot-axis" x1="36" y1="278" x2="488" y2="278"></line>
+      ${guides
+        .map((guide) => `<line class="boxplot-guide" x1="${toX(guide.value)}" y1="${dotY + 14}" x2="${toX(guide.value)}" y2="${boxTop - 8}"></line><text class="boxplot-guide-label" x="${toX(guide.value) - 20}" y="${guide.tier === 0 ? dotY - 40 : dotY - 18}">${guide.label}</text>`)
+        .join("")}
+      ${values.map((value) => `<circle class="boxplot-dot" cx="${toX(value)}" cy="${dotY}" r="7"></circle>`).join("")}
+      <line class="boxplot-whisker" x1="${toX(min)}" y1="${whiskerY}" x2="${toX(q1)}" y2="${whiskerY}"></line>
+      <line class="boxplot-whisker" x1="${toX(q3)}" y1="${whiskerY}" x2="${toX(max)}" y2="${whiskerY}"></line>
+      <line class="boxplot-cap" x1="${toX(min)}" y1="${boxTop + 12}" x2="${toX(min)}" y2="${boxBottom - 12}"></line>
+      <line class="boxplot-cap" x1="${toX(max)}" y1="${boxTop + 12}" x2="${toX(max)}" y2="${boxBottom - 12}"></line>
+      <rect class="boxplot-box" x="${toX(q1)}" y="${boxTop}" width="${toX(q3) - toX(q1)}" height="${boxBottom - boxTop}"></rect>
+      <line class="boxplot-median" x1="${toX(median)}" y1="${boxTop}" x2="${toX(median)}" y2="${boxBottom}"></line>
+    </svg>
+    <div class="applied-metrics">
+      <div class="applied-metric"><span>最小値</span><strong>${min}</strong></div>
+      <div class="applied-metric"><span>Q1</span><strong>${q1}</strong></div>
+      <div class="applied-metric positive"><span>中央値</span><strong>${median}</strong></div>
+      <div class="applied-metric"><span>Q3</span><strong>${q3}</strong></div>
+      <div class="applied-metric"><span>最大値</span><strong>${max}</strong></div>
+      <div class="applied-metric"><span>四分位範囲</span><strong>${iqr}</strong></div>
+    </div>
+  `;
+  const skewText =
+    lower === upper
+      ? "いまは左右対称なので、箱もひげも左右で同じ長さです。"
+      : lower < upper
+        ? "上側の間隔の方が広いので、箱とひげが右へ長く伸びています——データが大きい側に散らばっているしるしです。"
+        : "下側の間隔の方が広いので、箱とひげが左へ長く伸びています——データが小さい側に散らばっているしるしです。";
+  $("#box-plot-result").textContent =
+    `11個のデータのうち、箱（\\(Q_1=${q1}\\) から \\(Q_3=${q3}\\)）には両端を含めて7個——まん中の約半分——が入っています。` +
+    `箱の長さが四分位範囲 \\(Q_3-Q_1=${iqr}\\) です。${skewText}`;
+  scheduleMathTypeset($("#box-plot-result"));
+}
+
+// ---- Σの階段ラボ ----
+
+function setupSigmaStairsLab() {
+  ["#stairs-n", "#stairs-mode"].forEach((selector) => {
+    $(selector).addEventListener("input", renderSigmaStairsLab);
+  });
+  renderSigmaStairsLab();
+}
+
+function renderSigmaStairsLab() {
+  const n = Number($("#stairs-n").value);
+  const paired = $("#stairs-mode").value === "pair";
+  const sum = (n * (n + 1)) / 2;
+  const cell = Math.min(34, Math.floor(400 / n), Math.floor(230 / (n + 1)));
+  const gridW = n * cell;
+  const gridH = (n + 1) * cell;
+  const x0 = Math.round((520 - gridW) / 2);
+  const y0 = gridH + 8;
+  const viewH = gridH + 64;
+
+  const blocks = [];
+  for (let column = 1; column <= n; column += 1) {
+    for (let row = 1; row <= (paired ? n + 1 : column); row += 1) {
+      const isOriginal = row <= column;
+      blocks.push(
+        `<rect class="stairs-block ${isOriginal ? "original" : "flipped"}" x="${x0 + (column - 1) * cell + 1}" y="${y0 - row * cell + 1}" width="${cell - 2}" height="${cell - 2}" rx="4"></rect>`,
+      );
+    }
+  }
+  const columnLabels =
+    cell >= 22
+      ? Array.from({ length: n }, (_, index) => `<text class="stairs-count" x="${x0 + index * cell + cell / 2 - 5}" y="${y0 + 24}">${index + 1}</text>`).join("")
+      : "";
+
+  $("#sigma-stairs-stage").innerHTML = `
+    <svg class="lab-diagram-svg" viewBox="0 0 520 ${viewH}" role="img" aria-label="1段からn段まで増える階段の図">
+      ${blocks.join("")}
+      ${columnLabels}
+      ${
+        paired
+          ? `<text class="stairs-side-label" x="${x0 - 10}" y="${y0 - gridH / 2}" text-anchor="end">縦 ${n + 1}</text><text class="stairs-side-label" x="${x0 + gridW / 2 - 20}" y="${y0 + 46}">横 ${n}</text>`
+          : ""
+      }
+    </svg>
+    <div class="applied-metrics">
+      <div class="applied-metric"><span>段の数 n</span><strong>${n}</strong></div>
+      <div class="applied-metric positive"><span>青の石（1+2+…+${n}）</span><strong>${sum} 個</strong></div>
+      ${paired ? `<div class="applied-metric"><span>長方形ぜんぶ（${n}×${n + 1}）</span><strong>${n * (n + 1)} 個</strong></div>` : ""}
+    </div>
+  `;
+  $("#sigma-stairs-result").textContent = paired
+    ? `橙の逆さ階段を重ねると、どの列もちょうど \\(${n + 1}\\) 個になり、横 \\(${n}\\) 列の長方形——石は全部で \\(${n}\\times${n + 1}=${n * (n + 1)}\\) 個です。` +
+      `青はその半分なので \\(1+2+\\cdots+${n}=\\dfrac{${n}\\times${n + 1}}{2}=${sum}\\)。公式 \\(\\sum_{k=1}^{n}k=\\dfrac{n(n+1)}{2}\\) は、この絵の式です。`
+    : `階段の石は \\(1+2+\\cdots+${n}=${sum}\\) 個。1列ずつ数えるのは大変です。「逆さの階段を重ねる」に切り替えると、数えなくても分かる形に変わります。`;
+  scheduleMathTypeset($("#sigma-stairs-result"));
+}
+
 function stackLegendMarkup(segments) {
   return `<div class="stack-legend">${segments
     .filter((segment) => segment.value > 0)
@@ -4228,6 +4554,10 @@ function init() {
   setupTriangleAngleLab();
   setupGeometryPropertiesLab();
   setupEuclideanAlgorithmLab();
+  setupUnitSemicircleLab();
+  setupLatticePathLab();
+  setupBoxPlotLab();
+  setupSigmaStairsLab();
   setupAppliedLabs();
   setupRangeValueLabels();
   setupLabs();
