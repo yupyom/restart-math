@@ -3340,14 +3340,16 @@ input[type="text"],
   .content-menu:not(.open) .unit-buttons,
   .content-menu:not(.open) .lab-picker,
   .content-menu:not(.open) .mode-tabs,
-  .content-menu:not(.open) .story-picker {
+  .content-menu:not(.open) .story-picker,
+  .content-menu:not(.open) .figure-picker {
     display: none;
   }
 
   .content-menu.open .unit-buttons,
   .content-menu.open .lab-picker,
   .content-menu.open .mode-tabs,
-  .content-menu.open .story-picker {
+  .content-menu.open .story-picker,
+  .content-menu.open .figure-picker {
     display: grid;
     gap: 0.45rem;
     margin: 0.2rem 0 0.6rem;
