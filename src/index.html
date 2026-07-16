@@ -62,7 +62,8 @@
           <a class="nav-primary" href="#lessons" data-page-link="lessons">単元</a>
           <a class="nav-primary" href="#labs" data-page-link="labs">図解</a>
           <a class="nav-primary" href="#practice" data-page-link="practice">問題</a>
-          <a href="#stories" data-page-link="stories">読み物</a>
+          <a class="nav-primary" href="#stories" data-page-link="stories">読み物</a>
+          <a class="nav-primary" href="#figures" data-page-link="figures">数学者図鑑</a>
           <a href="#map" data-page-link="map">マップ</a>
           <a href="#search" data-page-link="search">検索</a>
         </div>
@@ -129,13 +130,18 @@
             <p>記号の役割、数学の歴史、社会とのつながりを知る。</p>
             <em>背景から知る</em>
           </a>
+          <a class="site-index-card" href="#figures" data-page-link="figures">
+            <span>06</span><strong>数学者図鑑</strong>
+            <p>数の世界を広げた数学者の横顔と、寄与した発見を知る。</p>
+            <em>人物から知る</em>
+          </a>
           <a class="site-index-card" href="#map" data-page-link="map">
-            <span>06</span><strong>学習マップ</strong>
+            <span>07</span><strong>学習マップ</strong>
             <p>分野と難しさから単元を探し、学ぶ順序を見直す。</p>
             <em>つながりから探す</em>
           </a>
           <a class="site-index-card" href="#search" data-page-link="search">
-            <span>07</span><strong>サイト内検索</strong>
+            <span>08</span><strong>サイト内検索</strong>
             <p>キーワードで、単元・図解・問題・用語を横断して探す。</p>
             <em>言葉から探す</em>
           </a>
@@ -1012,6 +1018,26 @@
             <div class="story-picker" id="story-picker"></div>
           </aside>
           <article class="story-panel" id="story-content" aria-live="polite"></article>
+        </div>
+      </section>
+
+      <section class="section figures-section app-page" id="figures" data-page="figures">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow">数学者図鑑</p>
+            <h2>数の世界を広げた人たち</h2>
+          </div>
+          <p>
+            数の考え方を前へ進めた数学者を、肖像とともに紹介します。よく知られたプロフィールと、どんな数学的な発見に寄与したかを、事実にもとづいてまとめました。読み物や関連する数学者へもたどれます。
+          </p>
+        </div>
+        <div class="content-index figure-index" id="figure-index" aria-label="数学者の一覧"></div>
+        <div class="figure-shell content-shell" hidden>
+          <aside class="content-menu" aria-label="数学者一覧">
+            <div class="content-menu-title">数学者図鑑</div>
+            <div class="figure-picker" id="figure-picker"></div>
+          </aside>
+          <article class="figure-panel" id="figure-content" aria-live="polite"></article>
         </div>
       </section>
 

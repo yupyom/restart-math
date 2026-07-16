@@ -6,6 +6,7 @@ import { labs, labCatalog, unitLabRefs } from "../src/content/labs.js";
 import { practiceCatalog } from "../src/content/practice.js";
 import { topics } from "../src/content/topics.js";
 import { stories, storyCatalog, storySourcePolicy } from "../src/content/stories.js";
+import { figures, figureCatalog } from "../src/content/figures.js";
 import { glossaryTerms } from "../src/content/glossary.js";
 
 const root = resolve(import.meta.dirname, "..");
@@ -218,7 +219,21 @@ export async function validateContent({ outputRoot } = {}) {
     });
   });
 
-  const sourceFiles = ["content/lessons.js", "content/topics.js", "content/labs.js", "content/practice.js", "content/stories.js", "content/glossary.js"];
+  assertUnique(figures, "id", "数学者");
+  figures.forEach((figure) => {
+    assert(figure.id && figure.name && figure.achievement, `数学者 ${figure.id} の基本情報が不足しています。`);
+    assert(Array.isArray(figure.profile) && figure.profile.length, `数学者 ${figure.id} のプロフィールがありません。`);
+    assert(Array.isArray(figure.contributions) && figure.contributions.length, `数学者 ${figure.id} の寄与の説明がありません。`);
+    const portrait = figure.portrait;
+    assert(portrait?.src && portrait?.alt, `数学者 ${figure.id} の肖像に src / alt が必要です。`);
+    assert(portrait?.src && existsSync(resolve(root, "src", portrait.src)), `数学者 ${figure.id} の肖像ファイルが見つかりません: ${portrait?.src}`);
+    (figure.related?.stories || []).forEach((storyId) => assert(storyCatalog[storyId], `数学者 ${figure.id} が存在しない読み物 ${storyId} を参照しています。`));
+    (figure.related?.figures || []).forEach((refId) => assert(figureCatalog[refId], `数学者 ${figure.id} が存在しない人物 ${refId} を参照しています。`));
+    (figure.related?.lessons || []).forEach((lessonId) => assert(lessonIds.has(lessonId), `数学者 ${figure.id} が存在しない単元 ${lessonId} を参照しています。`));
+    (figure.related?.labs || []).forEach((labId) => assert(labIds.has(labId), `数学者 ${figure.id} が存在しない図解 ${labId} を参照しています。`));
+  });
+
+  const sourceFiles = ["content/lessons.js", "content/topics.js", "content/labs.js", "content/practice.js", "content/stories.js", "content/figures.js", "content/glossary.js"];
   for (const sourceFile of sourceFiles) {
     const source = await readFile(resolve(root, "src", sourceFile), "utf8");
     assert(
@@ -233,5 +248,5 @@ export async function validateContent({ outputRoot } = {}) {
 
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   await validateContent();
-  console.log(`教材データを確認しました（単元 ${units.length}、図解 ${labs.length}、問題 ${practiceCatalog.length}）。`);
+  console.log(`教材データを確認しました（単元 ${units.length}、図解 ${labs.length}、問題 ${practiceCatalog.length}、数学者 ${figures.length}）。`);
 }

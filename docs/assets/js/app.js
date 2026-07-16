@@ -3,12 +3,13 @@ import { topics, categoryLabels } from "../../content/topics.js";
 import { labs, labCatalog } from "../../content/labs.js";
 import { practiceCatalog } from "../../content/practice.js";
 import { stories, storyCatalog } from "../../content/stories.js";
+import { figures, figureCatalog } from "../../content/figures.js";
 import { glossaryTerms } from "../../content/glossary.js";
 import { advancedPracticeGenerators } from "./practice-advanced.js";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-const pageIds = ["home", "scope", "lessons", "labs", "practice", "stories", "map", "search"];
+const pageIds = ["home", "scope", "lessons", "labs", "practice", "stories", "figures", "map", "search"];
 
 let mathTypesetFrame = null;
 const mathTypesetTargets = new Set();
@@ -72,6 +73,7 @@ let currentStepIndex = 0;
 let activeMapPage = 0;
 let activeLessonRange = null;
 let activeStoryId = "shared-calculation-order";
+let activeFigureId = "pythagoras";
 const storyTypeLabels = {
   rule: "ルールの物語",
   notation: "記法の読み方",
@@ -4426,6 +4428,124 @@ function setupStories() {
   renderStory();
 }
 
+function renderFigureIndex() {
+  const wrap = $("#figure-index");
+  if (!wrap) return;
+  const cards = figures
+    .map(
+      (figure) => `
+        <a class="index-card figure-card" href="#figures/${encodeURIComponent(figure.id)}">
+          <img class="figure-card-portrait" src="${escapeHtml(figure.portrait.src)}" alt="${escapeHtml(figure.portrait.alt)}" loading="lazy" width="72" height="72" />
+          <span class="figure-card-body">
+            <span class="index-card-meta">${escapeHtml(figure.era)}</span>
+            <strong>${escapeHtml(figure.name)}</strong>
+            <span class="index-card-summary">${formatTextWithMath(figure.achievement || "")}</span>
+          </span>
+        </a>
+      `,
+    )
+    .join("");
+  wrap.innerHTML = `${cards}<p class="figure-index-note">※ 肖像は史料をもとにした親しみやすいデフォルメ表現で、厳密な肖像資料ではありません。</p>`;
+  scheduleMathTypeset(wrap);
+}
+
+function renderFigure() {
+  const figure = figureCatalog[activeFigureId] || figures[0];
+  if (!figure) return;
+  const wrap = $("#figure-content");
+  const storyActions = (figure.related?.stories || [])
+    .map((id) => storyCatalog[id])
+    .filter(Boolean)
+    .map(
+      (story) =>
+        `<button class="learning-action primary" type="button" data-open-story="${escapeHtml(story.id)}">読み物へ：${formatTextWithMath(story.menuTitle || story.title)}</button>`,
+    );
+  const figureActions = (figure.related?.figures || [])
+    .map((id) => figureCatalog[id])
+    .filter(Boolean)
+    .map(
+      (person) =>
+        `<button class="learning-action" type="button" data-open-figure="${escapeHtml(person.id)}">${escapeHtml(person.name)}</button>`,
+    );
+  const lessonActions = (figure.related?.lessons || [])
+    .map((lessonId) => units.find((unit) => unit.id === lessonId))
+    .filter(Boolean)
+    .map(
+      (lesson) =>
+        `<button class="learning-action" type="button" data-open-lesson="${escapeHtml(lesson.id)}">単元へ：${formatTextWithMath(lesson.title)}</button>`,
+    );
+  const labActions = (figure.related?.labs || [])
+    .map((labId) => labCatalog[labId])
+    .filter(Boolean)
+    .map(
+      (lab) => `<button class="learning-action" type="button" data-open-lab="${escapeHtml(lab.id)}">図解へ：${escapeHtml(lab.short)}</button>`,
+    );
+
+  const metaLine = [figure.era, figure.region]
+    .filter(Boolean)
+    .map((item) => `<span>${escapeHtml(item)}</span>`)
+    .join("");
+  const profile = (figure.profile || []).map((text) => `<p>${formatTextWithMath(text)}</p>`).join("");
+  const contributions = (figure.contributions || []).map((text) => `<p>${formatTextWithMath(text)}</p>`).join("");
+  const source = figure.source
+    ? figure.source.url
+      ? `<aside class="story-sources"><h4>出典</h4><ul><li><a href="${escapeHtml(figure.source.url)}" target="_blank" rel="noreferrer">${escapeHtml(figure.name)} の伝記</a>（${escapeHtml(figure.source.publisher)}）</li></ul></aside>`
+      : `<aside class="story-sources"><h4>出典</h4><p class="story-source-note">${escapeHtml(figure.source.publisher)}</p></aside>`
+    : "";
+
+  const relatedGroups = [];
+  if (storyActions.length)
+    relatedGroups.push(`<div class="figure-related-group"><h4>関連する読み物</h4><div class="learning-action-list">${storyActions.join("")}</div></div>`);
+  if (figureActions.length)
+    relatedGroups.push(`<div class="figure-related-group"><h4>関連する数学者</h4><div class="learning-action-list">${figureActions.join("")}</div></div>`);
+  const materialActions = [...lessonActions, ...labActions];
+  if (materialActions.length)
+    relatedGroups.push(`<div class="figure-related-group"><h4>関連する単元・図解</h4><div class="learning-action-list">${materialActions.join("")}</div></div>`);
+
+  wrap.innerHTML = `
+    <button type="button" class="text-button back-to-index" data-back-to-list="figures">← 数学者図鑑の一覧へ</button>
+    <p class="story-kicker">数学者図鑑</p>
+    <div class="figure-detail-head">
+      <figure class="figure-detail-portrait"><img src="${escapeHtml(figure.portrait.src)}" alt="${escapeHtml(figure.portrait.alt)}" loading="lazy" width="480" height="480" /></figure>
+      <div class="figure-detail-titles">
+        <h3>${escapeHtml(figure.name)}</h3>
+        <p class="figure-detail-reading">${escapeHtml(figure.reading || "")}</p>
+        <p class="figure-detail-meta">${metaLine}</p>
+        <p class="figure-detail-achievement">${formatTextWithMath(figure.achievement || "")}</p>
+      </div>
+    </div>
+    <section class="figure-section"><h4>プロフィール</h4>${profile}</section>
+    <section class="figure-section"><h4>数学的な発見への寄与</h4>${contributions}</section>
+    ${source}
+    <section class="figure-related" aria-label="関連する教材と人物">${relatedGroups.join("")}</section>
+  `;
+  linkifyGlossaryTerms(wrap);
+  scheduleMathTypeset(wrap);
+}
+
+function renderFigurePicker() {
+  const wrap = $("#figure-picker");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  figures.forEach((figure) => {
+    const button = document.createElement("button");
+    const isActive = figure.id === activeFigureId;
+    button.type = "button";
+    button.className = `figure-picker-button${isActive ? " active" : ""}`;
+    button.setAttribute("aria-pressed", String(isActive));
+    button.innerHTML = `<img class="figure-picker-thumb" src="${escapeHtml(figure.portrait.src)}" alt="" loading="lazy" width="40" height="40" /><span class="figure-picker-text"><strong>${escapeHtml(figure.name)}</strong><span>${escapeHtml(figure.era)}</span></span>`;
+    button.addEventListener("click", () => {
+      if (figure.id !== activeFigureId) location.hash = routeHash("figures", figure.id);
+    });
+    wrap.append(button);
+  });
+}
+
+function setupFigures() {
+  renderFigurePicker();
+  renderFigure();
+}
+
 function setupMap() {
   ["#map-category", "#map-level"].forEach((selector) => {
     $(selector).addEventListener("change", () => {
@@ -4525,6 +4645,7 @@ function readRoute() {
   if (page === "labs" && (!id || labCatalog[id])) return { page, id };
   if (page === "practice" && (!id || practiceCatalog.some((practice) => practice.id === id))) return { page, id };
   if (page === "stories" && (!id || storyCatalog[id])) return { page, id };
+  if (page === "figures" && (!id || figureCatalog[id])) return { page, id };
   if (pageIds.includes(raw)) return { page: raw };
 
   // 以前の #単元ID / #図解ID も、そのまま開けるように残す。
@@ -4532,6 +4653,7 @@ function readRoute() {
   if (labCatalog[raw]) return { page: "labs", id: raw, legacy: true };
   if (practiceCatalog.some((practice) => practice.id === raw)) return { page: "practice", id: raw, legacy: true };
   if (storyCatalog[raw]) return { page: "stories", id: raw, legacy: true };
+  if (figureCatalog[raw]) return { page: "figures", id: raw, legacy: true };
   return { page: "home" };
 }
 
@@ -4599,6 +4721,20 @@ function handleRoute() {
       setStoryView("index");
     }
     jumpToTop();
+    return;
+  }
+
+  if (route.page === "figures") {
+    if (route.id) {
+      activeFigureId = route.id;
+      setFigureView("figure");
+      renderFigurePicker();
+      renderFigure();
+    } else {
+      renderFigureIndex();
+      setFigureView("index");
+    }
+    jumpToTop();
   }
 }
 
@@ -4611,6 +4747,11 @@ function setLessonView(view) {
 function setStoryView(view) {
   $("#story-index").hidden = view !== "index";
   $(".story-shell").hidden = view === "index";
+}
+
+function setFigureView(view) {
+  $("#figure-index").hidden = view !== "index";
+  $(".figure-shell").hidden = view === "index";
 }
 
 function setLabView(view) {
@@ -4915,6 +5056,13 @@ function setupNavigation() {
       return;
     }
 
+    const figureButton = event.target.closest("[data-open-figure]");
+    if (figureButton) {
+      const figureId = figureButton.dataset.openFigure;
+      if (figureCatalog[figureId]) location.hash = routeHash("figures", figureId);
+      return;
+    }
+
     const rangeButton = event.target.closest("[data-open-range]");
     if (rangeButton) {
       const range = rangeButton.dataset.openRange;
@@ -4961,6 +5109,7 @@ function init() {
   setupLabs();
   setupPractice();
   setupStories();
+  setupFigures();
   setupMap();
   setupSearch();
   setupNavigation();
