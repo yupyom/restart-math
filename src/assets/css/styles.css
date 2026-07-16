@@ -3597,6 +3597,7 @@ input[type="text"],
 }
 .figure-detail-achievement {
   margin: 0;
+  font-family: var(--font-reading);
   font-weight: 700;
   line-height: 1.7;
 }
@@ -3609,8 +3610,10 @@ input[type="text"],
   border-bottom: 2px solid var(--accent-soft);
 }
 .figure-section p {
-  margin: 0 0 0.6rem;
-  line-height: 1.9;
+  margin: 0.5rem 0 0.6rem;
+  font-family: var(--font-reading);
+  font-size: 18px;
+  line-height: 2;
 }
 .figure-related {
   margin-top: 1.6rem;
