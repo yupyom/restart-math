@@ -198,6 +198,9 @@ export const stories = [
     menuTitle: "デカルトと座標",
     title: "式と図を行き来する：デカルトと座標",
     lead: "座標は、図形の位置を数の組で表し、図形の問題を式として考える橋になります。",
+    portraits: [
+      { src: "assets/img/portraits/descartes.webp", alt: "デカルトのイメージイラスト", caption: "ルネ・デカルト（1596–1650）" },
+    ],
     lessonIds: ["functions", "geometry"],
     labIds: ["function-lab"],
     practiceIds: ["function-values", "geometry-basics"],
@@ -217,6 +220,9 @@ export const stories = [
     menuTitle: "ガウスと整数",
     title: "整数の規則を一つの分野へ：ガウス",
     lead: "割り算の余りや素数の規則は、ばらばらな計算ではなく、整数を調べる数論という分野につながります。",
+    portraits: [
+      { src: "assets/img/portraits/gauss.webp", alt: "ガウスのイメージイラスト", caption: "カール・フリードリヒ・ガウス（1777–1855）" },
+    ],
     lessonIds: ["math-human-activities"],
     labIds: ["euclidean-algorithm-lab"],
     practiceIds: ["number-theory"],
@@ -236,6 +242,9 @@ export const stories = [
     menuTitle: "ナイチンゲールと統計",
     title: "数字を図にして説明する：ナイチンゲールと統計",
     lead: "統計は平均を計算して終わりではなく、集めたデータから違いを見つけ、他の人へ根拠を示すためにも使われます。",
+    portraits: [
+      { src: "assets/img/portraits/nightingale.webp", alt: "ナイチンゲールのイメージイラスト", caption: "フローレンス・ナイチンゲール（1820–1910）" },
+    ],
     lessonIds: ["data", "data-analysis-i"],
     labIds: ["data-spread-lab"],
     practiceIds: ["data-summary", "data-analysis"],
@@ -275,6 +284,9 @@ export const stories = [
     menuTitle: "レコードと等号",
     title: "二本の線で「同じ」を書く：ロバート・レコードと等号",
     lead: "いまでは当たり前の等号も、初めから世界共通だったわけではありません。記号は、長い説明を短く共有するために育ってきました。",
+    portraits: [
+      { src: "assets/img/portraits/recorde.webp", alt: "ロバート・レコードのイメージイラスト", caption: "ロバート・レコード（1510–1558）" },
+    ],
     lessonIds: ["linear-equations", "equation-modeling", "identities-equations"],
     labIds: ["equation-lab"],
     practiceIds: ["equation", "identities"],
@@ -294,6 +306,9 @@ export const stories = [
     menuTitle: "代数のはじまり",
     title: "文章の問題を共通の方法で解く：アル＝フワーリズミと代数",
     lead: "方程式は、意味のない文字操作から始まったのではありません。相続・取引・測量など、生活の問題を同じ方法で解くための道具として整理されました。",
+    portraits: [
+      { src: "assets/img/portraits/al-khwarizmi.webp", alt: "アル＝フワーリズミのイメージイラスト", caption: "アル＝フワーリズミ（790頃–850頃）" },
+    ],
     lessonIds: ["linear-equations", "equation-modeling", "quadratic-inequalities"],
     labIds: ["equation-lab"],
     practiceIds: ["equation", "quadratic-sign"],
@@ -313,6 +328,9 @@ export const stories = [
     menuTitle: "カントールと集合",
     title: "集まりの大きさを比べる：カントールと集合",
     lead: "集合は、数カードを箱に分けるだけの記号ではありません。何を一つの集まりと見るかを決めることで、有限から無限まで同じ言葉で考えられます。",
+    portraits: [
+      { src: "assets/img/portraits/cantor.webp", alt: "カントールのイメージイラスト", caption: "ゲオルク・カントール（1845–1918）" },
+    ],
     lessonIds: ["sets-propositions"],
     labIds: ["set-sort-lab"],
     practiceIds: ["sets"],
@@ -332,6 +350,9 @@ export const stories = [
     menuTitle: "天文学と三角法",
     title: "星の位置を計算する：アル＝バッターニーと三角法",
     lead: "三角比は、教室の直角三角形だけの計算ではありません。直接手が届かない天体の位置や動きを、角度と比から調べる必要にも支えられてきました。",
+    portraits: [
+      { src: "assets/img/portraits/al-battani.webp", alt: "アル＝バッターニーのイメージイラスト", caption: "アル＝バッターニー（850頃–929）" },
+    ],
     lessonIds: ["trig-ratios", "sine-cosine-rule"],
     labIds: ["trig-lab"],
     practiceIds: ["trig", "sine-cosine-rule"],
@@ -351,6 +372,10 @@ export const stories = [
     menuTitle: "確率のはじまり",
     title: "途中で終わったゲームをどう分ける？：パスカル、フェルマーと確率",
     lead: "偶然を数学で考えるきっかけの一つは、遊びの結果を予言することではなく、途中で終わったゲームの賭け金を公平に分ける問いでした。",
+    portraits: [
+      { src: "assets/img/portraits/pascal.webp", alt: "パスカルのイメージイラスト", caption: "ブレーズ・パスカル（1623–1662）" },
+      { src: "assets/img/portraits/fermat.webp", alt: "フェルマーのイメージイラスト", caption: "ピエール・ド・フェルマー（1601–1665）" },
+    ],
     lessonIds: ["counting-principles", "probability-a"],
     labIds: ["probability-lab"],
     practiceIds: ["counting", "probability"],
@@ -371,6 +396,9 @@ export const stories = [
     menuTitle: "ユークリッド『原論』",
     title: "定義から一段ずつ積み上げる：ユークリッドの『原論』",
     lead: "数学の証明は、答えを知っている人だけの話術ではありません。出発点を共有し、前に確かめたことだけを使って結論まで進むための記録です。",
+    portraits: [
+      { src: "assets/img/portraits/euclid.webp", alt: "ユークリッドのイメージイラスト", caption: "ユークリッド（紀元前300年ごろ）" },
+    ],
     lessonIds: ["geometry", "geometry-a", "math-human-activities"],
     labIds: ["geometry-properties-lab", "euclidean-algorithm-lab"],
     practiceIds: ["geometry-basics", "geometry-properties", "number-theory"],

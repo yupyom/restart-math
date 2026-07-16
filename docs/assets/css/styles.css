@@ -3148,6 +3148,57 @@ input[type="text"],
   margin: 0.5rem 0 0;
 }
 
+/* 読み物の人物イラスト。広い画面では本文の右に回り込ませる。 */
+.story-portraits {
+  float: right;
+  display: grid;
+  gap: 0.9rem;
+  width: 200px;
+  margin: 0.4rem 0 1rem 1.4rem;
+}
+
+.story-portrait {
+  margin: 0;
+}
+
+.story-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+}
+
+.story-portrait figcaption {
+  margin-top: 0.45rem;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* 回り込みは本文までにして、出典や戻る導線は全幅で置く */
+.story-sources,
+.story-panel .learning-actions {
+  clear: both;
+}
+
+@media (max-width: 680px) {
+  .story-portraits {
+    float: none;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: auto;
+    margin: 0.6rem 0 1rem;
+  }
+
+  .story-portrait {
+    width: min(200px, 44%);
+  }
+}
+
 .story-sources {
   margin: 1.6rem 0 2rem;
   padding: 1rem;

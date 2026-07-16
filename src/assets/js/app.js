@@ -4372,10 +4372,20 @@ function renderStory() {
       </aside>
     `;
 
+  const portraits = story.portraits?.length
+    ? `<div class="story-portraits">${story.portraits
+        .map(
+          (portrait) =>
+            `<figure class="story-portrait"><img src="${escapeHtml(portrait.src)}" alt="${escapeHtml(portrait.alt)}" loading="lazy" width="480" height="480" /><figcaption>${escapeHtml(portrait.caption)}</figcaption></figure>`,
+        )
+        .join("")}</div>`
+    : "";
+
   wrap.innerHTML = `
     <button type="button" class="text-button back-to-index" data-back-to-list="stories">← 読み物の一覧へ</button>
     <p class="story-kicker">${escapeHtml(storyTypeLabels[story.type] || "読み物")}</p>
     <h3>${formatTextWithMath(story.title)}</h3>
+    ${portraits}
     <p class="story-lead">${formatTextWithMath(story.lead)}</p>
     ${story.sections
       .map(

@@ -1,4 +1,5 @@
 import { access, readFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { units } from "../src/content/lessons.js";
 import { labs, labCatalog, unitLabRefs } from "../src/content/labs.js";
@@ -210,6 +211,10 @@ export async function validateContent({ outputRoot } = {}) {
     story.sources.forEach((source) => {
       assert(source.title && source.url, `読み物 ${story.id} に不完全な出典があります。`);
       assert(/^https:\/\//.test(source.url), `読み物 ${story.id} の出典 URL は HTTPS を使ってください。`);
+    });
+    (story.portraits || []).forEach((portrait) => {
+      assert(portrait.src && portrait.alt && portrait.caption, `読み物 ${story.id} の肖像に src / alt / caption が必要です。`);
+      assert(existsSync(resolve(root, "src", portrait.src)), `読み物 ${story.id} の肖像ファイルが見つかりません: ${portrait.src}`);
     });
   });
 

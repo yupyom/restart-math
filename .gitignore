@@ -1,1 +1,5 @@
 .secrets/
+
+# 人物イラストの原本PNG（約2MB/枚）は原則コミットしない。
+# 実際に読み物で使う分だけ git add -f で追跡する（配信用は src/assets/img/portraits/*.webp）。
+design/*.png
