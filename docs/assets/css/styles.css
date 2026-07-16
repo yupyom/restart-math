@@ -578,6 +578,62 @@ code {
   margin: 0.3rem 0.5rem 0.7rem;
 }
 
+/* スマホ用の目次開閉ボタン。PCでは表示しない。 */
+.content-menu-toggle {
+  display: none;
+}
+
+/* IDなしの #lessons / #stories で表示する一覧ページ */
+.content-index {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.index-card {
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: #fffdf7;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.index-card:hover,
+.index-card:focus-visible {
+  border-color: #2f6f73;
+  box-shadow: 0 4px 14px rgba(53, 43, 31, 0.08);
+}
+
+.index-card-meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.index-card strong {
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.index-card-summary {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.back-to-index {
+  display: inline-block;
+  margin-bottom: 0.9rem;
+}
+
 .unit-buttons {
   display: grid;
   gap: 0.45rem;
@@ -3087,7 +3143,7 @@ input[type="text"],
 }
 
 .story-sources {
-  margin-top: 1rem;
+  margin: 1.6rem 0 2rem;
   padding: 1rem;
   border-radius: var(--radius-lg);
   background: #f5f7ff;
@@ -3193,23 +3249,57 @@ input[type="text"],
     position: static;
     max-height: none;
     overflow: hidden;
+    padding: 0.35rem 0.8rem;
   }
 
-  .unit-buttons,
-  .lab-picker,
-  .mode-tabs,
-  .story-picker {
+  /* 横フリックはやめて、ボタンで開閉する縦メニューにする */
+  .content-menu .content-menu-title {
+    display: none;
+  }
+
+  .content-menu-toggle {
     display: flex;
-    overflow-x: auto;
-    padding-bottom: 0.2rem;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.6rem 0.2rem;
+    border: none;
+    background: transparent;
+    font: inherit;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
   }
 
-  .unit-button,
-  .lab-picker-button,
-  .mode-button,
-  .story-picker-button {
-    flex: 0 0 auto;
-    min-width: 190px;
+  .content-menu-caret {
+    transition: transform 0.15s ease;
+  }
+
+  .content-menu.open .content-menu-caret {
+    transform: rotate(180deg);
+  }
+
+  .content-menu:not(.open) .unit-buttons,
+  .content-menu:not(.open) .lab-picker,
+  .content-menu:not(.open) .mode-tabs,
+  .content-menu:not(.open) .story-picker {
+    display: none;
+  }
+
+  .content-menu.open .unit-buttons,
+  .content-menu.open .lab-picker,
+  .content-menu.open .mode-tabs,
+  .content-menu.open .story-picker {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0.2rem 0 0.6rem;
+    max-height: 60vh;
+    overflow: auto;
+  }
+
+  .content-index {
+    grid-template-columns: 1fr;
   }
 
   .unit-content-grid {

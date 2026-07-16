@@ -57,7 +57,7 @@
           </span>
         </a>
         <div class="nav-links">
-          <a href="#home" data-page-link="home">目次</a>
+          <a href="#home" data-page-link="home">トップ</a>
           <a href="#scope" data-page-link="scope">範囲</a>
           <a href="#lessons" data-page-link="lessons">単元</a>
           <a href="#labs" data-page-link="labs">図解</a>
@@ -219,6 +219,8 @@
           <button type="button" class="text-button" id="clear-lesson-filter">すべての単元に戻る</button>
         </div>
 
+        <div class="content-index" id="lesson-index" hidden aria-label="単元の一覧"></div>
+
         <div class="lesson-shell content-shell">
           <aside class="unit-list content-menu" aria-label="単元一覧">
             <div class="unit-list-title content-menu-title">単元</div>
@@ -226,6 +228,7 @@
           </aside>
 
           <article class="unit-panel" aria-live="polite">
+            <button type="button" class="text-button back-to-index" data-back-to-list="lessons">← 単元の一覧へ</button>
             <div class="progress-row">
               <span id="unit-progress-label">1 / 28</span>
               <div class="progress-track" aria-hidden="true">
@@ -996,6 +999,7 @@
             問題を解く前に必ず読むページではありません。ルールの役割に立ち止まりたいときに、単元・図解・問題へ戻るための補助線です。
           </p>
         </div>
+        <div class="content-index" id="story-index" hidden aria-label="読み物の一覧"></div>
         <div class="story-shell content-shell">
           <aside class="content-menu" aria-label="読み物一覧">
             <div class="content-menu-title">読み物</div>

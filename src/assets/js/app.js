@@ -1119,9 +1119,14 @@ function setupLessons() {
   });
   $("#clear-lesson-filter").addEventListener("click", () => {
     activeLessonRange = null;
-    renderUnit();
-    const hash = routeHash("lessons", units[activeUnit].id);
-    if (location.hash !== hash) history.pushState(null, "", hash);
+    if ($("#lesson-index").hidden) {
+      renderUnit();
+      const hash = routeHash("lessons", units[activeUnit].id);
+      if (location.hash !== hash) history.pushState(null, "", hash);
+    } else {
+      renderLessonIndex();
+      if (location.hash !== "#lessons") history.pushState(null, "", "#lessons");
+    }
   });
 
   renderUnit();
@@ -4136,6 +4141,7 @@ function renderStory() {
     `;
 
   wrap.innerHTML = `
+    <button type="button" class="text-button back-to-index" data-back-to-list="stories">← 読み物の一覧へ</button>
     <p class="story-kicker">${escapeHtml(storyTypeLabels[story.type] || "読み物")}</p>
     <h3>${formatTextWithMath(story.title)}</h3>
     <p class="story-lead">${formatTextWithMath(story.lead)}</p>
@@ -4238,6 +4244,7 @@ function renderMap() {
       if (index >= 0) {
         activeLessonRange = null;
         activeUnit = index;
+        setLessonView("unit");
         renderUnit();
         activatePage("lessons");
         setHashForUnit(index);
@@ -4299,12 +4306,17 @@ function handleRoute() {
   activatePage(route.page);
 
   if (route.page === "lessons") {
-    activeLessonRange = route.rangeFilter ?? null;
+    // 単元IDつきで開いたときは範囲の絞り込みを保ち、#lessons（一覧）へ戻ったら解除する。
+    activeLessonRange = route.rangeFilter ?? (route.id ? activeLessonRange : null);
     if (route.id) {
       const unitIndex = units.findIndex((unit) => unit.id === route.id);
       if (unitIndex >= 0) activeUnit = unitIndex;
+      setLessonView("unit");
+      renderUnit();
+    } else {
+      renderLessonIndex();
+      setLessonView("index");
     }
-    renderUnit();
     jumpToTop();
     return;
   }
@@ -4322,11 +4334,86 @@ function handleRoute() {
   }
 
   if (route.page === "stories") {
-    activeStoryId = route.id || activeStoryId;
-    renderStoryPicker();
-    renderStory();
-    if (route.id) jumpToTop();
+    if (route.id) {
+      activeStoryId = route.id;
+      setStoryView("story");
+      renderStoryPicker();
+      renderStory();
+    } else {
+      renderStoryIndex();
+      setStoryView("index");
+    }
+    jumpToTop();
   }
+}
+
+// 一覧（インデックス）と本文の表示を切り替える。IDなしの #lessons / #stories は一覧を出す。
+function setLessonView(view) {
+  $("#lesson-index").hidden = view !== "index";
+  $(".lesson-shell").hidden = view === "index";
+}
+
+function setStoryView(view) {
+  $("#story-index").hidden = view !== "index";
+  $(".story-shell").hidden = view === "index";
+}
+
+function renderLessonIndex() {
+  const wrap = $("#lesson-index");
+  wrap.innerHTML = visibleUnits()
+    .map((unit) => {
+      const number = units.findIndex((item) => item.id === unit.id) + 1;
+      return `
+        <a class="index-card" href="#lessons/${encodeURIComponent(unit.id)}">
+          <span class="index-card-meta">${number}. ${escapeHtml(unitMetaLabel(unit))}</span>
+          <strong>${formatTextWithMath(unit.title)}</strong>
+          <span class="index-card-summary">${formatTextWithMath(unit.summary)}</span>
+        </a>
+      `;
+    })
+    .join("");
+  updateLessonFilterStatus();
+  scheduleMathTypeset(wrap);
+}
+
+function renderStoryIndex() {
+  const wrap = $("#story-index");
+  wrap.innerHTML = stories
+    .map(
+      (story) => `
+        <a class="index-card" href="#stories/${encodeURIComponent(story.id)}">
+          <span class="index-card-meta">${escapeHtml(storyTypeLabels[story.type] || "読み物")}</span>
+          <strong>${formatTextWithMath(story.title)}</strong>
+          <span class="index-card-summary">${formatTextWithMath(story.lead)}</span>
+        </a>
+      `,
+    )
+    .join("");
+  scheduleMathTypeset(wrap);
+}
+
+// スマホでは左目次を横フリックではなく、タップで開閉する縦メニューにする。
+function setupContentMenuToggles() {
+  $$(".content-menu").forEach((menu) => {
+    const title = menu.querySelector(".content-menu-title")?.textContent?.trim() || "一覧";
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "content-menu-toggle";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.innerHTML = `<span>${escapeHtml(title)}の一覧から選ぶ</span><span class="content-menu-caret" aria-hidden="true">▾</span>`;
+    toggle.addEventListener("click", () => {
+      const open = menu.classList.toggle("open");
+      toggle.setAttribute("aria-expanded", String(open));
+    });
+    menu.prepend(toggle);
+    // 一覧から選んだら閉じる。PCでは open クラスに対応する表示切替がないので影響しない。
+    menu.addEventListener("click", (event) => {
+      if (event.target.closest("button:not(.content-menu-toggle), a")) {
+        menu.classList.remove("open");
+        toggle.setAttribute("aria-expanded", "false");
+      }
+    });
+  });
 }
 
 // TeX・記号を落とし、検索照合に使える平文へ直す。
@@ -4488,6 +4575,16 @@ function setupNavigation() {
   });
 
   document.addEventListener("click", (event) => {
+    const backButton = event.target.closest("[data-back-to-list]");
+    if (backButton) {
+      if (backButton.dataset.backToList === "lessons") {
+        location.hash = activeLessonRange ? `#lessons/range/${encodeURIComponent(activeLessonRange)}` : "#lessons";
+      } else {
+        location.hash = "#stories";
+      }
+      return;
+    }
+
     const labButton = event.target.closest("[data-open-lab]");
     if (labButton) {
       const labId = labButton.dataset.openLab;
@@ -4538,6 +4635,7 @@ function setupNavigation() {
 
 function init() {
   setupMathChoiceGroups();
+  setupContentMenuToggles();
   setupLessons();
   setupNumberLine();
   setupInequalityLab();
