@@ -59,9 +59,9 @@
         <div class="nav-links">
           <a href="#home" data-page-link="home">トップ</a>
           <a href="#scope" data-page-link="scope">範囲</a>
-          <a href="#lessons" data-page-link="lessons">単元</a>
-          <a href="#labs" data-page-link="labs">図解</a>
-          <a href="#practice" data-page-link="practice">問題</a>
+          <a class="nav-primary" href="#lessons" data-page-link="lessons">単元</a>
+          <a class="nav-primary" href="#labs" data-page-link="labs">図解</a>
+          <a class="nav-primary" href="#practice" data-page-link="practice">問題</a>
           <a href="#stories" data-page-link="stories">読み物</a>
           <a href="#map" data-page-link="map">マップ</a>
           <a href="#search" data-page-link="search">検索</a>
@@ -257,12 +257,15 @@
           </p>
         </div>
 
+        <div class="content-index" id="lab-index" hidden aria-label="図解の一覧"></div>
+
         <div class="lab-shell content-shell">
           <aside class="content-menu" aria-label="図解一覧">
             <div class="content-menu-title">図解</div>
             <div class="lab-picker" id="lab-picker"></div>
           </aside>
           <div class="content-main">
+            <button type="button" class="text-button back-to-index" data-back-to-list="labs">← 図解の一覧へ</button>
             <div class="cross-links" id="lab-learning-actions" aria-live="polite"></div>
             <div class="lab-grid">
           <article class="lab-card" id="number-line-lab">
@@ -952,12 +955,15 @@
           </p>
         </div>
 
+        <div class="content-index" id="practice-index" hidden aria-label="問題の一覧"></div>
+
         <div class="practice-shell content-shell">
           <aside class="content-menu" aria-label="問題の種類">
             <div class="content-menu-title">問題</div>
             <div class="mode-tabs" id="practice-modes"></div>
           </aside>
           <div class="problem-card">
+            <button type="button" class="text-button back-to-index" data-back-to-list="practice">← 問題の一覧へ</button>
             <div class="problem-top">
               <div>
                 <p class="eyebrow" id="problem-mode-label">整数</p>

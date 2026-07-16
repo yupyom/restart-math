@@ -4322,14 +4322,27 @@ function handleRoute() {
   }
 
   if (route.page === "labs") {
-    selectLab(route.id || activeLabId);
-    if (route.id) focusLab(route.id);
+    if (route.id) {
+      setLabView("lab");
+      selectLab(route.id);
+      focusLab(route.id);
+    } else {
+      renderLabIndex();
+      setLabView("index");
+      jumpToTop();
+    }
     return;
   }
 
   if (route.page === "practice") {
-    if (route.id && route.id !== activePracticeMode) setActivePracticeMode(route.id);
-    if (route.id) jumpToTop();
+    if (route.id) {
+      setPracticeView("practice");
+      if (route.id !== activePracticeMode) setActivePracticeMode(route.id);
+    } else {
+      renderPracticeIndex();
+      setPracticeView("index");
+    }
+    jumpToTop();
     return;
   }
 
@@ -4356,6 +4369,50 @@ function setLessonView(view) {
 function setStoryView(view) {
   $("#story-index").hidden = view !== "index";
   $(".story-shell").hidden = view === "index";
+}
+
+function setLabView(view) {
+  $("#lab-index").hidden = view !== "index";
+  $(".lab-shell").hidden = view === "index";
+}
+
+function setPracticeView(view) {
+  $("#practice-index").hidden = view !== "index";
+  $(".practice-shell").hidden = view === "index";
+}
+
+function renderLabIndex() {
+  const wrap = $("#lab-index");
+  wrap.innerHTML = labs
+    .map(
+      (lab) => `
+        <a class="index-card" href="#labs/${encodeURIComponent(lab.id)}">
+          <span class="index-card-meta">${escapeHtml(lab.category)}</span>
+          <strong>${formatTextWithMath(lab.title)}</strong>
+          <span class="index-card-summary">${formatTextWithMath(`${lab.objectIntro}。${lab.observe}。`)}</span>
+        </a>
+      `,
+    )
+    .join("");
+  scheduleMathTypeset(wrap);
+}
+
+function renderPracticeIndex() {
+  const wrap = $("#practice-index");
+  wrap.innerHTML = practiceModes
+    .map((mode) => {
+      const lesson = units.find((unit) => unit.id === mode.lessonIds?.[0]);
+      const meta = lesson ? `${lesson.strand}｜${mode.level}` : mode.level;
+      return `
+        <a class="index-card" href="#practice/${encodeURIComponent(mode.id)}">
+          <span class="index-card-meta">${escapeHtml(meta)}</span>
+          <strong>${formatTextWithMath(mode.label)}</strong>
+          <span class="index-card-summary">${formatTextWithMath(mode.numberPolicy)}</span>
+        </a>
+      `;
+    })
+    .join("");
+  scheduleMathTypeset(wrap);
 }
 
 function renderLessonIndex() {
@@ -4577,10 +4634,11 @@ function setupNavigation() {
   document.addEventListener("click", (event) => {
     const backButton = event.target.closest("[data-back-to-list]");
     if (backButton) {
-      if (backButton.dataset.backToList === "lessons") {
-        location.hash = activeLessonRange ? `#lessons/range/${encodeURIComponent(activeLessonRange)}` : "#lessons";
+      const target = backButton.dataset.backToList;
+      if (target === "lessons" && activeLessonRange) {
+        location.hash = `#lessons/range/${encodeURIComponent(activeLessonRange)}`;
       } else {
-        location.hash = "#stories";
+        location.hash = `#${target}`;
       }
       return;
     }
