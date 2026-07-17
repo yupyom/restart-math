@@ -1,7 +1,21 @@
 // 練習問題の生成器（純関数群）。モード ID → 生成器の対応表もここ。
 import { compactLinearExpression, compactPolynomial, factorText, linearText, sumExpression, term, vertexQuadraticExpression } from "./format.js";
-import { choose, combination, fractionText, normalizeText, permutation, radicalTeX, randomInt, sameEquation, sameLinearExpression, sameRadical, sameRational } from "./math-utils.js";
-import { euclideanDivisionSteps } from "./labs-view.js";
+import {
+  choose,
+  combination,
+  euclideanDivisionSteps,
+  fractionText,
+  normalizeText,
+  permutation,
+  radicalTeX,
+  randomInt,
+  sameEquation,
+  sameLinearExpression,
+  sameNumberList,
+  sameRadical,
+  sameRational,
+} from "./math-utils.js";
+import { extraPracticeGenerators } from "./practice-extra.js";
 
 export function generateExpansionProblem() {
   const a = randomInt(1, 6);
@@ -59,13 +73,15 @@ export function generateFactoringProblem() {
       },
       {
         label: "式にまとめる",
-        question: "因数分解した式は？（例：(x+1)(x+2)）",
+        question: "因数分解した式は？",
+        example: "(x+1)(x+2)",
         hint: "見つけた2数をそのまま入れて \\((x+\\square)(x+\\triangle)\\) の形に書きます。かっこの順番はどちらでも正解です。",
         check: (input) => {
           const text = normalizeText(input);
           return text === `(x+${p})(x+${q})` || text === `(x+${q})(x+${p})`;
         },
         answer: `(x+${low})(x+${high})`,
+        choices: [`(x+${low})(x+${high})`, `(x-${low})(x-${high})`, `(x+${low})(x-${high})`],
       },
     ],
   };
@@ -86,13 +102,15 @@ export function generateQuadraticSolveProblem() {
     steps: [
       {
         label: "因数分解",
-        question: "左辺を因数分解すると？（例：(x-1)(x-2)）",
+        question: "左辺を因数分解すると？",
+        example: "(x-1)(x-2)",
         hint: `かけて \\(+${product}\\)、たして \\(-${sum}\\) になる2数は \\(-${low}\\) と \\(-${high}\\) です。`,
         check: (input) => {
           const text = normalizeText(input).replace(/=0$/, "");
           return text === `(x-${p})(x-${q})` || text === `(x-${q})(x-${p})`;
         },
         answer: `(x-${low})(x-${high})`,
+        choices: [`(x-${low})(x-${high})`, `(x+${low})(x+${high})`, `(x-${low})(x+${high})`],
       },
       {
         label: "解を読む",
@@ -142,6 +160,7 @@ export function generatePermCombProblem() {
           return ["c", "組合せ", "組み合わせ", "c組合せ", "c組み合わせ", `${n}c${r}`].includes(text);
         },
         answer: "C（組合せ）",
+        choices: ["P（順列）", "C（組合せ）"],
       },
     ],
   };
@@ -233,7 +252,27 @@ export function generateQuartilesProblem() {
   };
 }
 
+// 学び直し総合（exam-review）：これまでのモードから1問ずつ混合出題する。
+export function generateExamReviewProblem() {
+  const pool = [
+    generateIntegerProblem,
+    generateEquationProblem,
+    generateRadicalProblem,
+    generateExpansionProblem,
+    generateTrigProblem,
+    generateProbabilityProblem,
+    generateDataSummaryProblem,
+    generateVennCountProblem,
+    generateArithmeticSequenceProblem,
+    generateQuartilesProblem,
+  ];
+  const problem = choose(pool)();
+  return { ...problem, title: `総合演習：${problem.title}` };
+}
+
 export const practiceGenerators = {
+  ...extraPracticeGenerators,
+  "exam-review": generateExamReviewProblem,
   integer: generateIntegerProblem,
   "absolute-value": generateAbsoluteValueProblem,
   exponent: generateExponentProblem,
@@ -762,6 +801,7 @@ export function generateTrigSurveyProblem() {
         hint: "分かっている辺と求めたい辺が、角から見て「対辺・隣辺・斜辺」のどれとどれかを考えます。",
         check: (input) => normalizeText(input).includes(scenario.ratio),
         answer: scenario.ratio,
+        choices: ["sin", "cos", "tan"],
       },
       {
         label: "比の値",
@@ -813,6 +853,7 @@ export function generateCountingProblem() {
           return mode === "permutation" ? text.includes("順列") || text === "p" : text.includes("組合") || text === "c";
         },
         answer: mode === "permutation" ? "順列" : "組合せ",
+        choices: ["順列", "組合せ"],
       },
       {
         label: "総数を求める",
@@ -887,18 +928,6 @@ export function samePlusMinus(input, value) {
     .filter((item) => Number.isFinite(item))
     .sort((a, b) => a - b);
   return values.length === 2 && values[0] === -value && values[1] === value;
-}
-
-export function sameNumberList(input, expected) {
-  const values = normalizeText(input)
-    .replace(/[{}()（）]/g, "")
-    .replace(/[、，;]/g, ",")
-    .split(",")
-    .filter(Boolean)
-    .map(Number)
-    .sort((a, b) => a - b);
-  const target = [...expected].sort((a, b) => a - b);
-  return values.length === target.length && values.every((value, index) => value === target[index]);
 }
 
 export function generateSquareRootMeaningProblem() {
@@ -1006,6 +1035,7 @@ export function generateSetsProblem() {
           hint: operation === "intersection" ? "\\(\\cap\\) は両方に入る部分です。" : "\\(\\cup\\) は少なくとも一方に入る部分です。",
           check: (input) => normalizeText(input).includes(operation === "intersection" ? "共通" : "和集合"),
           answer: operation === "intersection" ? "共通部分" : "和集合",
+          choices: ["共通部分", "和集合"],
         },
         {
           label: "要素を並べる",
@@ -1034,6 +1064,7 @@ export function generateSetsProblem() {
         hint: "『すべて』成り立つか、小さい整数で確かめます。",
         check: (input) => normalizeText(input).includes(proposition.truth ? "真" : "偽"),
         answer: proposition.truth ? "真" : "偽",
+        choices: ["真", "偽"],
       },
       proposition.truth
         ? {
@@ -1042,6 +1073,7 @@ export function generateSetsProblem() {
             hint: "4、8、12、…は、すべて偶数の箱にも入ります。",
             check: (input) => ["内", "中", "含"].some((word) => normalizeText(input).includes(word)),
             answer: "内側（偶数の集合に含まれる）",
+            choices: ["内側（偶数の集合に含まれる）", "外側（重ならない）"],
           }
         : {
             label: "反例を一つ挙げる",
@@ -1071,6 +1103,7 @@ export function generateIdentitiesProblem() {
           hint: "どの \\(x\\) を入れても左右が同じかを考えます。",
           check: (input) => normalizeText(input).includes("恒等"),
           answer: "恒等式",
+          choices: ["恒等式", "方程式"],
         },
         {
           label: "一つの値で確かめる",
@@ -1096,6 +1129,7 @@ export function generateIdentitiesProblem() {
         hint: "ある \\(x\\) の値でだけ左右が等しくなる式です。",
         check: (input) => normalizeText(input).includes("方程"),
         answer: "方程式",
+        choices: ["恒等式", "方程式"],
       },
       {
         label: "成り立つ値を求める",
@@ -1174,6 +1208,7 @@ export function generateQuadraticSignProblem() {
         hint: "上に開く放物線は、二つの交点の外側でx軸より上になります。",
         check: (input) => normalizeText(input).includes("外"),
         answer: "根の外側",
+        choices: ["根の間（内側）", "根の外側"],
       },
       {
         label: "解を不等式で書く",
@@ -1349,6 +1384,7 @@ export function generateGeometryPropertiesProblem() {
         hint: "同じ弧に対する円周角は中心角の半分です。",
         check: (input) => sameRational(input, 1, 2) || normalizeText(input).includes("半分"),
         answer: `\\(\\frac12\\)`,
+        choices: ["半分（1/2）", "2倍", "同じ大きさ"],
       },
       {
         label: "角度を求める",

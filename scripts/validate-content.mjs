@@ -47,6 +47,10 @@ const mathTextKeys = new Set([
   "note",
   "text",
   "caption",
+  // 数学者図鑑（figures）の本文
+  "achievement",
+  "profile",
+  "contributions",
 ]);
 
 function validateExample(example, unitId) {
@@ -89,7 +93,10 @@ function validateExample(example, unitId) {
 
 function assertMathIsDelimited(text, path) {
   if (typeof text !== "string") return;
-  const prose = text.replace(/\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g, "");
+  const prose = text
+    .replace(/\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g, "")
+    // al-jabr のようなラテン語のハイフン複合語は数式ではないので除外する。
+    .replace(/\b[a-zA-Z]{2,}(?:-[a-zA-Z]{2,})+\b/g, "");
   const rawFormula = /(?:\d|[a-z])\s*(?:[+\-−×÷=<>]|<=|>=)\s*(?:\(?[a-z\d−-])/i;
   assert(!rawFormula.test(prose), path + " に数式の区切り漏れがあります。\\(...\\) または \\[...\\] で囲んでください。");
 }
@@ -102,7 +109,15 @@ function validateMathText(value, path = "content") {
   if (!value || typeof value !== "object") return;
   Object.entries(value).forEach(([key, child]) => {
     const childPath = `${path}.${key}`;
-    if (mathTextKeys.has(key) && typeof child === "string") assertMathIsDelimited(child, childPath);
+    if (mathTextKeys.has(key)) {
+      if (typeof child === "string") assertMathIsDelimited(child, childPath);
+      // profile: ["...", "..."] のような文字列の配列も本文として検査する。
+      if (Array.isArray(child)) {
+        child.forEach((item, index) => {
+          if (typeof item === "string") assertMathIsDelimited(item, `${childPath}[${index}]`);
+        });
+      }
+    }
     if (child && typeof child === "object") validateMathText(child, childPath);
   });
 }
@@ -133,7 +148,7 @@ export async function validateContent({ outputRoot } = {}) {
   const practiceIds = new Set(practiceCatalog.map((practice) => practice.id));
   const labIds = new Set(labs.map((lab) => lab.id));
 
-  validateMathText({ units, labs, stories });
+  validateMathText({ units, labs, stories, figures });
 
   units.forEach((unit) => {
     assert(unit.order > 0, `単元 ${unit.id} に順番がありません。`);

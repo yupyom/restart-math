@@ -957,7 +957,8 @@
           <p>
             いきなり答えだけを求めず、「途中で何をしたか」を一段ずつ確認します。
             最初は2桁以内の計算を中心にして、計算の重さよりルールの確認を優先します。
-            入力は半角でも全角でもある程度受け付けます。
+            入力は半角でも全角でもある程度受け付けます。書き方に迷ったら入力欄のうすい文字（入力例）を、
+            答えに迷ったら「選択肢から選ぶ」や「答えと解説を見る」を使ってください。
           </p>
         </div>
 
@@ -991,7 +992,13 @@
                 <button class="button primary" type="submit">確認</button>
               </div>
             </form>
+            <div class="answer-tools" id="answer-tools">
+              <button type="button" class="text-button answer-tool" id="show-choices">選択肢から選ぶ</button>
+              <button type="button" class="text-button answer-tool" id="give-up">答えと解説を見る</button>
+            </div>
+            <div class="choice-area" id="choice-area" hidden></div>
             <p class="feedback" id="feedback" aria-live="polite"></p>
+            <div class="reveal-panel" id="reveal-panel" hidden aria-live="polite"></div>
             <details class="hint-box">
               <summary>ヒントを見る</summary>
               <p id="hint-text"></p>

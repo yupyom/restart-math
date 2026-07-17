@@ -5,7 +5,7 @@ import { practiceCatalog } from "../../content/practice.js";
 import { state } from "./state.js";
 import { $, $$, jumpToTop, scheduleMathTypeset } from "./utils.js";
 import { compactPolynomial, escapeHtml, factorText, formatTextWithMath, linearText, sumExpression, term, vertexQuadraticExpression } from "./format.js";
-import { binomial, fractionText, gcd, largestSquareFactor, radicalTeX, radicalText, randomInt } from "./math-utils.js";
+import { binomial, euclideanDivisionSteps, fractionText, gcd, largestSquareFactor, radicalTeX, radicalText, randomInt } from "./math-utils.js";
 
 export const rangeValueFormatters = {
   "int-a": (value) => `a = ${value}` ,
@@ -1023,20 +1023,6 @@ export function renderVennLab() {
     `1回分を引いて \\(n(A\\cup B)=${sizeA}+${sizeB}-${both}=${union}\\) 人。どちらでもない人は \\(${total}-${union}=${outside}\\) 人です。`;
   scheduleMathTypeset($("#venn-stage"));
   scheduleMathTypeset($("#venn-result"));
-}
-
-export function euclideanDivisionSteps(first, second) {
-  let dividend = Math.max(first, second);
-  let divisor = Math.min(first, second);
-  const steps = [];
-  while (divisor !== 0) {
-    const quotient = Math.floor(dividend / divisor);
-    const remainder = dividend % divisor;
-    steps.push({ dividend, divisor, quotient, remainder });
-    dividend = divisor;
-    divisor = remainder;
-  }
-  return { steps, commonDivisor: dividend };
 }
 
 export function setupEuclideanAlgorithmLab() {

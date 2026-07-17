@@ -40,6 +40,38 @@ export function vertexQuadraticExpression(a, h, k) {
   return `${coefficient}${square}${vertical}`;
 }
 
+// 式の途中に「+3x」「-y」の形でつなぐ項。係数 ±1 の 1 は省く。
+export function signedCoefTerm(coefficient, variable) {
+  const sign = coefficient < 0 ? "-" : "+";
+  const magnitude = Math.abs(coefficient);
+  return `${sign}${magnitude === 1 ? "" : magnitude}${variable}`;
+}
+
+// 式の先頭の項。係数 ±1 の 1 は省き、正なら符号を付けない。
+export function leadCoefTerm(coefficient, variable) {
+  const magnitude = Math.abs(coefficient);
+  const body = `${magnitude === 1 ? "" : magnitude}${variable}`;
+  return coefficient < 0 ? `-${body}` : body;
+}
+
+// 定数項。0 なら項ごと省略する。
+export function signedConstant(value) {
+  if (value === 0) return "";
+  return value < 0 ? String(value) : `+${value}`;
+}
+
+// 符号つきの数（+5 / -3）。式の末尾へつなぐときに使う。
+export function signedTerm(value) {
+  return value < 0 ? String(value) : `+${value}`;
+}
+
+// 根 root を持つ一次因数の表示（root=3 → x-3、root=-3 → x+3）。
+export function linearFactor(root) {
+  if (root < 0) return `x+${Math.abs(root)}`;
+  if (root > 0) return `x-${root}`;
+  return "x";
+}
+
 export function term(coef, variable = "x") {
   if (coef === 0) return "0";
   if (coef === 1) return variable;

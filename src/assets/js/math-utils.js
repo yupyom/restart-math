@@ -52,6 +52,8 @@ export function combination(n, r) {
   return permutation(n, r) / factorial(r);
 }
 
+// 解答入力の正規化。全角と半角、記号の表記揺れをここで一手に吸収する
+// （生成器・発展生成器・採点の全員がこの一つを使う。仕様の分岐を作らない）。
 export function normalizeText(value) {
   return String(value)
     .trim()
@@ -60,11 +62,82 @@ export function normalizeText(value) {
     .replace(/[−ー－]/g, "-")
     .replace(/[＋]/g, "+")
     .replace(/[＝]/g, "=")
+    .replace(/[＜]/g, "<")
+    .replace(/[＞]/g, ">")
     .replace(/[×・＊]/g, "*")
+    .replace(/[、，；]/g, ",")
     .replace(/（/g, "(")
     .replace(/）/g, ")")
     .replace(/\s+/g, "")
     .toLowerCase();
+}
+
+// 数値の一致。variable を渡すと「x=」の形の前置きを許す。度・° の単位も無視する。
+export function numericAnswer(input, answer, variable = "") {
+  const prefix = variable ? new RegExp(`^${variable}=`) : null;
+  const text = prefix ? normalizeText(input).replace(prefix, "") : normalizeText(input);
+  return Number(text.replace(/度|°/g, "")) === answer;
+}
+
+// カンマ区切りの数の組（順序を区別する）。
+export function sameOrderedPair(input, first, second) {
+  const values = normalizeText(input)
+    .replace(/[{}()（）]/g, "")
+    .split(",")
+    .map(Number);
+  return values.length === 2 && values[0] === first && values[1] === second;
+}
+
+// カンマ区切りの数の列（順序を区別する）。
+export function sameOrderedList(input, expected) {
+  const values = normalizeText(input)
+    .replace(/[{}()（）]/g, "")
+    .split(",")
+    .filter(Boolean)
+    .map(Number);
+  return values.length === expected.length && values.every((value, index) => value === expected[index]);
+}
+
+// カンマ区切りの数の集合（順序を区別しない）。
+export function sameNumberList(input, expected) {
+  const values = normalizeText(input)
+    .replace(/[{}()（）]/g, "")
+    .split(",")
+    .filter(Boolean)
+    .map(Number)
+    .sort((a, b) => a - b);
+  const target = [...expected].sort((a, b) => a - b);
+  return values.length === target.length && values.every((value, index) => value === target[index]);
+}
+
+// 表示用の模範解答（TeX を含む）を、学習者が入力欄に打てる文字列へ直す。
+// 練習画面の選択肢生成と、scripts/test-practice.mjs の自己受理テストが同じ規則を使う。
+export function answerToInputText(answer) {
+  return String(answer)
+    .replace(/^\\\(|\\\)$/g, "")
+    .replace(/\\d?frac\{(-?[^{}]+)\}\{(-?[^{}]+)\}/g, "$1/$2")
+    .replace(/\\d?frac(\d)(\d)/g, "$1/$2")
+    .replace(/\\sqrt\{(\d+)\}/g, "√$1")
+    .replace(/\\sqrt(\d+)/g, "√$1")
+    .replace(/\\pm/g, "±")
+    .replace(/\\times/g, "*")
+    .replace(/\\ /g, " ")
+    .trim();
+}
+
+// ユークリッドの互除法の割り算列。図解（labs-view）と問題生成の両方が使う。
+export function euclideanDivisionSteps(first, second) {
+  let dividend = Math.max(first, second);
+  let divisor = Math.min(first, second);
+  const steps = [];
+  while (divisor !== 0) {
+    const quotient = Math.floor(dividend / divisor);
+    const remainder = dividend % divisor;
+    steps.push({ dividend, divisor, quotient, remainder });
+    dividend = divisor;
+    divisor = remainder;
+  }
+  return { steps, commonDivisor: dividend };
 }
 
 export function parseLinearExpression(input) {
