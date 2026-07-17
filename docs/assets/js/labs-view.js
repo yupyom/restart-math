@@ -140,8 +140,16 @@ export function drawNumberLine() {
   const op = $("#int-op").value;
   const move = op === "+" ? b : -b;
   const result = a + move;
-  const min = -16;
-  const max = 16;
+  // 結果が \(\pm16\) を超えるとき（例: 12+12=24）は軸を広げ、目盛りを4刻みに間引く。
+  const largest = Math.max(16, Math.abs(a), Math.abs(result));
+  let labelStep = 2;
+  let bound = 16;
+  if (largest > 16) {
+    labelStep = 4;
+    bound = Math.ceil((largest + 1) / labelStep) * labelStep;
+  }
+  const min = -bound;
+  const max = bound;
   const y = height * 0.64;
   const map = (value) => 48 + ((value - min) / (max - min)) * (width - 96);
 
@@ -159,7 +167,7 @@ export function drawNumberLine() {
   ctx.font = '700 26px "Noto Sans JP", "Hiragino Sans", sans-serif';
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
-  for (let value = min; value <= max; value += 2) {
+  for (let value = min; value <= max; value += labelStep) {
     const x = map(value);
     ctx.strokeStyle = value === 0 ? "#2f6f73" : "#9b8f82";
     ctx.lineWidth = value === 0 ? 4 : 2;
@@ -251,7 +259,7 @@ export function renderRadical() {
   tiles.innerHTML = `
     <div>
       <div class="square-grid" style="grid-template-columns: repeat(${size}, 8px);">${cells}</div>
-      <p class="lab-result" style="margin-top: .7rem;">平方数 \\(${factor.square}\\) ${factor.rest > 1 ? `が \\(${factor.rest}\\) 組` : ""}</p>
+      <p class="lab-result" style="margin-top: .7rem;">平方数 \\(${factor.square}\\) ${factor.rest > 1 ? `が \\(${factor.rest}\\) 組` : ""}${factor.root > 12 ? "（図は \\(12\\times12\\) までの縮小表示）" : ""}</p>
     </div>
   `;
   scheduleMathTypeset($("#radical-expression"));
@@ -786,27 +794,28 @@ export function renderProbabilityLab() {
   const secondTotal = mode === "replace" ? total : total - 1;
   const rrNumerator = red * secondRedNumerator;
   const rrDenominator = total * secondTotal;
-  const rbNumerator = red * (mode === "replace" ? blue : blue);
-  const rbDenominator = total * secondTotal;
+  // 枝の上の分数は「分母＝そのときの玉の総数」を見せたいので約分しない。
+  // 約分（fractionText）は最後の積の結果だけに使う。
+  const rawFraction = (numerator, denominator) => `\\frac{${numerator}}{${denominator}}`;
 
   $("#probability-stage").innerHTML = `
     <div class="probability-tree">
       <div class="tree-node root">袋<br>R:${red} B:${blue}</div>
       <div class="tree-column">
-        <div class="tree-branch red">1回目 R<br>\\(${fractionText(red, total)}\\)</div>
-        <div class="tree-branch blue">1回目 B<br>\\(${fractionText(blue, total)}\\)</div>
+        <div class="tree-branch red">1回目 R<br>\\(${rawFraction(red, total)}\\)</div>
+        <div class="tree-branch blue">1回目 B<br>\\(${rawFraction(blue, total)}\\)</div>
       </div>
       <div class="tree-column">
-        <div class="tree-branch red">R の後に R<br>\\(${fractionText(secondRedNumerator, secondTotal)}\\)</div>
-        <div class="tree-branch blue">R の後に B<br>\\(${fractionText(mode === "replace" ? blue : blue, secondTotal)}\\)</div>
+        <div class="tree-branch red">R の後に R<br>\\(${rawFraction(secondRedNumerator, secondTotal)}\\)</div>
+        <div class="tree-branch blue">R の後に B<br>\\(${rawFraction(blue, secondTotal)}\\)</div>
       </div>
     </div>
     <p class="tree-note">枝をたどるときは確率をかけます。</p>
   `;
   $("#probability-result").textContent =
     mode === "replace"
-      ? `戻して2回なので、赤赤の確率は \\(${fractionText(red, total)}\\times${fractionText(red, total)}=${fractionText(rrNumerator, rrDenominator)}\\)。`
-      : `戻さず2回なので、赤赤の確率は \\(${fractionText(red, total)}\\times${fractionText(red - 1, total - 1)}=${fractionText(rrNumerator, rrDenominator)}\\)。2回目の分母が変わります。`;
+      ? `戻して2回なので、赤赤の確率は \\(${rawFraction(red, total)}\\times${rawFraction(red, total)}=${fractionText(rrNumerator, rrDenominator)}\\)。`
+      : `戻さず2回なので、赤赤の確率は \\(${rawFraction(red, total)}\\times${rawFraction(red - 1, total - 1)}=${fractionText(rrNumerator, rrDenominator)}\\)。2回目の分母が変わります。`;
   scheduleMathTypeset($("#probability-stage"));
   scheduleMathTypeset($("#probability-result"));
 }
@@ -1230,11 +1239,15 @@ export function renderUnitSemicircleLab() {
     ? `この角は正確な値が分かります：\\(\\sin${angle}^\\circ=${exact.sin}\\)、\\(\\cos${angle}^\\circ=${exact.cos}\\)。`
     : "";
   const signText =
-    angle < 90
-      ? "点は \\(y\\) 軸の右側にあり、\\(\\sin\\) も \\(\\cos\\) も正——直角三角形の定義と同じ値です。"
-      : angle === 90
-        ? "点は \\(y\\) 軸の真上。\\(\\cos90^\\circ=0\\) になり、ここが符号の変わり目です。"
-        : "点が \\(y\\) 軸の左側へ移ったので \\(\\cos\\theta\\)（\\(x\\) 座標）は負、\\(\\sin\\theta\\) は半円の上側だから正のままです。";
+    angle === 0
+      ? "点は \\(x\\) 軸上の右端。\\(\\sin0^\\circ=0\\)、\\(\\cos0^\\circ=1\\) です。"
+      : angle < 90
+        ? "点は \\(y\\) 軸の右側にあり、\\(\\sin\\) も \\(\\cos\\) も正——直角三角形の定義と同じ値です。"
+        : angle === 90
+          ? "点は \\(y\\) 軸の真上。\\(\\cos90^\\circ=0\\) になり、ここが符号の変わり目です。"
+          : angle === 180
+            ? "点は \\(x\\) 軸上の左端。\\(\\sin180^\\circ=0\\)、\\(\\cos180^\\circ=-1\\) です。"
+            : "点が \\(y\\) 軸の左側へ移ったので \\(\\cos\\theta\\)（\\(x\\) 座標）は負、\\(\\sin\\theta\\) は半円の上側だから正のままです。";
   $("#semicircle-result").textContent =
     `角 \\(\\theta=${angle}^\\circ\\) の点の座標は \\((\\cos\\theta,\\ \\sin\\theta)=(${round2(cos)},\\ ${round2(sin)})\\)。${signText}${exactText}`;
   scheduleMathTypeset($("#semicircle-result"));
@@ -1546,11 +1559,17 @@ export function renderAccountingLab() {
   const variableCost = unitCost * quantity;
   const cost = variableCost + fixedCost;
   const profit = sales - cost;
+  // 利益が出ているときは「売上＝費用＋利益」の棒。損失のときに損失分まで積むと
+  // 棒の合計が売上でも費用でもない量になるため、損失時は「費用の内訳」の棒にする。
   const segments = [
     { label: "製造費用（1個ごと）", kind: "variable", value: variableCost, valueText: formatYen(variableCost) },
     { label: "固定の費用", kind: "fixed", value: fixedCost, valueText: formatYen(fixedCost) },
-    { label: profit >= 0 ? "利益" : "費用が上回る分", kind: profit >= 0 ? "profit" : "interest", value: Math.abs(profit), valueText: formatYen(Math.abs(profit)) },
+    ...(profit >= 0 ? [{ label: "利益", kind: "profit", value: profit, valueText: formatYen(profit) }] : []),
   ];
+  const barLabel =
+    profit >= 0
+      ? `売上 ${formatYen(sales)} を費用と利益に分けた棒`
+      : `費用 ${formatYen(cost)} の内訳（売上 ${formatYen(sales)} では ${formatYen(-profit)}足りない）`;
 
   $("#accounting-stage").innerHTML = `
     <div class="applied-metrics">
@@ -1558,7 +1577,7 @@ export function renderAccountingLab() {
       <div class="applied-metric"><span>費用</span><strong>${formatYen(cost)}</strong></div>
       <div class="applied-metric ${profit >= 0 ? "positive" : "negative"}"><span>${profit >= 0 ? "利益" : "損失"}</span><strong>${formatYen(Math.abs(profit))}</strong></div>
     </div>
-    ${stackedBarMarkup(segments, `売上 ${formatYen(sales)} を費用と${profit >= 0 ? "利益" : "費用が上回る分"}に分けた棒`)}
+    ${stackedBarMarkup(segments, barLabel)}
     ${stackLegendMarkup(segments)}
     <p class="applied-caution">この図は、売上から費用を引くという会計の基本関係だけを示す教材例です。税金・在庫・実際の事業判断は扱いません。</p>
   `;

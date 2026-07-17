@@ -9,6 +9,8 @@ function normalizeText(value) {
     .replace(/[＜]/g, "<")
     .replace(/[＞]/g, ">")
     .replace(/[、，;]/g, ",")
+    .replace(/（/g, "(")
+    .replace(/）/g, ")")
     .replace(/\s+/g, "")
     .toLowerCase();
 }
@@ -75,6 +77,31 @@ function linearFactor(root) {
   return "x";
 }
 
+// 表示用: 式の途中に「+3x」「-y」の形でつなぐ。係数 ±1 の 1 は省く。
+function signedCoefTerm(coefficient, variable) {
+  const sign = coefficient < 0 ? "-" : "+";
+  const magnitude = Math.abs(coefficient);
+  return `${sign}${magnitude === 1 ? "" : magnitude}${variable}`;
+}
+
+// 表示用: 式の先頭の項。係数 ±1 の 1 は省き、正なら符号を付けない。
+function leadCoefTerm(coefficient, variable) {
+  const magnitude = Math.abs(coefficient);
+  const body = `${magnitude === 1 ? "" : magnitude}${variable}`;
+  return coefficient < 0 ? `-${body}` : body;
+}
+
+// 表示用: 定数項。0 なら項ごと省略する。
+function signedConstant(value) {
+  if (value === 0) return "";
+  return value < 0 ? String(value) : `+${value}`;
+}
+
+// ヒントの引き算で、負の数を (−n) と括弧書きにして二重マイナスを避ける。
+function factorText(value) {
+  return value < 0 ? `(${value})` : String(value);
+}
+
 function sameRadical(input, coefficient, radicand) {
   const text = normalizeText(input)
     .replace(/\*/g, "")
@@ -113,7 +140,7 @@ function integerAdvanced() {
   const left = randomInt(8, 18);
   const right = randomInt(2, 7);
   const factor = choose([-6, -5, -4, 4, 5, 6]);
-  const tail = randomInt(-15, 15);
+  const tail = randomInt(-15, 15) || 8;
   const grouped = left - right;
   const product = grouped * factor;
   const answer = product + tail;
@@ -163,7 +190,8 @@ function squareRootAdvanced() {
 function rootOperationsAdvanced() {
   const radicand = choose([2, 3, 5, 7]);
   const first = randomInt(7, 14);
-  const second = choose([-8, -6, 5, 9]);
+  // 係数の和が 0 になると答えが 0√n の形になってしまうので除外する。
+  const second = choose([-8, -6, 5, 9].filter((value) => first + value !== 0));
   const total = first + second;
   return {
     modeLabel: "少し進んだ問題",
@@ -178,7 +206,7 @@ function rootOperationsAdvanced() {
 
 function substitutionAdvanced() {
   const coefficient = choose([-4, -3, 3, 4]);
-  const constant = randomInt(-8, 8);
+  const constant = randomInt(-8, 8) || 5;
   const x = choose([-5, -4, -3, 3, 4, 5]);
   const square = x ** 2;
   const product = coefficient * square;
@@ -200,13 +228,13 @@ function combineAdvanced() {
   const xSecond = randomInt(-9, 9) || -3;
   const yFirst = randomInt(-9, 9) || 4;
   const ySecond = randomInt(-9, 9) || -2;
-  const constant = randomInt(-12, 12);
+  const constant = randomInt(-12, 12) || 7;
   const xTotal = xFirst + xSecond;
   const yTotal = yFirst + ySecond;
   return {
     modeLabel: "少し進んだ問題",
     title: "x・y・定数を別々にまとめる",
-    prompt: `\\(${xFirst}x${yFirst < 0 ? yFirst : `+${yFirst}`}y${xSecond < 0 ? xSecond : `+${xSecond}`}x${ySecond < 0 ? ySecond : `+${ySecond}`}y${constant < 0 ? constant : `+${constant}`}\\)`,
+    prompt: `\\(${leadCoefTerm(xFirst, "x")}${signedCoefTerm(yFirst, "y")}${signedCoefTerm(xSecond, "x")}${signedCoefTerm(ySecond, "y")}${signedConstant(constant)}\\)`,
     steps: [
       { label: "xの係数", question: "まとめた \\(x\\) の係数は？", hint: `\\(${xFirst}\\) と \\(${xSecond}\\) を足します。`, check: (input) => numericAnswer(input, xTotal), answer: String(xTotal) },
       { label: "yの係数", question: "まとめた \\(y\\) の係数は？", hint: `\\(${yFirst}\\) と \\(${ySecond}\\) を足します。`, check: (input) => numericAnswer(input, yTotal), answer: String(yTotal) },
@@ -243,10 +271,10 @@ function equationAdvanced() {
   return {
     modeLabel: "少し進んだ問題",
     title: "両辺にxがある一次方程式",
-    prompt: `\\(${leftCoefficient}x${leftConstant < 0 ? leftConstant : `+${leftConstant}`}=${rightCoefficient}x${rightConstant < 0 ? rightConstant : `+${rightConstant}`}\\)`,
+    prompt: `\\(${leftCoefficient}x${signedConstant(leftConstant)}=${leadCoefTerm(rightCoefficient, "x")}${signedConstant(rightConstant)}\\)`,
     steps: [
       { label: "xの項を片側へ", question: "右辺の \\(x\\) の項を左へ移すと、xの係数は？", hint: `\\(${leftCoefficient}-${rightCoefficient}\\) を計算します。`, check: (input) => numericAnswer(input, leftCoefficient - rightCoefficient), answer: String(leftCoefficient - rightCoefficient) },
-      { label: "定数を片側へ", question: "定数を右へまとめた値は？", hint: `\\(${rightConstant}-${leftConstant}\\) を計算します。`, check: (input) => numericAnswer(input, rightConstant - leftConstant), answer: String(rightConstant - leftConstant) },
+      { label: "定数を片側へ", question: "定数を右へまとめた値は？", hint: `\\(${rightConstant}-${factorText(leftConstant)}\\) を計算します。`, check: (input) => numericAnswer(input, rightConstant - leftConstant), answer: String(rightConstant - leftConstant) },
       { label: "解", question: "\\(x\\) は？", hint: "最後にxの係数で割ります。", check: (input) => numericAnswer(input, solution, "x"), answer: `\\(x=${solution}\\)` },
     ],
   };
@@ -295,9 +323,9 @@ function inequalityAdvanced() {
   return {
     modeLabel: "少し進んだ問題",
     title: "両辺にxがある一次不等式",
-    prompt: `\\(${leftCoefficient}x${leftConstant < 0 ? leftConstant : `+${leftConstant}`}<${rightCoefficient}x${rightConstant < 0 ? rightConstant : `+${rightConstant}`}\\)`,
+    prompt: `\\(${leftCoefficient}x${signedConstant(leftConstant)}<${leadCoefTerm(rightCoefficient, "x")}${signedConstant(rightConstant)}\\)`,
     steps: [
-      { label: "xの係数", question: "xの項を左へまとめた係数は？", hint: `\\(${leftCoefficient}-${rightCoefficient}\\) を計算します。`, check: (input) => numericAnswer(input, difference), answer: String(difference) },
+      { label: "xの係数", question: "xの項を左へまとめた係数は？", hint: `\\(${leftCoefficient}-${factorText(rightCoefficient)}\\) を計算します。`, check: (input) => numericAnswer(input, difference), answer: String(difference) },
       { label: "境目", question: "等号にしたときの境目の数は？", hint: "定数も片側へまとめて、係数で割ります。", check: (input) => numericAnswer(input, boundary), answer: String(boundary) },
       { label: "不等号", question: "解を、\\(x\\) と境目の数を不等号で結んで書くと？", hint: difference < 0 ? "負の係数で割るので向きを反転します。" : "正の係数で割るので向きはそのままです。", check: (input) => normalizeText(input) === `x${sign}${boundary}`, answer: `\\(x${sign}${boundary}\\)` },
     ],
@@ -312,7 +340,7 @@ function quadraticAdvanced() {
   return {
     modeLabel: "少し進んだ問題",
     title: "平方完成して頂点を読む",
-    prompt: `\\(y=x^2${linearCoefficient < 0 ? linearCoefficient : `+${linearCoefficient}`}x${constant < 0 ? constant : `+${constant}`}\\)`,
+    prompt: `\\(y=x^2${linearCoefficient === 0 ? "" : signedCoefTerm(linearCoefficient, "x")}${signedConstant(constant)}\\)`,
     steps: [
       { label: "横位置", question: "平方完成したときの頂点のx座標は？", hint: `\\(x^2-2px\\) の係数から \\(p\\) を読みます。`, check: (input) => numericAnswer(input, horizontal), answer: String(horizontal) },
       { label: "高さ", question: "頂点のy座標は？", hint: `\\(x=${horizontal}\\) を元の式へ代入します。`, check: (input) => numericAnswer(input, vertical), answer: String(vertical) },
@@ -333,8 +361,8 @@ function functionValuesAdvanced() {
     title: "2点から一次関数を決める",
     prompt: `直線が2点 \\((${firstX},${firstY})\\)、\\((${secondX},${secondY})\\) を通る。`,
     steps: [
-      { label: "xの増加量", question: "xの増加量は？", hint: `\\(${secondX}-${firstX}\\) を計算します。`, check: (input) => numericAnswer(input, secondX - firstX), answer: String(secondX - firstX) },
-      { label: "yの増加量", question: "yの増加量は？", hint: `\\(${secondY}-${firstY}\\) を計算します。`, check: (input) => numericAnswer(input, secondY - firstY), answer: String(secondY - firstY) },
+      { label: "xの増加量", question: "xの増加量は？", hint: `\\(${secondX}-${factorText(firstX)}\\) を計算します。`, check: (input) => numericAnswer(input, secondX - firstX), answer: String(secondX - firstX) },
+      { label: "yの増加量", question: "yの増加量は？", hint: `\\(${secondY}-${factorText(firstY)}\\) を計算します。`, check: (input) => numericAnswer(input, secondY - firstY), answer: String(secondY - firstY) },
       { label: "傾き", question: "傾き \\(m\\) は？", hint: "yの増加量をxの増加量で割ります。", check: (input) => numericAnswer(input, slope, "m"), answer: `\\(m=${slope}\\)` },
       { label: "切片", question: "切片 \\(b\\) は？", hint: "どちらかの点を \\(y=mx+b\\) へ代入します。", check: (input) => numericAnswer(input, intercept, "b"), answer: `\\(b=${intercept}\\)` },
     ],
@@ -342,8 +370,10 @@ function functionValuesAdvanced() {
 }
 
 function quadraticSignAdvanced() {
-  const lower = randomInt(-5, 0);
-  const upper = lower + randomInt(3, 7);
+  // 根が 0 だと因数の表示が (x) になって読みにくいので避ける。
+  const lower = randomInt(-5, -1);
+  let upper = lower + randomInt(3, 7);
+  while (upper === 0) upper = lower + randomInt(3, 7);
   return {
     modeLabel: "少し進んだ問題",
     title: "下に開く放物線の符号",
@@ -755,7 +785,7 @@ function factoringAdvanced() {
   return {
     modeLabel: "少し進んだ問題",
     title: "符号の組を見極める因数分解",
-    prompt: `\\(x^2${signedTerm(sum)}x${signedTerm(product)}\\) を因数分解する`,
+    prompt: `\\(x^2${signedCoefTerm(sum, "x")}${signedTerm(product)}\\) を因数分解する`,
     steps: [
       {
         label: "2数をさがす",
@@ -791,7 +821,7 @@ function quadraticSolveAdvanced() {
   return {
     modeLabel: "少し進んだ問題",
     title: "判別式と解の公式で解く",
-    prompt: `二次方程式 \\(x^2${signedTerm(b)}x${signedTerm(c)}=0\\) を、解の公式 \\(x=\\dfrac{-b\\pm\\sqrt{D}}{2a}\\) で解く`,
+    prompt: `二次方程式 \\(x^2${b === 0 ? "" : signedCoefTerm(b, "x")}${signedConstant(c)}=0\\) を、解の公式 \\(x=\\dfrac{-b\\pm\\sqrt{D}}{2a}\\) で解く`,
     steps: [
       {
         label: "判別式",

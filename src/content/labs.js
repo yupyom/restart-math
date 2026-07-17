@@ -162,7 +162,7 @@ export const labs = [
     practiceIds: ["venn-count", "sets", "counting"],
     objectIntro: "2つの円の人数と重なりを動かして、二重に数えられる部分を見る",
     observe: "そのまま足すと重なりを2回数える。1回分引くと正しい人数になる",
-    starterExample: "例：\\(n(A)=25\\)、\\(n(B)=15\\)、重なりを \\(8\\) にすると、\\(n(A\\cup B)=25+15-8=32\\) 人と数えられる。",
+    starterExample: "例：\\(n(A)=18\\)、\\(n(B)=14\\)、重なりを \\(6\\) にすると、\\(n(A\\cup B)=18+14-6=26\\) 人と数えられる。",
   },
   {
     id: "geometry-properties-lab",
@@ -297,6 +297,7 @@ export const unitLabRefs = {
   "function-notation": ["function-lab"],
   "pythagorean-theorem": ["trig-lab", "geometry-properties-lab"],
   "geometric-series-sum": ["loan-balance-lab"],
+  "geometric-sequences": ["loan-balance-lab"],
   "prime-factorization": ["radical-lab", "euclidean-algorithm-lab"],
   similarity: ["trig-lab"],
   "conditional-probability": ["probability-lab"],

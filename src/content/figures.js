@@ -298,13 +298,13 @@ export const figures = [
     "id": "fermat",
     "name": "ピエール・ド・フェルマー",
     "reading": "Pierre de Fermat",
-    "era": "1607–1665",
+    "era": "1601–1665",
     "region": "フランス（トゥールーズ）",
     "achievement": "数論と確率論の礎を築き、「最終定理」で知られる",
     "portrait": {
       "src": "assets/img/portraits/fermat.webp",
       "alt": "フェルマーのイメージイラスト",
-      "caption": "ピエール・ド・フェルマー（1607–1665）"
+      "caption": "ピエール・ド・フェルマー（1601–1665）"
     },
     "profile": [
       "トゥールーズの法律家・裁判官を本業としながら、余暇に数学を研究した「アマチュアの数学者」として知られます。",
@@ -405,7 +405,7 @@ export const figures = [
         "leibniz"
       ],
       "lessons": [
-        "prime-factorization",
+        "simultaneous-equations",
         "geometry"
       ],
       "labs": []
@@ -444,7 +444,7 @@ export const figures = [
       ],
       "lessons": [
         "functions",
-        "pythagorean-theorem"
+        "sum-and-general-term"
       ],
       "labs": [
         "function-lab"
@@ -968,7 +968,7 @@ export const figures = [
     },
     "profile": [
       "「近代看護の母」として知られるイギリスの看護師・社会改革者です。クリミア戦争での看護活動で有名になりました。",
-      "統計にも深い関心を持ち、女性として初めて王立統計協会の会員に選ばれました。"
+      "統計にも深い関心を持ち、女性として初めて統計協会（のちの王立統計協会）の会員に選ばれました。"
     ],
     "contributions": [
       "戦地での死因の多くが、負傷そのものより不衛生による病気であることを統計で示しました。データにもとづいて衛生状態の改善を訴え、多くの命を救いました。",

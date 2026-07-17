@@ -132,7 +132,7 @@ const rawPracticeCatalog = [
   },
   {
     id: "function-values",
-    label: "関数の式・表・値",
+    label: "関数の式と値",
     lessonIds: ["functions"],
     labIds: ["function-lab"],
     level: "はじめの一問",
@@ -140,7 +140,7 @@ const rawPracticeCatalog = [
   },
   {
     id: "quadratic-sign",
-    label: "二次方程式・不等式",
+    label: "二次不等式",
     lessonIds: ["quadratic-inequalities"],
     labIds: ["quadratic-lab"],
     level: "はじめの一問",
@@ -224,7 +224,7 @@ const rawPracticeCatalog = [
     lessonIds: ["geometry"],
     labIds: ["geometry-properties-lab", "trig-lab"],
     level: "はじめの一問",
-    numberPolicy: "三角形の角と3・4・5の直角三角形",
+    numberPolicy: "三角形の角と3・4・5などの直角三角形",
   },
   {
     id: "expansion",
@@ -279,12 +279,12 @@ const rawPracticeCatalog = [
 const advancedPolicies = {
   integer: "かっこを含む3段階の計算・答えは3桁以内",
   "absolute-value": "積や差の絶対値を、計算してから距離として読む",
-  exponent: "累乗の積・商・累乗を組み合わせて指数を整理する",
+  exponent: "累乗の積と商を組み合わせて指数を整理する",
   "arithmetic-sequence": "離れた2つの項から公差を逆算して一般項を使う",
   "venn-count": "『どちらでもない』の人数から重なりを逆算する",
-  radical: "ルートの中は200以下・平方因数を2回見直す",
+  radical: "ルートの中は1400以下・大きい平方因数（\\(8^2\\)〜\\(14^2\\)）を探す",
   "square-root-meaning": "平方数は400以下・√と方程式の解を区別する",
-  "root-operations": "係数は2桁を含み、加減と乗法を使い分ける",
+  "root-operations": "係数は2桁を含む、同じルートの加減",
   substitution: "負の数・2乗を含む式へ代入する",
   combine: "3種類以上の項を符号ごと整理する",
   distribute: "2つのかっこを順に展開する",

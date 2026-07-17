@@ -136,7 +136,11 @@ export function generatePermCombProblem() {
         label: "使い分け",
         question: `${n}人から「代表${r}人」を選ぶときに使うのは P と C のどちら？`,
         hint: "代表どうしに順番や役割の区別はありません。区別がないなら、並べ替えのぶんを割った方を使います。",
-        check: (input) => ["c", "組合せ", "組み合わせ", `${n}c${r}`].includes(normalizeText(input)),
+        check: (input) => {
+          // 模範解答の「C（組合せ）」のような括弧つき入力も受理する。
+          const text = normalizeText(input).replace(/[（()）]/g, "");
+          return ["c", "組合せ", "組み合わせ", "c組合せ", "c組み合わせ", `${n}c${r}`].includes(text);
+        },
         answer: "C（組合せ）",
       },
     ],
@@ -296,7 +300,8 @@ export function generateAbsoluteValueProblem() {
 export function generateExponentProblem() {
   const base = choose(["a", "x", "2", "3"]);
   const m = choose([2, 3, 4, 5]);
-  const n = choose([2, 3, 4]);
+  // 累乗の累乗（m×n）が「数えて確かめられる大きさ」を超えないよう抑える。
+  const n = choose([2, 3, 4].filter((value) => m * value <= 12));
   const productExponent = m + n;
   const powerExponent = m * n;
   return {
@@ -470,7 +475,7 @@ export function generateSubstitutionProblem() {
         check: (input) => {
           const text = normalizeText(input);
           const constant = b === 0 ? "" : b < 0 ? String(b) : `+${b}`;
-          const acceptable = [`${a}*${x}${constant}`, `${a}(${x})${constant}`].map(normalizeText);
+          const acceptable = [`${a}*${x}${constant}`, `${a}(${x})${constant}`, `${a}*(${x})${constant}`].map(normalizeText);
           return acceptable.includes(text);
         },
         answer: `\\(${a}\\times${factorText(x)}${b < 0 ? `-${Math.abs(b)}` : b > 0 ? `+${b}` : ""}\\)`,
@@ -489,8 +494,8 @@ export function generateSubstitutionProblem() {
 export function generateCombineProblem() {
   const p = randomInt(-5, 5) || 2;
   const q = randomInt(-5, 5) || -3;
-  const r = randomInt(-6, 6);
-  const s = randomInt(-6, 6);
+  const r = randomInt(-6, 6) || 4;
+  const s = randomInt(-6, 6) || -2;
   const xSum = p + q;
   const cSum = r + s;
   return {
@@ -520,7 +525,7 @@ export function generateCombineProblem() {
       {
         label: "ひとつの文字式にする",
         question: "整理した式は？",
-        hint: `\\(${xSum}x\\) と \\(${cSum}\\) を並べます。`,
+        hint: `\\(${term(xSum)}\\) と \\(${cSum}\\) を並べます。`,
         check: (input) => sameLinearExpression(input, xSum, cSum),
         answer: `\\(${linearText(xSum, cSum)}\\)`,
       },
@@ -957,7 +962,7 @@ export function generateRootOperationsProblem() {
     { left: 2, right: 8, coef: 4, rest: 1 },
     { left: 3, right: 12, coef: 6, rest: 1 },
     { left: 6, right: 3, coef: 3, rest: 2 },
-    { left: 5, right: 20, coef: 10, rest: 1 },
+    { left: 2, right: 18, coef: 6, rest: 1 },
     { left: 2, right: 6, coef: 2, rest: 3 },
   ];
   const problem = choose(multiplicationCases);
@@ -1142,8 +1147,13 @@ export function sameOutsideInterval(input, lower, upper) {
 }
 
 export function generateQuadraticSignProblem() {
-  const lower = randomInt(-4, 1);
-  const upper = lower + randomInt(2, 5);
+  // 根が 0 だと因数の表示が (x) になって読みにくいので引き直す。
+  let lower = randomInt(-4, 1);
+  let upper = lower + randomInt(2, 5);
+  while (lower === 0 || upper === 0) {
+    lower = randomInt(-4, 1);
+    upper = lower + randomInt(2, 5);
+  }
   const leftFactor = lower < 0 ? `x+${Math.abs(lower)}` : lower > 0 ? `x-${lower}` : "x";
   const rightFactor = upper < 0 ? `x+${Math.abs(upper)}` : upper > 0 ? `x-${upper}` : "x";
   return {
@@ -1344,7 +1354,7 @@ export function generateGeometryPropertiesProblem() {
         label: "角度を求める",
         question: "\\(\\angle ABC\\) は何度？",
         hint: `\\(${centralAngle}\\div2\\) を計算します。`,
-        check: (input) => Number(normalizeText(input).replace("度", "")) === inscribedAngle,
+        check: (input) => Number(normalizeText(input).replace(/度|°/g, "")) === inscribedAngle,
         answer: `${inscribedAngle}°`,
       },
     ],
@@ -1397,7 +1407,7 @@ export function generateGeometryBasicsProblem() {
           label: "内角の和を使う",
           question: "残りの角は何度？",
           hint: "三角形の内角の和は180°です。",
-          check: (input) => Number(normalizeText(input).replace("度", "")) === third,
+          check: (input) => Number(normalizeText(input).replace(/度|°/g, "")) === third,
           answer: `${third}°`,
         },
       ],

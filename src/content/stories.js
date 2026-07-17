@@ -285,7 +285,7 @@ export const stories = [
     title: "二本の線で「同じ」を書く：ロバート・レコードと等号",
     lead: "いまでは当たり前の等号も、初めから世界共通だったわけではありません。記号は、長い説明を短く共有するために育ってきました。",
     portraits: [
-      { src: "assets/img/portraits/recorde.webp", alt: "ロバート・レコードのイメージイラスト", caption: "ロバート・レコード（1510–1558）" },
+      { src: "assets/img/portraits/recorde.webp", alt: "ロバート・レコードのイメージイラスト", caption: "ロバート・レコード（1512頃–1558）" },
     ],
     lessonIds: ["linear-equations", "equation-modeling", "identities-equations"],
     labIds: ["equation-lab"],
@@ -296,7 +296,7 @@ export const stories = [
       { heading: "この単元との接続", body: "\\(=\\) は『答えを書く合図』ではなく、左右が同じ量だという主張です。方程式でも恒等式でも、この意味は変わりません。" },
     ],
     sources: [
-      { title: "Robert Recorde (1510–1558)", publisher: "MacTutor History of Mathematics, University of St Andrews", url: "https://mathshistory.st-andrews.ac.uk/Biographies/Recorde/" },
+      { title: "Robert Recorde (c. 1512–1558)", publisher: "MacTutor History of Mathematics, University of St Andrews", url: "https://mathshistory.st-andrews.ac.uk/Biographies/Recorde/" },
     ],
     factCheck: { status: "checked", note: "1557年の著書での等号使用と、記号が直ちに定着しなかった点を出典の範囲で記述しました。" },
   },
@@ -307,7 +307,7 @@ export const stories = [
     title: "文章の問題を共通の方法で解く：アル＝フワーリズミと代数",
     lead: "方程式は、意味のない文字操作から始まったのではありません。相続・取引・測量など、生活の問題を同じ方法で解くための道具として整理されました。",
     portraits: [
-      { src: "assets/img/portraits/al-khwarizmi.webp", alt: "アル＝フワーリズミのイメージイラスト", caption: "アル＝フワーリズミ（790頃–850頃）" },
+      { src: "assets/img/portraits/al-khwarizmi.webp", alt: "アル＝フワーリズミのイメージイラスト", caption: "アル＝フワーリズミ（780頃–850頃）" },
     ],
     lessonIds: ["linear-equations", "equation-modeling", "quadratic-inequalities"],
     labIds: ["equation-lab"],
@@ -318,7 +318,7 @@ export const stories = [
       { heading: "この単元との接続", body: "文章から同じ量を二通りに表し、方程式の形に整理すれば、題材が変わっても同じ解き方を使えます。" },
     ],
     sources: [
-      { title: "Al-Khwarizmi (790–850)", publisher: "MacTutor History of Mathematics, University of St Andrews", url: "https://mathshistory.st-andrews.ac.uk/Biographies/Al-Khwarizmi/" },
+      { title: "Al-Khwarizmi (c. 780–850)", publisher: "MacTutor History of Mathematics, University of St Andrews", url: "https://mathshistory.st-andrews.ac.uk/Biographies/Al-Khwarizmi/" },
     ],
     factCheck: { status: "checked", note: "代数書の実用的目的、言葉による記述、一次・二次方程式の扱いに限定して記述しました。" },
   },
@@ -351,7 +351,7 @@ export const stories = [
     title: "星の位置を計算する：アル＝バッターニーと三角法",
     lead: "三角比は、教室の直角三角形だけの計算ではありません。直接手が届かない天体の位置や動きを、角度と比から調べる必要にも支えられてきました。",
     portraits: [
-      { src: "assets/img/portraits/al-battani.webp", alt: "アル＝バッターニーのイメージイラスト", caption: "アル＝バッターニー（850頃–929）" },
+      { src: "assets/img/portraits/al-battani.webp", alt: "アル＝バッターニーのイメージイラスト", caption: "アル＝バッターニー（858頃–929）" },
     ],
     lessonIds: ["trig-ratios", "sine-cosine-rule"],
     labIds: ["trig-lab"],
@@ -362,7 +362,7 @@ export const stories = [
       { heading: "この単元との接続", body: "測れる角度と長さの比を使えば、直接測れない辺や距離を計算できます。まずは図の辺と角の対応から始めます。" },
     ],
     sources: [
-      { title: "Al-Battani (about 850–929)", publisher: "MacTutor History of Mathematics, University of St Andrews", url: "https://mathshistory.st-andrews.ac.uk/Biographies/Al-Battani/" },
+      { title: "Al-Battani (c. 858–929)", publisher: "MacTutor History of Mathematics, University of St Andrews", url: "https://mathshistory.st-andrews.ac.uk/Biographies/Al-Battani/" },
     ],
     factCheck: { status: "checked", note: "天体観測、三角関数の利用、直角三角形の公式に限定し、近代的三角法の単独発明とは記述していません。" },
   },

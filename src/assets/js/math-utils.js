@@ -61,6 +61,8 @@ export function normalizeText(value) {
     .replace(/[＋]/g, "+")
     .replace(/[＝]/g, "=")
     .replace(/[×・＊]/g, "*")
+    .replace(/（/g, "(")
+    .replace(/）/g, ")")
     .replace(/\s+/g, "")
     .toLowerCase();
 }
