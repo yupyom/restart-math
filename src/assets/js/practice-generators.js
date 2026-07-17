@@ -43,7 +43,7 @@ export function generateExpansionProblem() {
       {
         label: "和と差の積",
         question: `\\((x+${c})(x-${c})\\) を展開すると \\(x^2-\\square\\)。ひかれる数 \\(\\square\\) は？`,
-        hint: `和と差の積は \\((x+a)(x-a)=x^2-a^2\\)。\\(x\\) の項は \\(-${c}x\\) と \\(+${c}x\\) で打ち消し合います。`,
+        hint: `和と差の積は \\((x+a)(x-a)=x^2-a^2\\)。ここでは \\(a\\) にあたる数が \\(${c}\\) です。\\(x\\) の項は \\(-${c}x\\) と \\(+${c}x\\) で打ち消し合います。`,
         check: (input) => Number(normalizeText(input)) === c * c,
         answer: String(c * c),
       },
@@ -328,7 +328,7 @@ export function generateAbsoluteValueProblem() {
       {
         label: "2数の距離",
         question: `\\(${negative}\\) と \\(${positive}\\) の距離は？`,
-        hint: `2数の距離は \\(|${negative}-${positive}|\\) で求められます。`,
+        hint: `数直線で大きい方は \\(${positive}\\)、小さい方は \\(${negative}\\)。距離は「大きい数 − 小さい数」で、\\(${positive}-(${negative})\\) を計算します。引く順番に迷うときは、差に絶対値を付けた \\(|${positive}-(${negative})|\\) と覚えれば、どちらから引いても距離になります。`,
         check: (input) => Number(normalizeText(input)) === distance,
         answer: String(distance),
       },
@@ -446,7 +446,7 @@ export function generateIntegerProblem() {
       {
         label: "残った足し算・引き算を計算する",
         question: `\\(${sumExpression(a, product)}\\) は？`,
-        hint: "数直線で、\\(a\\) から積の分だけ移動します。",
+        hint: `数直線で、\\(${a}\\) から \\(${product}\\) だけ移動します。${product < 0 ? `負の数を足すのは、左へ \\(${Math.abs(product)}\\) 目盛り動くこと` : `正の数を足すのは、右へ \\(${product}\\) 目盛り動くこと`}です。`,
         check: (input) => Number(normalizeText(input)) === answer,
         answer: String(answer),
       },
@@ -481,7 +481,7 @@ export function generateRadicalProblem() {
       {
         label: "平方数の因数を見つける",
         question: `\\(${n}=\\Box\\times${rest}\\)。\\(\\Box\\) に入る平方数は？`,
-        hint: `\\(${base}^2\\) を探してみましょう。`,
+        hint: `平方数（\\(4,\\ 9,\\ 16,\\ 25,\\ \\dots\\)）の中から、\\(${rest}\\) をかけると \\(${n}\\) に戻るものを探します。\\(${n}\\div${rest}\\) を計算しても確かめられます。`,
         check: (input) => Number(normalizeText(input)) === base * base,
         answer: String(base * base),
       },
@@ -692,7 +692,7 @@ export function generateQuadraticVertexProblem() {
       {
         label: "頂点を読む",
         question: "頂点の座標は？",
-        hint: "頂点形式 \\(y=a(x-p)^2+q\\) では、\\(p\\) が横位置、\\(q\\) が高さです。",
+        hint: `頂点形式 \\(y=a(x-p)^2+q\\) と見比べます。${h === 0 ? "かっこの2乗がないのは横位置が \\(0\\) だから。頂点は \\(y\\) 軸の上にあります。" : "かっこの中は「\\(x-\\)横位置」なので、中の符号を反転して読みます。"}高さは最後の定数です。`,
         check: (input) => samePoint(input, h, k),
         answer: `\\((${h},${k})\\)`,
       },
@@ -860,8 +860,8 @@ export function generateCountingProblem() {
         question: "全部で何通り？",
         hint:
           mode === "permutation"
-            ? `\\({}_{${n}}P_{${r}}\\) を計算します。`
-            : `\\({}_{${n}}C_{${r}}\\) を計算します。`,
+            ? `\\({}_{${n}}P_{${r}}\\)：\\(${n}\\) から1ずつ減らしながら \\(${r}\\) 個かけます。`
+            : `まず並べ方 \\({}_{${n}}P_{${r}}\\) を数え、同じ \\(${r}\\) 人の並べ替え \\(${r}!\\) 通りで割ります。`,
         check: (input) => Number(normalizeText(input)) === total,
         answer: String(total),
       },
@@ -1004,7 +1004,7 @@ export function generateRootOperationsProblem() {
       {
         label: "ルートの中をかける",
         question: "一つの√にまとめると、√の中はいくつ？",
-        hint: `\\(\\sqrt{a}\\sqrt{b}=\\sqrt{ab}\\) を使います。`,
+        hint: `\\(\\sqrt{a}\\sqrt{b}=\\sqrt{ab}\\) を使います。ここでは \\(\\sqrt{${problem.left}}\\times\\sqrt{${problem.right}}=\\sqrt{${problem.left}\\times${problem.right}}\\) です。`,
         check: (input) => Number(normalizeText(input)) === product,
         answer: String(product),
       },
@@ -1241,7 +1241,7 @@ export function generateSineCosineRuleProblem() {
         {
           label: "正弦定理へ代入する",
           question: `\\(\\dfrac{${sideA}}{1/2}=\\dfrac{b}{1}\\) より、\\(b\\) は？`,
-          hint: `\\(${sideA}\\div\\frac12\\) を計算します。`,
+          hint: `分母は「向かいの角のサイン」です。左の \\(\\frac12\\) は \\(\\sin30^\\circ\\)、右の \\(1\\) は \\(\\sin90^\\circ\\)。\\(${sideA}\\div\\frac12\\) は \\(${sideA}\\times2\\) と同じです。`,
           check: (input) => Number(normalizeText(input).replace(/^b=/, "")) === sideB,
           answer: `\\(b=${sideB}\\)`,
         },

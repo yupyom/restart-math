@@ -231,7 +231,7 @@ export function generateSimultaneousProblem() {
       {
         label: "2つの式をたす",
         question: `2つの式を左辺どうし・右辺どうしでたすと \\(2x=\\square\\)。\\(\\square\\) は？`,
-        hint: `\\(+y\\) と \\(-y\\) が打ち消し合って \\(y\\) が消えます。右辺は \\(${sum}+(${difference})\\)。`,
+        hint: `\\(+y\\) と \\(-y\\) が打ち消し合って \\(y\\) が消えます。右辺は \\(${sum}${difference < 0 ? `+(${difference})` : `+${difference}`}\\)。`,
         check: (input) => numericAnswer(input, sum + difference),
         answer: String(sum + difference),
       },
@@ -860,7 +860,7 @@ export function generateProofFillProblem() {
         question: "\\(2(m+n)\\) が偶数だといえる理由はどれ？",
         hint: "偶数の定義は「2×（整数）の形で書ける数」でした。定義に戻るのが証明の締めくくりです。",
         choices: ["2×（整数）の形だから", "いくつか例で確かめたから", "見た目が偶数らしいから"],
-        check: (input) => normalizeText(input).includes("2*(整数)の形だから".replace("*", "*")) || normalizeText(input).includes("の形だから"),
+        check: (input) => normalizeText(input).includes("の形だから"),
         answer: "2×（整数）の形だから",
       },
       {
@@ -1291,7 +1291,7 @@ export function generateDifferenceSequenceProblem() {
       {
         label: "階差の規則",
         question: "階差の列はどんな数列？",
-        hint: "取り出した差の列 自体が、公差1で増えています。",
+        hint: "取り出した差の列そのものが、公差1で増えています。",
         choices: ["公差1の等差数列", "公比2の等比数列", "規則はない"],
         check: (input) => normalizeText(input).includes("等差"),
         answer: "公差1の等差数列",

@@ -46,7 +46,7 @@ function radicalAdvanced() {
     title: "大きい平方因数を見つける",
     prompt: `\\(\\sqrt{${value}}\\) を最も簡単な形にする`,
     steps: [
-      { label: "平方因数", question: `\\(${value}=\\Box\\times${rest}\\) の平方数は？`, hint: `\\(${base}^2\\) を確かめます。`, check: (input) => numericAnswer(input, square), answer: String(square) },
+      { label: "平方因数", question: `\\(${value}=\\Box\\times${rest}\\) の平方数は？`, hint: `\\(${value}\\div${rest}\\) を計算し、それがどんな数の2乗になっているかを確かめます。`, check: (input) => numericAnswer(input, square), answer: String(square) },
       { label: "√の外へ出す", question: "最も簡単な形は？", hint: `\\(\\sqrt{${square}}=${base}\\) です。`, check: (input) => sameRadical(input, base, rest), answer: `\\(${radicalTeX(base, rest)}\\)` },
     ],
   };
@@ -206,7 +206,7 @@ function inequalityAdvanced() {
     prompt: `\\(${leftCoefficient}x${signedConstant(leftConstant)}<${leadCoefTerm(rightCoefficient, "x")}${signedConstant(rightConstant)}\\)`,
     steps: [
       { label: "xの係数", question: "xの項を左へまとめた係数は？", hint: `\\(${leftCoefficient}-${factorText(rightCoefficient)}\\) を計算します。`, check: (input) => numericAnswer(input, difference), answer: String(difference) },
-      { label: "境目", question: "等号にしたときの境目の数は？", hint: "定数も片側へまとめて、係数で割ります。", check: (input) => numericAnswer(input, boundary), answer: String(boundary) },
+      { label: "境目", question: "等号にしたときの境目の数は？", hint: `定数を右へまとめると \\(${rightConstant}-${factorText(leftConstant)}=${rightConstant - leftConstant}\\)。これを \\(x\\) の係数 \\(${difference}\\) で割ります。`, check: (input) => numericAnswer(input, boundary), answer: String(boundary) },
       { label: "不等号", question: "解を、\\(x\\) と境目の数を不等号で結んで書くと？", hint: difference < 0 ? "負の係数で割るので向きを反転します。" : "正の係数で割るので向きはそのままです。", check: (input) => normalizeText(input) === `x${sign}${boundary}`, answer: `\\(x${sign}${boundary}\\)` },
     ],
   };
@@ -222,7 +222,7 @@ function quadraticAdvanced() {
     title: "平方完成して頂点を読む",
     prompt: `\\(y=x^2${linearCoefficient === 0 ? "" : signedCoefTerm(linearCoefficient, "x")}${signedConstant(constant)}\\)`,
     steps: [
-      { label: "横位置", question: "平方完成したときの頂点のx座標は？", hint: `\\(x^2-2px\\) の係数から \\(p\\) を読みます。`, check: (input) => numericAnswer(input, horizontal), answer: String(horizontal) },
+      { label: "横位置", question: "平方完成したときの頂点のx座標は？", hint: `\\(x\\) の係数 \\(${linearCoefficient}\\) を半分にして符号を変えた数が、頂点の \\(x\\) 座標です（平方完成でかっこの中に入る数）。`, check: (input) => numericAnswer(input, horizontal), answer: String(horizontal) },
       { label: "高さ", question: "頂点のy座標は？", hint: `\\(x=${horizontal}\\) を元の式へ代入します。`, check: (input) => numericAnswer(input, vertical), answer: String(vertical) },
       { label: "頂点", question: "頂点を \\(x,y\\) の順に書くと？", hint: "横位置と高さを組にします。", check: (input) => sameOrderedPair(input, horizontal, vertical), answer: `\\((${horizontal},${vertical})\\)` },
     ],
@@ -280,7 +280,7 @@ function trigAdvanced() {
     prompt: `斜辺が \\(${hypotenuse}\\)、角 \\(\\theta=${angle}^\\circ\\) の直角三角形で${targetName}を求める。`,
     steps: [
       { label: "使う比", question: `斜辺と${targetName}を結ぶのは sin・cos・tan のどれ？`, hint: `${targetName}÷斜辺の比を選びます。`, check: (input) => normalizeText(input).includes(ratioName), answer: ratioName, choices: ["sin", "cos", "tan"] },
-      { label: "代表値", question: `\\(${ratioName}${angle}^\\circ\\) は？`, hint: "正三角形を半分にした比を使います。", check: (input) => sameRational(input, 1, 2), answer: `\\(\\frac12\\)` },
+      { label: "代表値", question: `\\(\\${ratioName}${angle}^\\circ\\) は？`, hint: "正三角形を半分にした比を使います。", check: (input) => sameRational(input, 1, 2), answer: `\\(\\frac12\\)` },
       { label: "辺の長さ", question: `${targetName}は？`, hint: `\\(${hypotenuse}\\times\\frac12\\) を計算します。`, check: (input) => numericAnswer(input, target), answer: String(target) },
     ],
   };
@@ -404,10 +404,10 @@ function numberTheoryAdvanced() {
     [527, 341],
   ]);
   const result = euclideanDivisionSteps(first, second);
-  const steps = result.steps.map(({ dividend, divisor, remainder }, index) => ({
+  const steps = result.steps.map(({ dividend, divisor, quotient, remainder }, index) => ({
     label: `余り ${index + 1}`,
     question: `\\(${dividend}\\) を \\(${divisor}\\) で割った余りは？`,
-    hint: "商をかけて、引いた残りを求めます。",
+    hint: `商は \\(${quotient}\\)。\\(${dividend}-${divisor}\\times${quotient}\\) が余りです。`,
     check: (input) => numericAnswer(input, remainder),
     answer: String(remainder),
   }));
