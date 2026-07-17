@@ -4,7 +4,7 @@ import { labCatalog } from "../../content/labs.js";
 import { practiceCatalog } from "../../content/practice.js";
 import { stories, storyCatalog } from "../../content/stories.js";
 import { state } from "./state.js";
-import { $, jumpToTop, scheduleMathTypeset } from "./utils.js";
+import { $, jumpToTop, scheduleMathTypeset, toggleSectionLead } from "./utils.js";
 import { routeHash } from "./nav.js";
 import { escapeHtml, formatTextWithMath, term, workedExampleMarkup } from "./format.js";
 import { linkifyGlossaryTerms } from "./glossary-links.js";
@@ -456,6 +456,7 @@ export function setupLessons() {
 export function setLessonView(view) {
   $("#lesson-index").hidden = view !== "index";
   $(".lesson-shell").hidden = view === "index";
+  toggleSectionLead("lessons", view === "index");
 }
 
 export function renderLessonIndex() {

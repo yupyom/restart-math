@@ -280,7 +280,6 @@ h3 {
 .answer-row,
 .problem-top,
 .lab-title-row,
-.split-heading,
 .progress-row,
 .pager {
   display: flex;
@@ -339,18 +338,15 @@ h3 {
 }
 
 .section-heading p:not(.eyebrow) {
-  max-width: 62rem;
+  max-width: 48rem;
   color: var(--muted);
   margin: 0.8rem 0 0;
 }
 
-.split-heading {
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.split-heading > p {
-  max-width: 35rem;
+/* 見出しは 1 行（フル幅）、リード文はその下に置く縦積み。
+   リード文は一覧ページだけに出し、詳細ページでは JS が hidden にして上部を軽くする。 */
+.section-lead-persistent {
+  margin-top: 0.8rem;
 }
 
 .home-index {

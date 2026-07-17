@@ -4,7 +4,7 @@ import { labCatalog } from "../../content/labs.js";
 import { practiceCatalog } from "../../content/practice.js";
 import { advancedPracticeGenerators } from "./practice-advanced.js";
 import { state } from "./state.js";
-import { $, $$, scheduleMathTypeset } from "./utils.js";
+import { $, $$, scheduleMathTypeset, toggleSectionLead } from "./utils.js";
 import { routeHash } from "./nav.js";
 import { escapeHtml, formatTextWithMath } from "./format.js";
 import { practiceGenerators } from "./practice-generators.js";
@@ -456,6 +456,7 @@ export function revealCurrentStep() {
 export function setPracticeView(view) {
   $("#practice-index").hidden = view !== "index";
   $(".practice-shell").hidden = view === "index";
+  toggleSectionLead("practice", view === "index");
 }
 
 export function renderPracticeIndex() {

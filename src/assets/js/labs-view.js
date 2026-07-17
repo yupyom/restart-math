@@ -3,7 +3,7 @@ import { units } from "../../content/lessons.js";
 import { labs, labCatalog } from "../../content/labs.js";
 import { practiceCatalog } from "../../content/practice.js";
 import { state } from "./state.js";
-import { $, $$, jumpToTop, scheduleMathTypeset } from "./utils.js";
+import { $, $$, jumpToTop, scheduleMathTypeset, toggleSectionLead } from "./utils.js";
 import { routeHash } from "./nav.js";
 import { compactPolynomial, escapeHtml, factorText, formatTextWithMath, linearText, sumExpression, term, vertexQuadraticExpression } from "./format.js";
 import { binomial, euclideanDivisionSteps, fractionText, gcd, largestSquareFactor, radicalTeX, radicalText, randomInt } from "./math-utils.js";
@@ -1711,6 +1711,7 @@ export function focusLab(labId) {
 export function setLabView(view) {
   $("#lab-index").hidden = view !== "index";
   $(".lab-shell").hidden = view === "index";
+  toggleSectionLead("labs", view === "index");
 }
 
 export function renderLabIndex() {

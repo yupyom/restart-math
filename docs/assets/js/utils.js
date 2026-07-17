@@ -5,6 +5,16 @@ export const $ = (selector) => document.querySelector(selector);
 
 export const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
+// 見出しのリード文は一覧ページだけに出し、詳細ページでは隠して上部を軽くする。
+// .section-lead-persistent は隠さない（問題ページの操作案内など、詳細でも残したい一文）。
+export function toggleSectionLead(pageId, showOnIndex) {
+  const section = document.querySelector(`[data-page="${pageId}"]`);
+  if (!section) return;
+  section.querySelectorAll(".section-lead").forEach((lead) => {
+    lead.hidden = !showOnIndex;
+  });
+}
+
 export let mathTypesetFrame = null;
 
 export const mathTypesetTargets = new Set();

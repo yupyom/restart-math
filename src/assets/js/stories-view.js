@@ -4,7 +4,7 @@ import { labCatalog } from "../../content/labs.js";
 import { practiceCatalog } from "../../content/practice.js";
 import { stories, storyCatalog } from "../../content/stories.js";
 import { state } from "./state.js";
-import { $, scheduleMathTypeset } from "./utils.js";
+import { $, scheduleMathTypeset, toggleSectionLead } from "./utils.js";
 import { routeHash } from "./nav.js";
 import { escapeHtml, formatTextWithMath } from "./format.js";
 import { linkifyGlossaryTerms } from "./glossary-links.js";
@@ -126,6 +126,7 @@ export function setupStories() {
 export function setStoryView(view) {
   $("#story-index").hidden = view !== "index";
   $(".story-shell").hidden = view === "index";
+  toggleSectionLead("stories", view === "index");
 }
 
 export function renderStoryIndex() {

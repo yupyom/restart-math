@@ -4,7 +4,7 @@ import { labs, labCatalog } from "../../content/labs.js";
 import { stories, storyCatalog } from "../../content/stories.js";
 import { figures, figureCatalog } from "../../content/figures.js";
 import { state } from "./state.js";
-import { $, scheduleMathTypeset } from "./utils.js";
+import { $, scheduleMathTypeset, toggleSectionLead } from "./utils.js";
 import { routeHash } from "./nav.js";
 import { escapeHtml, formatTextWithMath } from "./format.js";
 import { linkifyGlossaryTerms } from "./glossary-links.js";
@@ -140,4 +140,5 @@ export function setupFigures() {
 export function setFigureView(view) {
   $("#figure-index").hidden = view !== "index";
   $(".figure-shell").hidden = view === "index";
+  toggleSectionLead("figures", view === "index");
 }
