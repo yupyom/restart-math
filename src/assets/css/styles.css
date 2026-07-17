@@ -244,6 +244,39 @@ h3 {
   font-size: 1.08em;
 }
 
+/* 本文の段落に長いインライン数式が入ると、画面幅を突き破って横スクロールを生む
+   （とくにスマホ）。読み物・図鑑・単元本文のインライン数式だけ、はみ出すときは
+   数式の中で横スクロールさせ、行の外へあふれないようにする。max-width が効くよう
+   inline-block にし、overflow を付けても文字の縦位置がずれないよう vertical-align
+   を明示する（overflow を指定するとベースラインが箱の下端に移るため）。 */
+.example-intro mjx-container:not([display="true"]),
+.unit-summary mjx-container:not([display="true"]),
+.story-lead mjx-container:not([display="true"]),
+.story-section p mjx-container:not([display="true"]),
+.figure-detail-achievement mjx-container:not([display="true"]),
+.figure-section p mjx-container:not([display="true"]) {
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  vertical-align: middle;
+  /* MathJax の描画は端数で 1px ほどはみ出すことがあり、そのままだと短い式にも
+     横スクロールバーが出て行の高さがずれる。バーは隠し、長い式はスマホのスワイプで
+     スクロールできるようにする（バーの有無はスクロールできるかに影響しない）。 */
+  scrollbar-width: none;
+}
+
+.example-intro mjx-container:not([display="true"])::-webkit-scrollbar,
+.unit-summary mjx-container:not([display="true"])::-webkit-scrollbar,
+.story-lead mjx-container:not([display="true"])::-webkit-scrollbar,
+.story-section p mjx-container:not([display="true"])::-webkit-scrollbar,
+.figure-detail-achievement mjx-container:not([display="true"])::-webkit-scrollbar,
+.figure-section p mjx-container:not([display="true"])::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 .answer-row,
 .problem-top,
 .lab-title-row,
@@ -983,6 +1016,13 @@ code {
   margin: 0.4rem 0 0;
 }
 
+/* グリッドの子は既定で min-width:auto のため、長いインライン数式があると
+   段落がその最小幅まで広がり、ページ全体を横に突き破る。min-width:0 で
+   段落を親幅に収め、はみ出す数式は下の指定で数式内スクロールにする。 */
+.worked-example > * {
+  min-width: 0;
+}
+
 .example-intro {
   margin: 0;
   font-family: var(--font-reading);
@@ -996,7 +1036,8 @@ code {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.3rem 0.15rem 0.55rem;
+  /* 右端に少し余白をとり、スクロール影と数式が重ならないようにする。 */
+  padding: 0.3rem 0.7rem 0.55rem 0.15rem;
   color: var(--ink);
   font-size: clamp(1.15rem, 2.4vw, 1.55rem);
   line-height: 1.55;
@@ -1053,7 +1094,8 @@ code {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.1rem 0;
+  /* 右端に余白をとり、スクロール影と数式が重ならないようにする。 */
+  padding: 0.1rem 0.7rem 0.1rem 0;
   color: var(--ink);
   font-size: clamp(1.1rem, 2.2vw, 1.4rem);
   line-height: 1.5;
@@ -1062,6 +1104,25 @@ code {
 .walkthrough-equation mjx-container[display="true"] {
   margin: 0 !important;
   text-align: left !important;
+}
+
+/* 横に長い数式は overflow-x: auto でスクロールできるが、それが見た目で分からず
+   「式が途中で切れている」と誤解されやすい。続きがある側の端にだけ影を出し、
+   スクロールしきると影が消えるようにして、横に続くことを知らせる（純CSS）。
+   影は「白いカバー（内容と一緒に動く local）」で普段は隠し、スクロールで
+   カバーがずれると下の影（要素に固定した scroll）が現れる仕組み。背景は例カード・
+   手順カードとも白（#ffffff）なのでカバーも白でそろえる。 */
+.equation-display,
+.walkthrough-equation {
+  background-image:
+    linear-gradient(to right, #ffffff 45%, rgba(255, 255, 255, 0)),
+    linear-gradient(to left, #ffffff 45%, rgba(255, 255, 255, 0)),
+    radial-gradient(farthest-side at 0 50%, rgba(24, 76, 80, 0.32), rgba(24, 76, 80, 0)),
+    radial-gradient(farthest-side at 100% 50%, rgba(24, 76, 80, 0.32), rgba(24, 76, 80, 0));
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-size: 2.4rem 100%, 2.4rem 100%, 1.1rem 100%, 1.1rem 100%;
+  background-attachment: local, local, scroll, scroll;
 }
 
 .walkthrough-sentence {
