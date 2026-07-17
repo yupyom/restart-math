@@ -1319,6 +1319,14 @@ code {
   margin-top: 1.2rem;
 }
 
+/* 図鑑・読み物・図解・問題の詳細ページ下部に置く前後移動。本文と区切る線を足す。 */
+.detail-pager {
+  gap: 0.6rem;
+  margin-top: 1.6rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+}
+
 .lab-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

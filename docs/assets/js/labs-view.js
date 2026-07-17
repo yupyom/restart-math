@@ -4,8 +4,10 @@ import { labs, labCatalog } from "../../content/labs.js";
 import { practiceCatalog } from "../../content/practice.js";
 import { state } from "./state.js";
 import { $, $$, jumpToTop, scheduleMathTypeset } from "./utils.js";
+import { routeHash } from "./nav.js";
 import { compactPolynomial, escapeHtml, factorText, formatTextWithMath, linearText, sumExpression, term, vertexQuadraticExpression } from "./format.js";
 import { binomial, euclideanDivisionSteps, fractionText, gcd, largestSquareFactor, radicalTeX, radicalText, randomInt } from "./math-utils.js";
+import { renderDetailPager } from "./pager.js";
 
 export const rangeValueFormatters = {
   "int-a": (value) => `a = ${value}` ,
@@ -1680,6 +1682,14 @@ export function selectLab(labId, { scroll = false } = {}) {
   });
   renderLabPicker();
   renderLabLearningActions(labId);
+  renderDetailPager($("#lab-pager"), {
+    items: labs,
+    activeId: labId,
+    onSelect: (id) => { location.hash = routeHash("labs", id); },
+    prevLabel: "前の図解",
+    nextLabel: "次の図解",
+    ariaLabel: "図解の前後移動",
+  });
   if (scroll && lab) {
     window.setTimeout(() => jumpToTop(lab), 80);
   }

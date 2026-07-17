@@ -9,6 +9,7 @@ import { routeHash } from "./nav.js";
 import { escapeHtml, formatTextWithMath } from "./format.js";
 import { practiceGenerators } from "./practice-generators.js";
 import { answerToInputText } from "./math-utils.js";
+import { renderDetailPager } from "./pager.js";
 
 export const practiceModes = practiceCatalog.map((mode) => ({
   ...mode,
@@ -46,6 +47,7 @@ export function setupPractice() {
   $("#show-choices").addEventListener("click", showChoices);
   $("#give-up").addEventListener("click", revealCurrentStep);
   newProblem();
+  renderPracticePager();
 }
 
 export function renderPracticeModes() {
@@ -53,6 +55,18 @@ export function renderPracticeModes() {
     const isActive = practiceModes[index].id === state.activePracticeMode;
     button.classList.toggle("active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
+  });
+  renderPracticePager();
+}
+
+function renderPracticePager() {
+  renderDetailPager($("#practice-pager"), {
+    items: practiceModes,
+    activeId: state.activePracticeMode,
+    onSelect: (id) => { location.hash = routeHash("practice", id); },
+    prevLabel: "前の問題",
+    nextLabel: "次の問題",
+    ariaLabel: "問題の前後移動",
   });
 }
 

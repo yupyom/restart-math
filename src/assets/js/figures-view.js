@@ -8,6 +8,7 @@ import { $, scheduleMathTypeset } from "./utils.js";
 import { routeHash } from "./nav.js";
 import { escapeHtml, formatTextWithMath } from "./format.js";
 import { linkifyGlossaryTerms } from "./glossary-links.js";
+import { renderDetailPager } from "./pager.js";
 
 export function renderFigureIndex() {
   const wrap = $("#figure-index");
@@ -99,7 +100,16 @@ export function renderFigure() {
     <section class="figure-section"><h4>数学的な発見への寄与</h4>${contributions}</section>
     ${source}
     <section class="figure-related" aria-label="関連する教材と人物">${relatedGroups.join("")}</section>
+    <div class="pager detail-pager" id="figure-pager"></div>
   `;
+  renderDetailPager($("#figure-pager"), {
+    items: figures,
+    activeId: figure.id,
+    onSelect: (id) => { location.hash = routeHash("figures", id); },
+    prevLabel: "前の人物",
+    nextLabel: "次の人物",
+    ariaLabel: "数学者の前後移動",
+  });
   linkifyGlossaryTerms(wrap);
   scheduleMathTypeset(wrap);
 }

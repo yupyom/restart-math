@@ -8,6 +8,7 @@ import { $, jumpToTop, scheduleMathTypeset } from "./utils.js";
 import { routeHash } from "./nav.js";
 import { escapeHtml, formatTextWithMath, term, workedExampleMarkup } from "./format.js";
 import { linkifyGlossaryTerms } from "./glossary-links.js";
+import { renderPageNumbers } from "./pager.js";
 import { readRoute } from "./router.js";
 
 export function rangeTags(unit) {
@@ -360,21 +361,18 @@ export function renderUnitButtons() {
 
 export function renderDots() {
   const wrap = $("#unit-dots");
-  wrap.innerHTML = "";
-  visibleUnits().forEach((unit, visibleIndex) => {
-    const index = units.findIndex((item) => item.id === unit.id);
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `dot-button${index === state.activeUnit ? " active" : ""}`;
-    button.textContent = String(visibleIndex + 1);
-    button.setAttribute("aria-label", `${visibleIndex + 1}ページへ`);
-    button.addEventListener("click", () => {
-      state.activeUnit = index;
+  const available = visibleUnits();
+  const activeIndex = available.findIndex((unit) => units[state.activeUnit]?.id === unit.id);
+  // 全 62 単元の番号を並べるとスクロールが増えるので、現在地の前後だけを窓で見せる。
+  renderPageNumbers(wrap, {
+    items: available,
+    activeIndex,
+    onSelect: (unitId) => {
+      state.activeUnit = units.findIndex((item) => item.id === unitId);
       renderUnit();
-      setHashForUnit(index);
+      setHashForUnit(state.activeUnit);
       jumpToTop();
-    });
-    wrap.append(button);
+    },
   });
 }
 

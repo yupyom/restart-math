@@ -8,6 +8,7 @@ import { $, scheduleMathTypeset } from "./utils.js";
 import { routeHash } from "./nav.js";
 import { escapeHtml, formatTextWithMath } from "./format.js";
 import { linkifyGlossaryTerms } from "./glossary-links.js";
+import { renderDetailPager } from "./pager.js";
 
 export const storyTypeLabels = {
   rule: "ルールの物語",
@@ -85,7 +86,16 @@ export function renderStory() {
       <p>読み物は補助線です。説明・図解・問題の好きな場所へ戻れます。</p>
       <div class="learning-action-list">${[...lessonActions, ...labActions, ...practiceActions].join("")}</div>
     </section>
+    <div class="pager detail-pager" id="story-pager"></div>
   `;
+  renderDetailPager($("#story-pager"), {
+    items: stories,
+    activeId: story.id,
+    onSelect: (id) => { location.hash = routeHash("stories", id); },
+    prevLabel: "前の読み物",
+    nextLabel: "次の読み物",
+    ariaLabel: "読み物の前後移動",
+  });
   linkifyGlossaryTerms(wrap);
   scheduleMathTypeset(wrap);
 }
