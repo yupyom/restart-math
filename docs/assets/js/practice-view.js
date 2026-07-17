@@ -91,6 +91,9 @@ export function setActivePracticeLevel(level) {
 export function setActivePracticeMode(modeId, { newQuestion = true } = {}) {
   if (!practiceModes.some((mode) => mode.id === modeId)) return;
   state.activePracticeMode = modeId;
+  // 別の問題へ移ったら難易度は「はじめの一問」に戻す。前のモードで「少し進んだ問題」を
+  // 選んだまま引き継ぐと、発展問題のないモードでは無言でやさしい問題に化けて紛らわしい。
+  state.activePracticeLevel = "starter";
   renderPracticeModes();
   if (newQuestion) newProblem();
 }
