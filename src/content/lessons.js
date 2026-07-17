@@ -2571,7 +2571,6 @@ const lessonContexts = {
         kind: "shared-rule",
         title: "『同じとみなす』は割り算になる",
         summary: "同じものを含む順列で \\(p!\\) で割ったのと同じ発想です。重複のぶんだけ割る——場合の数を貫く共通ルールです。",
-        storyId: "shared-calculation-order",
       },
       {
         kind: "history",

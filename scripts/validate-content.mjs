@@ -180,6 +180,22 @@ export async function validateContent({ outputRoot } = {}) {
       (unit.context.storyIds || []).forEach((storyId) =>
         assert(storyCatalog[storyId], `単元 ${unit.id} の読み物 ${storyId} が見つかりません。`),
       );
+      // 逆参照の欠落チェック：context.connections が指す図解・読み物・問題は、その単元の
+      // labIds / storyIds / practiceIds にも登録されていること。登録されていないと、つながり
+      // カードからは飛べても、関連図解・関連読み物の一覧や単元⇄教材の相互リンクから漏れる。
+      // （labIds 等は存在確認済みなので、この整合チェックは同時に「実在すること」も担保する。）
+      const registeredLabs = new Set(unit.labIds || []);
+      const registeredStories = new Set(unit.context.storyIds || []);
+      const registeredPractice = new Set(unit.practiceIds || []);
+      unit.context.connections.forEach((connection) => {
+        assert(connection.title && connection.summary, `単元 ${unit.id} の connection に title / summary がありません。`);
+        if (connection.labId)
+          assert(registeredLabs.has(connection.labId), `単元 ${unit.id} の connection が指す図解 ${connection.labId} が labIds に未登録です（逆参照の欠落）。`);
+        if (connection.storyId)
+          assert(registeredStories.has(connection.storyId), `単元 ${unit.id} の connection が指す読み物 ${connection.storyId} が context.storyIds に未登録です（逆参照の欠落）。`);
+        if (connection.practiceId)
+          assert(registeredPractice.has(connection.practiceId), `単元 ${unit.id} の connection が指す問題 ${connection.practiceId} が practiceIds に未登録です（逆参照の欠落）。`);
+      });
     }
   });
 

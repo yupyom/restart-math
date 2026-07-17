@@ -46,7 +46,7 @@
 
 ### 教材データの整合
 
-- [ ] 12. **単元⇄問題⇄図解のひも付けが手動で、逆参照の欠落が起きやすい**（今回、等比数列の本文がラボへ誘導しているのに labIds 未登録を修正）。→ validate に「context.connections の labId は labIds にも含まれる」等の相互整合チェックを追加。
+- [x] 12. **単元⇄問題⇄図解のひも付けが手動で、逆参照の欠落が起きやすい**（2026-07-18 完了。validate-content.mjs に「単元内整合」チェックを追加：context.connections が指す labId は labIds に、storyId は context.storyIds に、practiceId は practiceIds に登録されていること。登録配列は実在確認済みなので、この整合チェックは同時に「connection の参照先が実在すること」も担保する。実測で circular-permutations の connection が指す読み物 shared-calculation-order（計算順序の読み物・lessonIds は integer-rules のみ）が storyIds に無く reverse link も無い**誤参照**だったため、その storyId を外して情報カード化（つながりの文言は残す）。**全双方向の強制はしない**判断：unit→lab 16件・unit→問題 34件など意図的な非対称参照が多数あり、TODO の趣旨どおり「単元内で connection が指す id は同じ単元の登録配列にも入っている」に絞った。誤参照を一時再挿入して検出を確認済み）。
 - [ ] 13. **人物の生没年が stories と figures で二重管理**（今回4人の食い違いを修正）。→ figures を単一の情報源にし、stories の肖像キャプションは figures から生成する（少なくとも validate で一致チェック）。
 - [ ] 14. **フェルマーの生年は1601年（従来説・MacTutor）と1607年（近年の研究）の2説**があり、現在は出典に合わせ1601で統一。→ 本文に「1607年説もある」の注記を入れるかどうか方針決め。
 
