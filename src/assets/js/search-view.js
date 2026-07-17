@@ -3,6 +3,8 @@ import { units } from "../../content/lessons.js";
 import { labs } from "../../content/labs.js";
 import { practiceCatalog } from "../../content/practice.js";
 import { stories } from "../../content/stories.js";
+import { figures } from "../../content/figures.js";
+import { searchSynonyms } from "../../content/search-synonyms.js";
 import { $ } from "./utils.js";
 import { activatePage } from "./nav.js";
 import { escapeHtml, term } from "./format.js";
@@ -15,6 +17,33 @@ export function plainTextForSearch(value) {
     .replace(/[{}^_&~]/g, "")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+// 検索用の正規化。索引と検索語の両側に同じ変換をかけ、全角/半角・大文字小文字・
+// 漢数字⇄算用数字（「２次方程式」「2次方程式」「二次方程式」）の揺れを同一視する。
+// 解答採点の normalizeText（math-utils.js）と発想は同じだが、あちらは空白除去や
+// 記号の * 変換など採点専用の変換を含むため、検索は検索専用のこの関数を使う。
+const KANJI_DIGITS = { "〇": "0", "零": "0", "一": "1", "二": "2", "三": "3", "四": "4", "五": "5", "六": "6", "七": "7", "八": "8", "九": "9" };
+
+export function normalizeSearchText(value) {
+  return String(value ?? "")
+    .replace(/[０-９Ａ-Ｚａ-ｚ]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0))
+    .replace(/[〇零一二三四五六七八九]/g, (char) => KANJI_DIGITS[char])
+    .toLowerCase();
+}
+
+// 同義語辞書を「正規化済みの語 → グループ全語」の表に展開しておく。
+const synonymGroups = new Map();
+searchSynonyms.forEach((group) => {
+  const variants = [...new Set(group.map((term) => normalizeSearchText(plainTextForSearch(term))).filter(Boolean))];
+  variants.forEach((variant) => {
+    const merged = new Set([...(synonymGroups.get(variant) || []), ...variants]);
+    synonymGroups.set(variant, [...merged]);
+  });
+});
+
+function expandSearchTerm(term) {
+  return synonymGroups.get(term) || [term];
 }
 
 export let searchIndex = null;
@@ -71,23 +100,34 @@ export function buildSearchIndex() {
     });
   });
 
+  figures.forEach((figure) => {
+    entries.push({
+      type: "数学者",
+      title: figure.name,
+      snippet: figure.achievement,
+      body: [figure.name, figure.reading, figure.era, figure.region, figure.achievement, ...(figure.profile || []), ...(figure.contributions || [])].join(" "),
+      hash: `#figures/${figure.id}`,
+    });
+  });
+
   return entries.map((entry) => ({
     ...entry,
-    plainTitle: plainTextForSearch(entry.title).toLowerCase(),
+    plainTitle: normalizeSearchText(plainTextForSearch(entry.title)),
     plainSnippet: plainTextForSearch(entry.snippet),
-    plainBody: plainTextForSearch(entry.body).toLowerCase(),
+    plainBody: normalizeSearchText(plainTextForSearch(entry.body)),
   }));
 }
 
 export function searchEntries(query) {
   if (!searchIndex) searchIndex = buildSearchIndex();
-  const terms = plainTextForSearch(query).toLowerCase().split(/[\s、。]+/).filter(Boolean);
+  const terms = normalizeSearchText(plainTextForSearch(query)).split(/[\s、。]+/).filter(Boolean);
   if (!terms.length) return [];
-  const matches = searchIndex.filter((entry) => terms.every((term) => entry.plainBody.includes(term)));
+  const termVariants = terms.map(expandSearchTerm);
+  const matches = searchIndex.filter((entry) => termVariants.every((variants) => variants.some((variant) => entry.plainBody.includes(variant))));
   return matches
     .map((entry) => ({
       entry,
-      score: terms.every((term) => entry.plainTitle.includes(term)) ? 0 : 1,
+      score: termVariants.every((variants) => variants.some((variant) => entry.plainTitle.includes(variant))) ? 0 : 1,
     }))
     .sort((first, second) => first.score - second.score)
     .map(({ entry }) => entry);
@@ -107,7 +147,7 @@ export function renderSearchResults(query) {
 
   const results = searchEntries(trimmed);
   if (!results.length) {
-    status.textContent = "見つかりませんでした。言い方を変える（例：ルート → 平方根）と見つかることがあります。";
+    status.textContent = "見つかりませんでした。言葉を短くする・別の言い方にすると見つかることがあります。";
     resultsWrap.innerHTML = "";
     return;
   }

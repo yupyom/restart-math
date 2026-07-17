@@ -8,6 +8,7 @@ import { topics } from "../src/content/topics.js";
 import { stories, storyCatalog, storySourcePolicy } from "../src/content/stories.js";
 import { figures, figureCatalog } from "../src/content/figures.js";
 import { glossaryTerms } from "../src/content/glossary.js";
+import { searchSynonyms } from "../src/content/search-synonyms.js";
 
 const root = resolve(import.meta.dirname, "..");
 
@@ -213,6 +214,16 @@ export async function validateContent({ outputRoot } = {}) {
     assert(lessonIds.has(lessonId), `用語集「${term}」の単元 ${lessonId} が見つかりません。`);
   });
 
+  const synonymSeen = new Set();
+  searchSynonyms.forEach((group, index) => {
+    assert(Array.isArray(group) && group.length >= 2, `検索の同義語グループ ${index + 1} には2語以上が必要です。`);
+    group.forEach((term) => {
+      assert(typeof term === "string" && term.trim(), `検索の同義語グループ ${index + 1} に空の語があります。`);
+      assert(!synonymSeen.has(term), `検索の同義語が複数のグループに重複しています: ${term}`);
+      synonymSeen.add(term);
+    });
+  });
+
   assert(storySourcePolicy.history && storySourcePolicy.society, "読み物の出典方針がありません。");
   stories.forEach((story) => {
     assert(story.type && story.title && story.lead, `読み物 ${story.id} の基本情報が不足しています。`);
@@ -248,7 +259,7 @@ export async function validateContent({ outputRoot } = {}) {
     (figure.related?.labs || []).forEach((labId) => assert(labIds.has(labId), `数学者 ${figure.id} が存在しない図解 ${labId} を参照しています。`));
   });
 
-  const sourceFiles = ["content/lessons.js", "content/topics.js", "content/labs.js", "content/practice.js", "content/stories.js", "content/figures.js", "content/glossary.js"];
+  const sourceFiles = ["content/lessons.js", "content/topics.js", "content/labs.js", "content/practice.js", "content/stories.js", "content/figures.js", "content/glossary.js", "content/search-synonyms.js"];
   for (const sourceFile of sourceFiles) {
     const source = await readFile(resolve(root, "src", sourceFile), "utf8");
     assert(
