@@ -64,13 +64,13 @@
 { id, stage, range: [], title, summary, points: [],
   example, check, checkExample?, context?, model?, connections?: [] }
 ```
-- `example`: 文字列 / `{ type:"walkthrough", intro, steps:[{ equation?|text?, note }], conclusion }` / `{ type:"narrative", body, equation }`。
+- `example`: 文字列 または オブジェクト（型は `assets/js/format.js` の `workedExampleMarkup` が判定）。5系統: 文字列（`=`・`\Rightarrow` を含むと自動で式に整形、無ければ本文表示） / `{ type:"aligned-steps", intro?, rows:[], conclusion? }` / `{ type:"walkthrough", intro?, steps:[{ equation?|text?, note? }], conclusion? }` / `{ type:"word-problem", prompt, explanation, equation }` / `{ type:"narrative", body, equation? }`。
 - `context`: 補足カード群（`lessons-view.js` の `contextCardsMarkup` が描画）。**入れるなら3キー必須**：`why`（オブジェクト・必須）＋ `definitions`・`connections`（配列・必須。使わなければ空配列可）。`npm run check` がこの3つを要求する（`{ title, body }` ではない）。
   - `why`: `{ question, answer, tryIt }` →「なぜこの約束？」カード。
   - `definitions`: `[{ term, meaning, example, boundary }]` →「言葉をほどく」カード（空配列ならカード非表示）。
   - `connections`: `[{ title, summary, labId?|storyId?|practiceId? }]` →「どこで役立つ？」カード。`labId`→単元の `labIds`、`storyId`→`context.storyIds`、`practiceId`→`practiceIds` に**登録必須（逆参照検査あり）**。`context.storyIds` は読み物ボタンの列で、`connections.storyId` の登録先も兼ねる。
   - ※これは下の単元直下 `connections`（「次の一手」）とは別物。現状どの単元も未使用なので、初採用時はブラウザ確認推奨。
-- `model`: 図。現行の `type` は `line-graph` / `area` / `circle-angle` / `right-triangle` / `inscribed-angle`。dispatcher は `lessons-view.js` の `unitModelMarkup`。**新しい type を足すときは dispatcher に分岐＋描画関数＋（必要なら）CSS＋ブラウザ確認**、という順で行う。
+- `model`: 図。dispatcher は `lessons-view.js` の `unitModelMarkup`。現行の `type` は `circle-angle` / `right-triangle` / `line-graph` / `area` の4種（`inscribed-angle` は無い）。**新しい type を足すときは dispatcher に分岐＋描画関数＋（必要なら）CSS＋ブラウザ確認**、という順で行う。
 - `connections`: `[{ kind, title, summary, storyId|labId }]`。`storyId`/`labId` は実在必須（`npm run check` が逆参照検査）。
 - ヒント・note は一般論でなく実際の数値で語り、その単元までに教えた道具だけを前提にする。証明例は答案にそのまま書ける文章を step の `text` に1行ずつ、赤の心の声を `note` に。
 
@@ -79,7 +79,7 @@
 
 ### 表示・ロジック（`src/assets/`）
 - `js/` … 役割別モジュール。単元描画＝`lessons-view.js`（model 描画関数もここ）、図解ラボ＝`labs-view.js`、問題生成＝`practice-generators.js`/`practice-advanced.js`/`practice-extra.js`、整形＝`format.js`、状態＝`state.js`、ナビ＝`nav.js`/`router.js`。エントリは `app.js`（init のみ）。
-- `css/` … 分割済み（`styles.css` に図の `.series`/`.axis` など、他に base/layout/components/lesson/practice/figures/… ）。
+- `css/` … 現状は `styles.css` の**1ファイル**（base/layout/components/lesson/practice/figures や図の `.series`/`.axis` などを内包。ファイル分割はしていない）。
 
 ### 検証（`npm run check` の実体）
 - `scripts/validate-content.mjs` … ID重複・`lessonId`/`labId`/`practiceId`/`storyId` 逆参照・数式に生HTMLが混ざらないか・全単元に「次の一手」があるか。`validateMathText` の対象は units/labs/stories（figures は対象外なので図鑑は目視）。
