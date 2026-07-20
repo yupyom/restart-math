@@ -59,19 +59,20 @@
 - `src/content/lessons.js` … 目次。①import の列 ②`rawUnits` 配列（定義順・表示順ではない）③表示順 `learningPath` ④`lessonMetadata`（strand / practiceIds）⑤`lessonContexts` ⑥`units` 合成。
 - **ユーザーが言う「単元N」= `learningPath` の N 番目**（ファイル定義順ではない）。番号は `npm run units` で引く。
 
-単元オブジェクトの型（表示側 `lessons-view.js` が参照するキーだけが表示される。未対応キーを足しても出ない）:
+単元**本文ファイル**（`lessons/<id>.js`）に書くキー（表示側 `lessons-view.js` が参照。未対応キーを足しても出ない）:
 ```
 { id, stage, range: [], title, summary, points: [],
-  example, check, checkExample?, context?, model?, connections?: [] }
+  example, check, checkExample?, model? }
 ```
+これに `lessons.js` が合成して付与する（**本文には書かない**）: `order` / `nextLessonId` / `labIds` / `strand` / `practiceIds` / `context`（`lessonContexts` から）/ `recommendedLabId`・`recommendedPracticeId`・`recommendedNextLessonId`（＝「次の一手」）。
 - `example`: 文字列 または オブジェクト（型は `assets/js/format.js` の `workedExampleMarkup` が判定）。5系統: 文字列（`=`・`\Rightarrow` を含むと自動で式に整形、無ければ本文表示） / `{ type:"aligned-steps", intro?, rows:[], conclusion? }` / `{ type:"walkthrough", intro?, steps:[{ equation?|text?, note? }], conclusion? }` / `{ type:"word-problem", prompt, explanation, equation }` / `{ type:"narrative", body, equation? }`。
-- `context`: 補足カード群（`lessons-view.js` の `contextCardsMarkup` が描画）。**入れるなら3キー必須**：`why`（オブジェクト・必須）＋ `definitions`・`connections`（配列・必須。使わなければ空配列可）。`npm run check` がこの3つを要求する（`{ title, body }` ではない）。
+- `context`: 補足カード群（**本文ではなく `lessons.js` の `lessonContexts` に単元idで登録する**。本文に書いても合成時に上書きされる。`lessons-view.js` の `contextCardsMarkup` が描画。現状 約25単元で使用中）。**入れるなら3キー必須**：`why`（オブジェクト・必須）＋ `definitions`・`connections`（配列・必須。使わなければ空配列可）。`npm run check` がこの3つを要求する（`{ title, body }` ではない）。
   - `why`: `{ question, answer, tryIt }` →「なぜこの約束？」カード。
   - `definitions`: `[{ term, meaning, example, boundary }]` →「言葉をほどく」カード（空配列ならカード非表示）。
   - `connections`: `[{ title, summary, labId?|storyId?|practiceId? }]` →「どこで役立つ？」カード。`labId`→単元の `labIds`、`storyId`→`context.storyIds`、`practiceId`→`practiceIds` に**登録必須（逆参照検査あり）**。`context.storyIds` は読み物ボタンの列で、`connections.storyId` の登録先も兼ねる。
-  - ※これは下の単元直下 `connections`（「次の一手」）とは別物。現状どの単元も未使用なので、初採用時はブラウザ確認推奨。
+  - ※ ここでの `connections`（＝`context.connections`）は「どこで役立つ？」カード用で、「次の一手」（下記 `recommended*`）とは別物。
 - `model`: 図。dispatcher は `lessons-view.js` の `unitModelMarkup`。現行の `type` は `circle-angle` / `right-triangle` / `line-graph` / `area` の4種（`inscribed-angle` は無い）。**新しい type を足すときは dispatcher に分岐＋描画関数＋（必要なら）CSS＋ブラウザ確認**、という順で行う。
-- `connections`: `[{ kind, title, summary, storyId|labId }]`。`storyId`/`labId` は実在必須（`npm run check` が逆参照検査）。
+- 「次の一手」＝ `lessons.js` が合成する `recommendedLabId` / `recommendedPracticeId` / `recommendedNextLessonId`（本文に書かない）。`npm run check` が各単元に最低1つあるか検査する。**トップレベルの `connections` フィールドは存在しない**（関連リンクは `context.connections` に置く）。
 - ヒント・note は一般論でなく実際の数値で語り、その単元までに教えた道具だけを前提にする。証明例は答案にそのまま書ける文章を step の `text` に1行ずつ、赤の心の声を `note` に。
 
 ### その他のコンテンツ（`src/content/`）
