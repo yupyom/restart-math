@@ -52,6 +52,8 @@
 
 ## 2. データ構造の現況
 
+> **リポジトリ全体の構造と「正本→公開物」の生成モデル（`src` が唯一の正本／`docs` は `build` による完全コピーでバンドルなし／編集は `src` だけ）は [design/content-architecture.md](design/content-architecture.md) §3 が正本。** 本節は「その構造を実際にどう編集するか」の対応表に徹する。迷ったら §3 に戻る。
+
 ### 単元（いちばんよく編集する）
 - `src/content/lessons/<id>.js` … 各単元の本文。`export const unit = {...}`（1ファイル約30〜90行）。
 - `src/content/lessons.js` … 目次。①import の列 ②`rawUnits` 配列（定義順・表示順ではない）③表示順 `learningPath` ④`lessonMetadata`（strand / practiceIds）⑤`lessonContexts` ⑥`units` 合成。
