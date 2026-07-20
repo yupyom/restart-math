@@ -352,27 +352,37 @@ export const unit = {
 
 ### 11.2 単元に追加する文脈データ
 
-単元データには、本文とは別に次の短い要素を持たせます。すべてを毎回開かず、必要な子が「なぜ？」を開ける構成にします。
+単元の本文とは別に、`lessons.js` の `lessonContexts` に**単元 id をキーにして**次の短い要素を登録します（本文ファイルには書かない）。すべてを毎回開かず、必要な子が「なぜ？」を開ける構成にします。
 
 ```js
-{
-  id: "integer-rules",
-  // 既存の title, summary, points ...
-  context: {
+// src/content/lessons.js の lessonContexts に、単元 id をキーにして登録する
+const lessonContexts = {
+  "integer-rules": {
     why: {
       question: "どうして計算する順番を決めるの？",
       answer: "式を読む人によって答えが変わらないよう、共通の読み方を決めているから。",
-      tryIt: "2+3×4 を、先に足す場合と先にかける場合で比べる"
+      tryIt: "2+3×4 を、先に足す場合と先にかける場合で比べる",
     },
     definitions: [
-      { term: "式", meaning: "数や記号を、計算の約束に従って並べたもの", boundary: "等号で『成り立つか』を問うと方程式になる" }
+      {
+        term: "式",
+        meaning: "数や記号を、計算の約束に従って並べたもの",
+        example: "3+4×2 は、×を先にして 3+8=11",
+        boundary: "等号で『成り立つか』を問うと方程式になる",
+      },
     ],
     connections: [
-      { kind: "daily-life", title: "会計の合計", summary: "計算順序をそろえると、複数の人が同じ集計結果を確かめられる" }
+      {
+        kind: "daily-life",          // 分類ラベル（history/model/notation… 現状は描画に未使用）
+        title: "会計の合計",
+        summary: "計算順序をそろえると、複数の人が同じ集計結果を確かめられる",
+        // labId / storyId / practiceId を付けるとカードにボタンが出る（逆参照検査あり）
+      },
     ],
-    storyIds: ["shared-notation"]
-  }
-}
+    storyIds: ["shared-notation"],   // 「どこで役立つ？」に並べる読み物ボタン
+  },
+  // ...他の単元
+};
 ```
 
 `why` は「ルールの役割」を、`definitions` は「言葉をどう使うか・どこまでを指すか」を、`connections` は「何を扱えるようになるか」を担当します。正解を出すために全てを読ませるのではなく、立ち止まったときの補助線にします。

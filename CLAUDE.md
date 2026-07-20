@@ -69,7 +69,7 @@
 - `context`: 補足カード群（**本文ではなく `lessons.js` の `lessonContexts` に単元idで登録する**。本文に書いても合成時に上書きされる。`lessons-view.js` の `contextCardsMarkup` が描画。現状 約25単元で使用中）。**入れるなら3キー必須**：`why`（オブジェクト・必須）＋ `definitions`・`connections`（配列・必須。使わなければ空配列可）。`npm run check` がこの3つを要求する（`{ title, body }` ではない）。
   - `why`: `{ question, answer, tryIt }` →「なぜこの約束？」カード。
   - `definitions`: `[{ term, meaning, example, boundary }]` →「言葉をほどく」カード（空配列ならカード非表示）。
-  - `connections`: `[{ title, summary, labId?|storyId?|practiceId? }]` →「どこで役立つ？」カード。`labId`→単元の `labIds`、`storyId`→`context.storyIds`、`practiceId`→`practiceIds` に**登録必須（逆参照検査あり）**。`context.storyIds` は読み物ボタンの列で、`connections.storyId` の登録先も兼ねる。
+  - `connections`: `[{ kind, title, summary, labId?|storyId?|practiceId? }]` →「どこで役立つ？」カード。`kind` は分類ラベル（history/model/notation… 現状は描画に未使用だが全エントリに付ける慣習）。`labId`→単元の `labIds`、`storyId`→`context.storyIds`、`practiceId`→`practiceIds` に**登録必須（逆参照検査あり）**。`context.storyIds` は読み物ボタンの列で、`connections.storyId` の登録先も兼ねる。
   - ※ ここでの `connections`（＝`context.connections`）は「どこで役立つ？」カード用で、「次の一手」（下記 `recommended*`）とは別物。
 - `model`: 図。dispatcher は `lessons-view.js` の `unitModelMarkup`。現行の `type` は `circle-angle` / `right-triangle` / `line-graph` / `area` の4種（`inscribed-angle` は無い）。**新しい type を足すときは dispatcher に分岐＋描画関数＋（必要なら）CSS＋ブラウザ確認**、という順で行う。
 - 「次の一手」＝ `lessons.js` が合成する `recommendedLabId` / `recommendedPracticeId` / `recommendedNextLessonId`（本文に書かない）。`npm run check` が各単元に最低1つあるか検査する。**トップレベルの `connections` フィールドは存在しない**（関連リンクは `context.connections` に置く）。
