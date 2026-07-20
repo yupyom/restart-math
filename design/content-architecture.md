@@ -125,28 +125,32 @@ npm run build ＝ scripts/build.mjs
 
 ### 4.1 単元 (本文＝`content/lessons/<id>.js`、目次＝`lessons.js`)
 
-単元は教材本文の最小単位です。**本文は1単元1ファイル**（`content/lessons/<id>.js`）に置き、`lessons.js` はそれらを import して表示順 `learningPath` 等を合成する**目次**です（設計初版では単元も `lessons.js` に同梱していました）。各単元には、必ず範囲・学習段階・短い説明・関連図解・関連問題を持たせます。下のコード例は設計意図を示すための初版当時の記法で、`order`・`aligned-steps`・`nextLessonId` などは現行と異なります——**最新の単元型は [CLAUDE.md](../CLAUDE.md)「2. データ構造の現況」を正本**としてください。
+単元は教材本文の最小単位です。**本文は1単元1ファイル**（`content/lessons/<id>.js`）に置き、範囲・学習段階・短い説明・要点・例・確認を持たせます。図解や問題との**関連づけ・表示順・分野（strand）・補足カードは本文には書かず**、目次の `lessons.js` が合成します（下記）。
 
 ```js
-{
+// src/content/lessons/linear-equations.js —— これが編集する正本
+export const unit = {
   id: "linear-equations",
-  order: 13,
-  range: ["中1"],
-  strand: "数と式",
-  stage: "方程式 1",
+  stage: "方程式 1",          // 単元内の順番ラベル
+  range: ["中1"],             // 学校段階（中1 / 中3 / 数I / 数A）
   title: "一次方程式を解く",
   summary: "左右から同じブロックを取り…",
-  points: ["…", "…"],
-  example: {
-    type: "aligned-steps",
-    rows: ["3x-5=16", "3x=21", "x=7"]
+  points: ["…", "…"],         // 要点は3つ以内が基本
+  example: {                   // 例は §4.1.1 の5系統から選ぶ
+    type: "walkthrough",
+    intro: "…",
+    steps: [
+      { equation: "3x-5=16", note: "…" },
+      { equation: "x=7", note: "…" },
+    ],
+    conclusion: "…",
   },
-  objectIntro: "x袋と1ブロックで考える",
-  labIds: ["equation-blocks"],
-  practiceIds: ["linear-equation"],
-  nextLessonId: "simultaneous-equations"
-}
+  check: "…",                  // 「小さく確かめる」一問
+  // 任意の本文キー: checkExample?（別解の例） / model?（図。type は §4.2）
+};
 ```
+
+表示順・関連づけ・補足は目次の `lessons.js` が合成します。全単元を import し、表示順 `learningPath` と `lessonMetadata`（`strand`・`practiceIds`）を合わせて、各単元へ `order`（`learningPath` 順の連番）・`nextLessonId`・`labIds`（図解からの逆参照）・`strand`・`practiceIds`・`recommended{Lab,Practice,Next}Id`（＝「次の一手」）を付与します。補足カード（`context`）は同じ `lessons.js` の `lessonContexts` に単元idで登録します（本文ファイルではありません）。**だから単元本文ファイルには `order`・`strand`・`labIds`・`nextLessonId`・`context` を書きません。**
 
 `range` は学校段階（`中1`、`中3`、`数I`、`数A`）だけに使い、`stage` は単元内の順番だけに使います。たとえば「数I」が二つ並んで別の意味に見える、といったラベルの混乱を避けます。
 
@@ -156,10 +160,11 @@ npm run build ＝ scripts/build.mjs
 
 | 型 | 使う場面 | 表示の約束 |
 | --- | --- | --- |
-| ふつうの説明 | 定義・要点・図の読み方 | 文中の変数だけをインライン数式にする |
-| `aligned-steps` | 計算過程・互除法 | 一行ごとに等号をそろえる。別の式を一つの連鎖にしない |
-| `word-problem` | 文章題から式を作る例 | 問題文、量の意味、最後の式を分けて示す |
-| `narrative` | 図形の説明・短い比較 | 文章を先に読み、必要な結論式だけを独立表示する |
+| 文字列（ふつうの説明） | 定義・要点・短い一言 | `=`・`\Rightarrow` を含めば自動で式に整形、無ければ本文表示。文中の変数はインライン数式 |
+| `walkthrough` | 手順を1ステップずつ（最も多用） | 番号つきで各ステップに式（`equation`）か文（`text`）＋赤note（`note`）。`intro`・`conclusion` は任意 |
+| `aligned-steps` | 計算過程・互除法 | `rows` を等号ぞろえで縦に並べる。別の式を一つの連鎖にしない |
+| `word-problem` | 文章題から式を作る例 | `prompt`（問題文）→`explanation`（量の意味）→`equation`（式）を分けて示す |
+| `narrative` | 図形の説明・短い比較 | `body` を先に読み、必要なら `equation` だけを独立表示する |
 
 たとえば複数の等式をカンマでつないだ文章を自動で縦計算に変換してはいけません。互除法なら各行が別の等式、分配法則の途中式なら同じ式の変形、文章題なら式の前に状況説明が必要です。この区別をデータで持ち、表示側の推測に任せないことを品質基準にします。
 
