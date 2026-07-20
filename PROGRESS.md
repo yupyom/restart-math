@@ -19,9 +19,10 @@
 | 単位 | 内容 | 状態 | コミット | 対象 |
 |---|---|---|---|---|
 | D1 | CLAUDE.md §2 の型記述を実装へ一致（model type 4種／example 5系統／css 1本） | ✅ | 57da479 | CLAUDE.md |
-| D2 | design §4.1・§4.1.1 の example 型表に `walkthrough` 追加＋初版コード例の是正 | ⬜ 未 | - | design/content-architecture.md |
+| D2 | design §4.1・§4.1.1 の example 型表に `walkthrough` 追加＋初版コード例の是正 | ✅ | a0c7bf9 | design/content-architecture.md |
 | D3 | README.md「教材データの編集場所」を現況化（`lessons/<id>.js`・分割モジュール） | ⬜ 未 | - | README.md |
 | D4 | （任意・優先度低）design §6 ルート・§7 検査リストを router / validate-content と突き合わせ | ⬜ 未 | - | design/content-architecture.md |
+| D5 | （D2着手中に発見）CLAUDE.md §2 の型記述の残課題：`context` は本文でなく `lessonContexts`（lessons.js）に登録する点を明示／トップレベル `connections?` は実使用ゼロの疑い（要確認のうえ訂正 or 削除） | ⬜ 未 | - | CLAUDE.md（必要なら design も） |
 
 済んだ関連: design §3 の刷新（6881911）、`context` 型記述の修正（2918ede）。
 
