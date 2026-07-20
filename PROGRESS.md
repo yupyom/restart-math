@@ -18,7 +18,7 @@
 
 | 単位 | 内容 | 状態 | コミット | 対象 |
 |---|---|---|---|---|
-| D1 | CLAUDE.md §2 の型記述を実装へ一致（model type 4種／example 5系統／css 1本） | ⬜ 未 | - | CLAUDE.md |
+| D1 | CLAUDE.md §2 の型記述を実装へ一致（model type 4種／example 5系統／css 1本） | ✅ | 57da479 | CLAUDE.md |
 | D2 | design §4.1・§4.1.1 の example 型表に `walkthrough` 追加＋初版コード例の是正 | ⬜ 未 | - | design/content-architecture.md |
 | D3 | README.md「教材データの編集場所」を現況化（`lessons/<id>.js`・分割モジュール） | ⬜ 未 | - | README.md |
 | D4 | （任意・優先度低）design §6 ルート・§7 検査リストを router / validate-content と突き合わせ | ⬜ 未 | - | design/content-architecture.md |
