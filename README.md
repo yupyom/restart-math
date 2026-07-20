@@ -12,7 +12,7 @@
 ├── src/                 # 編集する正本
 │   ├── index.html        # 画面の骨組み
 │   ├── assets/           # CSS と画面の動き
-│   └── content/          # 単元・図解・問題・マップの教材データ
+│   └── content/          # 単元(lessons/<id>.js)・図解・問題・マップの教材データ
 ├── scripts/              # 内容検査と公開用ファイル生成
 ├── docs/                 # GitHub Pages が配信する生成済みファイル
 ├── design/               # 設計文書（公開用ではない）
@@ -54,12 +54,12 @@ python3 -m http.server 8000 --directory docs
 
 ## 教材データの編集場所
 
-- 単元ノートと範囲・順番・次の教材: `src/content/lessons.js`
+- 単元の本文（範囲・要点・例・確認）: `src/content/lessons/<id>.js`（1単元1ファイル）。表示順・分野・関連づけの合成は目次の `src/content/lessons.js`
 - 図解の説明と対応単元: `src/content/labs.js`
-- 問題の初期難度・対応単元・対応図解: `src/content/practice.js`
+- 問題の初期難度・対応単元・対応図解: `src/content/practice.js`（出題の生成ロジックは `src/assets/js/practice-generators.js` ほか）
 - 読み物、出典、事実確認の状態: `src/content/stories.js`
 - 学習マップ: `src/content/topics.js`（単元データから入口を生成）
 - 見た目: `src/assets/css/styles.css`
-- 図解の動き、採点、画面遷移: `src/assets/js/app.js`
+- 図解の動き・採点・画面遷移: `src/assets/js/` の役割別モジュール（図解 `labs-view.js`、採点/問題 `practice-view.js`・`practice-*.js`、遷移 `router.js`・`nav.js` など。`app.js` は初期化のみ）
 
 数式は MathJax の TeX 記法で書きます。教材データを画面へ出すときは HTML エスケープを通すため、不等号などが HTML として誤解されず、教科書に近い数式表示を保てます。
