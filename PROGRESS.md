@@ -14,14 +14,18 @@
 | 9 | 単元28 図形の基本量: 角度・面積・円の公式おさらい＋三平方接続 | ✅ | 24e9de4 | lessons/geometry.js |
 | 10 | 単元31 三角比: 有名角の復元法＋数表→関数電卓＋近似と正確な形 | ✅ | 24e9de4 | lessons/trig-ratios.js |
 | 8 | 二次方程式: 判別式が負→複素数（虚数単位i）への入口（数II） | ✅ | 8bdb14b | lessons/quadratic-equations.js |
-| 7 | 二次不等式にtitle特化＋両単元に放物線と解の図（新model type: parabola） | ⬜ 未 | - | lessons/quadratic-*.js, lessons-view.js, css/styles.css |
 | 11 | 学び直し総合の拡充（重み付け評価・成長率予測・グラフにだまされない） | ⬜ 未 | - | lessons/exam-review.js |
 | 4 | 新単元: 円周率と近似（記号のまま計算→最後に近似、記号/小数の見分け） | ⬜ 未 | - | 新規 lessons/<id>.js ＋ lessons.js |
+| 7 | 二次不等式にtitle特化＋両単元に放物線と解の図（新model type: parabola） | ⬜ 未 | - | lessons/quadratic-*.js, lessons-view.js, css/styles.css |
 | 2 | 新単元: 分数の四則演算＋練習問題（比率・概算も） | ⬜ 未 | - | 新規 ＋ practice.js ＋ 生成器 |
 | 5 | 新単元: 有効数字＋練習問題（定義・計算・途中丸めで精度低下） | ⬜ 未 | - | 新規 ＋ practice.js ＋ 生成器 |
 
 ## 実施順の方針
-既存単元の点編集（8→7→11）を先に片付け、新単元（4→2→5）は最後にまとめる。
+残りは**予想作業量の軽い順**に着手する（上の表も未着手行をこの順に並べ替え済み）：**11 → 4 → 7 → 2 → 5**。
+- 11: 既存1単元 exam-review.js の点編集のみ＝最軽。
+- 4: 新単元だが練習なし（新規ファイル＋lessons.js 配線のみ、新しい表示部品なし）。
+- 7: 既存2単元の編集に加え新しい model type「parabola」を作る（dispatcher 分岐＋SVG 描画関数＋CSS＋ブラウザ確認）ぶん重い。
+- 2・5: 新単元＋練習＋生成器で最も重い。5（有効数字）は丸め・精度で採点/生成が繊細なぶん最後。
 新単元は learningPath 挿入・lessonMetadata・（練習を付けるなら）practice.js と生成器まで揃えてから check（CLAUDE.md「4. 新しい単元を追加する手順」）。
 
 ## 完了後
