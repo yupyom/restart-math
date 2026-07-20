@@ -1,10 +1,31 @@
-# 単元ブラッシュアップ進捗（依頼11項目・継続作業）
+# 継続作業トラッカー（ターン・セッションをまたぐ作業）
 
-ユーザー依頼の11項目のトラッカー。ターンをまたぐので、**1項目ごとに `npm run check` → `npm run build` → コミット**し、
-このファイルの状態と実コミットハッシュを同じコミットで更新する。次ターンはまずここを読めば続きが分かる。
-番号はユーザーの言う「単元N」= `npm run units` の N 番目（learningPath 順）。詳しい手順は [CLAUDE.md](CLAUDE.md)。
+ターンをまたぐ継続作業を、**1単位ごとに1コミット**して実ハッシュとともに残す台帳。次ターンはまずここを読めば続きが分かる。
+いま進めているのは **A. 開発ドキュメント整備**。**B. 単元ブラッシュアップ**は ⏸ 次セッション以降。
+単元番号はユーザーの言う「単元N」= `npm run units` の N 番目（learningPath 順）。詳しい手順は [CLAUDE.md](CLAUDE.md)。
 
 > **状態の正本は git（`git log` の実ハッシュ）とディスク（`grep -cF` で実在確認）。** 表がgitと食い違うときはgitを信じる。
+
+## A. 開発ドキュメント整備（実装との矛盾解消）★いま進行中
+
+実装を正本に、開発ドキュメントの記述を現況へ合わせる。棚卸しで確認した**実装の事実（＝正本）**を先に固定し、次ターンで再調査せず直せるようにする:
+
+- **model type**（`unitModelMarkup` @ `assets/js/lessons-view.js`）= `circle-angle` / `right-triangle` / `line-graph` / `area` の**4種**。`inscribed-angle` は実装にも使用単元にも無い。
+- **example type**（`workedExampleMarkup` @ `assets/js/format.js`）= 文字列 / `aligned-steps` / `walkthrough` / `word-problem` / `narrative` の**5系統**（単元実使用: walkthrough 49・narrative 5・word-problem 3・aligned-steps 2）。
+- **css** = `src/assets/css/styles.css` **1本のみ**（分割されていない）。
+- **js** = 役割別に分割（`app.js`=初期化、`lessons-view`/`labs-view`/`practice-view`/`router`/`nav`/`state`…）。単元本文=`content/lessons/<id>.js`（62本）、`lessons.js`=目次。
+- **npm scripts** = build / check / units / unit / preview（CLAUDE.md §1 の表と一致・修正不要）。
+
+| 単位 | 内容 | 状態 | コミット | 対象 |
+|---|---|---|---|---|
+| D1 | CLAUDE.md §2 の型記述を実装へ一致（model type 4種／example 5系統／css 1本） | ⬜ 未 | - | CLAUDE.md |
+| D2 | design §4.1・§4.1.1 の example 型表に `walkthrough` 追加＋初版コード例の是正 | ⬜ 未 | - | design/content-architecture.md |
+| D3 | README.md「教材データの編集場所」を現況化（`lessons/<id>.js`・分割モジュール） | ⬜ 未 | - | README.md |
+| D4 | （任意・優先度低）design §6 ルート・§7 検査リストを router / validate-content と突き合わせ | ⬜ 未 | - | design/content-architecture.md |
+
+済んだ関連: design §3 の刷新（6881911）、`context` 型記述の修正（2918ede）。
+
+## B. 単元ブラッシュアップ（依頼11項目）⏸ 次セッション以降
 
 | # | 内容 | 状態 | コミット | 対象 |
 |---|---|---|---|---|
