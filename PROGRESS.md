@@ -87,11 +87,11 @@
 - [x] C2-3 新しい問題生成器を作る → ⚠ **不足（→ F5・F6）**：生成器の返り値形（modeLabel/title/prompt/steps）・**mode→生成器の対応表の所在**・step 各フィールドの意味（`check` は関数等）が未文書化。design §4.3 は `generator` フィールドを示すが実体は対応表方式（F6）
 - [x] C2-4 難度・上限・前提を調整する（level / numberPolicy） → ⚠ **部分不足（→ F5・F6）**：`numberPolicy` は実体では説明文（例「答えが2桁以内」）だが design §4.3 は policy コード（`radicand-under-100`）と誤記。取りうる値・生成器での効き方も未文書化
 
-### C3 図解ラボ（labs）
-- [ ] C3-1 図解を探す
-- [ ] C3-2 図解を追加する（`labs.js`：lessonIds/practiceIds/starterExample/hostId＋`labs-view.js` の描画）
-- [ ] C3-3 図解の操作コードを編集する（`labs-view.js`）
-- [ ] C3-4 単元⇄図解の相互リンク（unitLabRefs / recommendedLabId）
+### C3 図解ラボ（labs） — 点検済み（2026-07-21）
+- [x] C3-1 図解を探す → ✅ **概ね完備**（場所は §2、`labs.js` を読めば一覧可・アプリ検索も対象）
+- [x] C3-2 図解を追加する → ⚠ **不足（→ F7・F8）**：新規追加手順が未文書化。実フィールドは id/title/short/category/lessonIds〔必須〕/practiceIds〔必須〕/objectIntro/observe/starterExample〔必須〕で、描画は `labs-view.js` に追加。design §4.2 の例は必須の practiceIds・starterExample を欠き、**実在しない `hostId`** を載せている（→F8）
+- [x] C3-3 図解の操作コードを編集する（labs-view.js） → ✅ **概ね完備**（場所は §2、編集の一般フロー〔§0/§3/§5〕＋`preview` 確認〔§3-5〕で辿れる）
+- [x] C3-4 単元⇄図解の相互リンク → ✅ **概ね完備**（§2 D5「labIds＝unitLabRefs＝図解側 lessonIds の逆参照」＋design §4.2/§5 で向きが辿れる）
 
 ### C4 読み物（stories）
 - [ ] C4-1 読み物を探す
@@ -139,3 +139,5 @@
 | F4 | model type のデータ形を文書化（各 type=circle-angle/right-triangle/line-graph/area が必要とするキー、または既存 model 例の見つけ方）。現状は `lessons-view.js` の描画関数を読むしかない | CLAUDE.md §2／design §4 | C1-7 | ⬜ 未 |
 | F5 | 練習問題の追加ガイドを補強：①単元⇄練習の両方向リンク（`practice.lessonIds`＋`lessonMetadata.practiceIds`）②mode→生成器の対応表の所在（`practice-generators.js`）③生成器の返り値形（modeLabel/title/prompt/steps）④step 各フィールドの意味（`check`=関数, answer, hint, choices?, example?, accept?）⑤`level`/`numberPolicy` は説明テキストである旨 | CLAUDE.md §4／design §4.3 | C2-2, C2-3, C2-4 | ⬜ 未 |
 | F6 | 実態と食い違う練習の既存記述を是正：(i) `practice.js` 冒頭コメント「生成・採点コードは app.js」→ `practice-generators.js` 等へ (ii) design §4.3 の practice 例を実体へ（`label`／`generator` フィールド無し・mode→生成器は対応表／`numberPolicy` は説明文） | practice.js, design §4.3 | C2-3, C2-4（＋C2-1 補強） | ⬜ 未 |
+| F7 | 図解ラボの追加手順を新設：実フィールド（id/title/short/category/lessonIds〔必須・逆参照〕/practiceIds〔必須・逆参照〕/objectIntro/observe/starterExample〔必須〕）と、描画は近い既存図解を写して `labs-view.js` に追加＋`preview` 確認（lab.id で描画対応） | CLAUDE.md（新§） | C3-2（＋C3-3 補強） | ⬜ 未 |
+| F8 | design §4.2 の labs 例を実体へ：必須の `practiceIds`・`starterExample`（と `short`）を追加、実在しない `hostId` を削除 | design/content-architecture.md §4.2 | C3-2 補強 | ⬜ 未 |
