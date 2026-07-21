@@ -109,9 +109,9 @@
 ### C7 用語集（glossary） — 点検済み（2026-07-21）
 - [x] C7-1 用語を追加する → ✅ **完備**（`glossary.js` 冒頭コメントが自己文書化：形式 `{ term, lessonId }`・いつ足す/足さない〔一般語は避ける・stopTerms〕・単元 context の definitions から自動追加される旨まで明記。場所は §2、`check` が length≥2・重複・lessonId 実在を検査）→ **新たな不足なし**
 
-### C8 検索（search）
-- [ ] C8-1 検索できるようワードを整備する（`search-synonyms.js`・表記揺れ）
-- [ ] C8-2 検索対象に新しい種別を含める（search-view の索引範囲）
+### C8 検索（search） — 点検済み（2026-07-21）
+- [x] C8-1 検索できるようワードを整備する → ✅ **完備**（`search-synonyms.js` 冒頭コメントが自己文書化：グループ形式・正規化が全角/半角/漢数字を自動吸収・部分一致は載せない・「配列に1行足すだけ」。場所は §2、`check` が空語・重複を検査。※新単元での整備喚起は F2）
+- [x] C8-2 検索対象に新しい種別を含める → ⚠ **部分不足（→ F15）**：`search-view.js` が索引する種別（units/labs/practice/stories/figures の5種）と、新種別を索引に加える手順（import＋forEach を既存パターンで追加）が未文書化。§2 の js モジュール一覧にも `search-view.js` が載っていない
 
 ### C9 表示・仕組みの拡張
 - [ ] C9-1 新しいページ／ルートを追加する（nav `pageIds`・router・index.html・design §6）
@@ -147,3 +147,4 @@
 | F12 | CLAUDE.md §2 検証行の誤りを是正：「validateMathText の対象は units/labs/stories（figures は対象外・目視）」→ figures も対象（`validate-content.mjs` line 152、mathTextKeys に achievement/profile/contributions）。図鑑の数式・肖像実在・related 逆参照も `check` が検査 | CLAUDE.md §2 | C5-2 補強 | ⬜ 未 |
 | F13 | 学習マップは自動生成である旨を明文化：topics は `units` から自動生成（category=categoryForLesson(strand)・level=levelForLesson(range)・title/description=単元）で手動追加不要。有効な strand 値・category キー一覧（categoryLabels）、新 strand→categoryForLesson／新 range→levelForLesson を要更新 | CLAUDE.md §2/§4 | C6-1, C6-3（＋C6-2 補強） | ⬜ 未 |
 | F14 | design §4.4 の学習マップ例を実体へ：自動生成である旨と topic の形（category はキー・level は range 由来・field は title/description）に是正、手書きの `label`/`category:"数と式"` を修正 | design/content-architecture.md §4.4 | C6-1 補強 | ⬜ 未 |
+| F15 | 検索インデックスの範囲と拡張方法を明文化：`search-view.js` が索引する5種（units/labs/practice/stories/figures）、新種別は import＋forEach を既存パターンで追加。§2 の js モジュール一覧に `search-view.js`（と欠けている他モジュール）を補う | CLAUDE.md §2 | C8-2 | ⬜ 未 |
