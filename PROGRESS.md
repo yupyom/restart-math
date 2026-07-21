@@ -101,10 +101,10 @@
 - [x] C5-1 図鑑を探す → ✅ **概ね完備**（場所は §2、`figures.js` を読めば一覧可・アプリ検索も索引済み）
 - [x] C5-2 図鑑を追加する → ⚠ **部分不足（→ F11・F12）**：`figures.js` 冒頭コメントが構造（fields・related・`\\(` 2重BS・era/region）を自己文書化しており概ね写せるが、①肖像画像の配置（`src/assets/img/portraits/<id>.webp`・実在必須）②検証の理解が欠落。CLAUDE.md §2 検証行が「figures は validateMathText 対象外・目視」と誤記（実際は line 152 で figures も対象・portrait 実在も検査）→F12
 
-### C6 学習マップ・範囲・分野
-- [ ] C6-1 学習マップに単元を反映する（`topics.js`／categoryForLesson・levelForLesson）
-- [ ] C6-2 新しい range 値を導入したときの更新（levelForLesson）
-- [ ] C6-3 strand の割り当て（lessonMetadata／topics の分類）
+### C6 学習マップ・範囲・分野 — 点検済み（2026-07-21）
+- [x] C6-1 学習マップに単元を反映する → ⚠ **不足（→ F13・F14）**：topics は `units` から**自動生成**（`topic-<id>`／category=categoryForLesson(strand)／level=levelForLesson(range)／title・description=単元）で**手動追加不要**だが、この「自動生成・手動不要」が明文化されていない。design §4.4 の例は手書き topic（`label`・`category:"数と式"`）で実体と食い違う（→F14）
+- [x] C6-2 新しい range 値を導入したときの levelForLesson 更新 → ✅ **完備**（§4-2 に明記）。※strand 側の同種注意（新 strand→categoryForLesson 要更新）は F13 で補う
+- [x] C6-3 strand の割り当て → ⚠ **部分不足（→ F13）**：どこに書くか（lessonMetadata）は §2/§4-2 で辿れるが、有効な strand 値・category キー（categoryLabels: number/algebra/function/geometry/data/logic/sequence）と strand→category 対応が未文書化
 
 ### C7 用語集（glossary）
 - [ ] C7-1 用語を追加する（term / lessonId、重複・長さ）
@@ -145,3 +145,5 @@
 | F10 | design §4.5 の読み物例を実体へ：必須の title/lead/sections（[{heading,body}]）と menuTitle を追加 | design/content-architecture.md §4.5 | C4-2 補強 | ⬜ 未 |
 | F11 | 数学者図鑑の追加手順を明文化：`figures.js` 冒頭コメントを入口に、実キー（id/name/reading/era/region/achievement/profile[]/contributions[]/portrait{src,alt,caption}/related{stories,figures,lessons,labs}）、肖像は `src/assets/img/portraits/<id>.webp` に置き実在必須、related は逆参照実在必須、近い既存を写す＋`check` | CLAUDE.md（新§） | C5-2 | ⬜ 未 |
 | F12 | CLAUDE.md §2 検証行の誤りを是正：「validateMathText の対象は units/labs/stories（figures は対象外・目視）」→ figures も対象（`validate-content.mjs` line 152、mathTextKeys に achievement/profile/contributions）。図鑑の数式・肖像実在・related 逆参照も `check` が検査 | CLAUDE.md §2 | C5-2 補強 | ⬜ 未 |
+| F13 | 学習マップは自動生成である旨を明文化：topics は `units` から自動生成（category=categoryForLesson(strand)・level=levelForLesson(range)・title/description=単元）で手動追加不要。有効な strand 値・category キー一覧（categoryLabels）、新 strand→categoryForLesson／新 range→levelForLesson を要更新 | CLAUDE.md §2/§4 | C6-1, C6-3（＋C6-2 補強） | ⬜ 未 |
+| F14 | design §4.4 の学習マップ例を実体へ：自動生成である旨と topic の形（category はキー・level は range 由来・field は title/description）に是正、手書きの `label`/`category:"数と式"` を修正 | design/content-architecture.md §4.4 | C6-1 補強 | ⬜ 未 |
