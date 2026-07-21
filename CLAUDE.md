@@ -100,13 +100,14 @@
 
 ## 4. 新しい単元を追加する手順
 
-1. 近い既存単元を `npm run unit -- <近いid>` で写し、`src/content/lessons/<newid>.js` を作る。
+1. 新規前に `npm run units -- <キーワード>`（またはアプリ内検索）で**同種単元が無いか確認**する。近い既存単元を `npm run unit -- <近いid>` で写し、`src/content/lessons/<newid>.js` を作る。
 2. `src/content/lessons.js` の4か所を編集（各 Edit 前に該当行を Read）:
    - import 1行、`rawUnits` 配列に1行、`learningPath` の挿入位置に1行、`lessonMetadata` に `{ strand, practiceIds }` を1行。
    - `learningPath` は「使う概念が先に現れる順」。挿入で以降の単元番号がずれるのは仕様。
-   - `strand` は topics.js の `categoryForLesson`/`levelForLesson` が参照。新しい `range` 値を導入したら `levelForLesson` も要更新。
-3. 練習を付けるなら `practice.js` に登録し、生成器を `practice-generators.js`（追補は `practice-extra.js`）へ。step 型は `{ label, question, hint, check, answer, choices?, example?, accept? }`。
-4. `npm run check`（`learningPath` と単元IDの一致もここで検査）→ `npm run build` → `npm run units` で番号を確認 → 表示に関わるので `npm run preview` で1回確認 → コミット。
+   - `strand` は topics.js の `categoryForLesson`/`levelForLesson` が参照。新しい `strand` 値は `categoryForLesson`、新しい `range` 値は `levelForLesson` も要更新（未対応だと algebra／level 1 に落ちる）。学習マップは units から自動生成なので手当ては不要。
+3. 対の練習を付けるなら §4.6「練習」の手順で `practice.js` 登録＋生成器＋`lessonMetadata.practiceIds` を揃える。**今すぐ作らないなら [TODO.md](TODO.md) に起票**しておく。
+4. **必須の関連作業**：検索で見つかるよう `search-synonyms.js`／`glossary.js` にこの単元の語を必要に応じて足す。（任意）補足カードは `lessonContexts`、図解リンクは `labs.js` 側の `lessonIds` に単元 id を足す。
+5. `npm run check`（`learningPath` と単元IDの一致もここで検査）→ `npm run build` → `npm run units` で番号を確認 → 表示に関わるので `npm run preview` で1回確認 → コミット。
 
 ## 4.5 id のリネーム・削除（波及チェックリスト）
 
@@ -121,6 +122,30 @@ id（単元・図解・問題・読み物・数学者）を変える／消すと
 - **数学者 `figureId`** … `figures.js` 本体の `id`／他 figure の `related.figures`。
 
 削除は上の参照を消してから本体エントリを消す。リネームは新旧を漏れなく置換する。仕上げに `npm run check` →（通れば）`npm run build`。
+
+## 4.6 練習・図解・読み物・図鑑を追加する
+
+各種別の**データ型の例**は [design/content-architecture.md](design/content-architecture.md) §4.2〜§4.5、ここは**手順**。基本は「近い既存を1つ写して差し替える」。内容を変えたら必ず `npm run check`（＋表示物は `npm run preview`）→ `npm run build` → コミット。
+
+### 練習（practice）
+- `practice.js` に1エントリ追加：`{ id, label, lessonIds, labIds, level, numberPolicy }`。`numberPolicy` は説明テキスト（例「答えが2桁以内」。コード値ではない）。
+- 生成器を `practice-generators.js`（追補 `practice-extra.js` / 発展 `practice-advanced.js`）に純関数で書き、**モード id → 生成器の対応表**（同ファイル内）に登録する（`practice.js` に `generator` フィールドは無い）。生成器は `{ modeLabel, title, prompt, steps: [...] }` を返す。step 型は `{ label, question, hint, check, answer, choices?, example?, accept? }`（`check` は入力を受け取り真偽を返す関数）。
+- **単元⇄練習の両方向**を揃える：`practice.lessonIds` に単元 id、`lessonMetadata`（lessons.js）の `practiceIds` にこの practiceId。片方だけだと単元からの「次の一手」に出ない。
+- `npm run check`（`test-practice.mjs` が全モードの自己受理を検査）。
+
+### 図解ラボ（labs）
+- `labs.js` に1エントリ追加：`{ id, title, short, category, lessonIds, practiceIds, objectIntro, observe, starterExample }`。`lessonIds`・`practiceIds`・`starterExample` は必須（`check` が逆参照と存在を検査）。`hostId` フィールドは無い。
+- 描画・操作コードは `labs-view.js` に `id` 対応で追加（近い既存図解を写す）。表示物なので `npm run preview` で確認。
+
+### 読み物（stories）
+- `stories.js` に1エントリ追加：`{ id, type, menuTitle, title, lead, lessonIds, labIds, practiceIds, sections: [{ heading, body }], sources, factCheck }`。`type` は `rule`／`history`／`society`。`factCheck.status` は `"checked"` 必須。
+- `history`／`society` は `sources` に HTTPS 出典を1つ以上（`{ title, url }`）。肖像を使うなら `portraits: [{ src, alt, caption }]`（画像は `src/` 配下に実在）。
+- `npm run check`（出典・事実確認・肖像実在・相互リンクを検査）。
+
+### 数学者図鑑（figures）
+- `figures.js` は先頭コメントが構造を説明している（まず読む）。1エントリ追加：`{ id, name, reading, era, region, achievement, profile: [...], contributions: [...], portrait: { src, alt, caption }, related: { stories, figures, lessons, labs } }`。本文の数式はソース上 `\\(` の2重バックスラッシュ。
+- 肖像画像は `src/assets/img/portraits/<id>.webp` に置く（実在必須）。`related.*` は実在必須（`check` が逆参照検査）。
+- `npm run check`（`figures` も数式区切り・肖像実在・related を検査）。
 
 ## 5. コミット/ドキュメント運用
 
