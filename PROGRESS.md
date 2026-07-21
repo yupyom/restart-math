@@ -70,16 +70,16 @@
 - [x] C0-2 正本と生成物（`src`＝正本／`docs`＝完全コピー／触るのは `src` だけ） → ✅ **完備**（design §3・README「フォルダ構成」・CLAUDE.md L3＋§2冒頭リンク）
 - [x] C0-3 文書の役割分担（CLAUDE.md=手順／design=構造・思想／CHANGELOG=済/TODO=これから/PROGRESS=継続） → ⚠ **不足（→ F1）**：CLAUDE.md 冒頭ナビ（L6/L9/L11）で design が「設計思想」限定で構造・生成モデル(§3)を含まず、PROGRESS が「進行中のブラッシュアップ詳細」限定で実態の継続作業トラッカー(A/B/C)とズレる
 
-### C1 単元（lessons）
-- [ ] C1-1 単元を探す（番号・キーワード→id→ファイル）
-- [ ] C1-2 新規前に同種単元がないか検索して重複回避
-- [ ] C1-3 単元本文を編集する（安全手順）
-- [ ] C1-4 新規単元を作成する（本文ファイル＋`lessons.js` の import/rawUnits/learningPath/lessonMetadata、strand）
-- [ ] C1-5 表示順（learningPath）を変える／挿入で番号がずれる扱い
-- [ ] C1-6 単元 id をリネーム・削除する（全逆参照＝topics/practice/stories/figures/glossary/lessonContexts/labs への波及と直し方）
-- [ ] C1-7 単元に図（model）を付ける／新しい model type を作る（dispatcher＋描画＋CSS＋ブラウザ確認）
-- [ ] C1-8 単元に補足カード（context）を付ける（`lessonContexts` に登録・3キー・逆参照）
-- [ ] C1-9 「次の一手」を成立させる（labIds/practiceIds/nextLesson→recommended*）
+### C1 単元（lessons） — 点検済み（2026-07-21）
+- [x] C1-1 単元を探す（番号・キーワード→id→ファイル） → ✅ **完備**（§1 `npm run units`／`unit`、§2「単元N=learningPath のN番目・番号は units で引く」）
+- [x] C1-2 新規前に同種単元がないか検索して重複回避 → ✅ **概ね完備**（検索手段は §1 `units -- 語`／アプリ検索で辿れる。ただし §4 に「新規前の重複確認」の明示ステップは無い→ F2 で補強）
+- [x] C1-3 単元本文を編集する（安全手順） → ✅ **完備**（§3 の6ステップ）
+- [x] C1-4 新規単元を作成する → ⚠ **不足（→ F2）**：§4 に骨子（本文＋`lessons.js` 4か所＋strand＋learningPath＋練習）はあるが、必須関連作業のうち検索ワード整備（search-synonyms/glossary）・問題未作成時のTODO化・context/図解リンクの案内が欠落
+- [x] C1-5 表示順（learningPath）を変える／挿入で番号ずれ → ✅ **完備**（§4「使う概念が先／番号ずれは仕様」、`check` が learningPath と id の一致を検査）
+- [x] C1-6 単元 id をリネーム・削除する（全逆参照の波及と直し方） → ⚠ **不足（→ F3）**：削除・リネームの手順と逆参照先一覧が未文書化（`check` で dangling は落ちるが「どこを直すか」の案内が無い）
+- [x] C1-7 単元に図（model）を付ける／新しい model type を作る → ⚠ **部分不足（→ F4）**：新 type 作成手順は §2 にあるが、既存 type を使うためのデータ形（各 type の必要キー）が未文書化
+- [x] C1-8 単元に補足カード（context）を付ける → ✅ **完備**（§2 context 行＋design §11.2：lessonContexts 登録・3キー・逆参照・kind。D5/D6 で整備済み）
+- [x] C1-9 「次の一手」を成立させる → ✅ **完備**（§2：recommended* は labIds〔unitLabRefs〕/practiceIds〔lessonMetadata〕/nextLessonId から合成、`check` が最低1つを検査）
 
 ### C2 練習問題（practice）
 - [ ] C2-1 練習モードを探す
@@ -134,3 +134,6 @@
 | 修正ID | 内容 | 対象 | 解決する点検項目 | 状態 |
 |---|---|---|---|---|
 | F1 | CLAUDE.md 冒頭の文書ナビを実態へ：design を「設計思想＋リポジトリ構造・生成モデル(§3)」に拡張、PROGRESS を「継続作業トラッカー（A/B/C…）」に一般化、L11 の振り分けにも PROGRESS の役割を追記 | CLAUDE.md | C0-3 | ⬜ 未 |
+| F2 | §4「新しい単元を追加する手順」に必須の関連作業を追記：①新規前の重複検索（`npm run units -- 語`）②検索ワード整備（`search-synonyms.js`／`glossary.js` に語を追加）③対の問題を作らない場合は TODO 化 ④（任意）context 追加・図解リンク | CLAUDE.md（§4） | C1-4（＋C1-2 補強・C8-1 の新単元分） | ⬜ 未 |
+| F3 | 単元 id のリネーム・削除の波及チェックリストを新設（逆参照先＝`lessons.js`〔import/rawUnits/learningPath/lessonMetadata/lessonContexts〕・`labs.js`〔lessonIds〕・`practice.js`・`stories.js`・`figures.js`〔related.lessons〕・`glossary.js`・`topics.js`・`context.connections`。直す順＋`check` で残参照ゼロ確認） | CLAUDE.md（新§） | C1-6, C10-1 | ⬜ 未 |
+| F4 | model type のデータ形を文書化（各 type=circle-angle/right-triangle/line-graph/area が必要とするキー、または既存 model 例の見つけ方）。現状は `lessons-view.js` の描画関数を読むしかない | CLAUDE.md §2／design §4 | C1-7 | ⬜ 未 |
