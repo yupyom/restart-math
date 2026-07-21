@@ -118,8 +118,8 @@
 - [x] C9-2 新しい example 型を追加する → ⚠ **不足（→ F17）**：format.js の workedExampleMarkup に分岐を足すだけでなく、`validate-content.mjs` の validateExample の許可リスト（line 64）にも型を加えないと `check` が落ちる、という必須関連作業が未明示。design §4.1.1 の型表更新も。model type（§2）には拡張手順があるが example type には無い
 - [x] C9-3 新しい検証ルールを `validate-content.mjs` に足す → ✅ **概ね完備**（場所は §2/§7、assert の既存パターンを写す。design §7 が「検査の正本はスクリプト本体」と明示）
 
-### C10 削除・リネーム・移動の波及
-- [ ] C10-1 id 変更・削除時に、全逆参照をどう洗い出して直すか（チェックリスト）
+### C10 削除・リネーム・移動の波及 — 点検済み（2026-07-21）
+- [x] C10-1 id 変更・削除時に、全逆参照をどう洗い出して直すか → ⚠ **不足（→ F3）**：削除・リネームの手順と逆参照先一覧が未文書化。`check`（validate-content の逆参照検査）で dangling は落ちるが「どこを直すか」の案内が無い。C1-6（単元特化）の一般化として、F3 を全 id 種別（単元/図解/問題/読み物/数学者）に拡張して解決する
 
 ### C11 運用
 - [ ] C11-1 変更後の検証・ビルド・プレビュー（check / build / preview）
@@ -135,7 +135,7 @@
 |---|---|---|---|---|
 | F1 | CLAUDE.md 冒頭の文書ナビを実態へ：design を「設計思想＋リポジトリ構造・生成モデル(§3)」に拡張、PROGRESS を「継続作業トラッカー（A/B/C…）」に一般化、L11 の振り分けにも PROGRESS の役割を追記 | CLAUDE.md | C0-3 | ⬜ 未 |
 | F2 | §4「新しい単元を追加する手順」に必須の関連作業を追記：①新規前の重複検索（`npm run units -- 語`）②検索ワード整備（`search-synonyms.js`／`glossary.js` に語を追加）③対の問題を作らない場合は TODO 化 ④（任意）context 追加・図解リンク | CLAUDE.md（§4） | C1-4（＋C1-2 補強・C8-1 の新単元分） | ⬜ 未 |
-| F3 | 単元 id のリネーム・削除の波及チェックリストを新設（逆参照先＝`lessons.js`〔import/rawUnits/learningPath/lessonMetadata/lessonContexts〕・`labs.js`〔lessonIds〕・`practice.js`・`stories.js`・`figures.js`〔related.lessons〕・`glossary.js`・`topics.js`・`context.connections`。直す順＋`check` で残参照ゼロ確認） | CLAUDE.md（新§） | C1-6, C10-1 | ⬜ 未 |
+| F3 | id のリネーム・削除の波及チェックリストを新設（**全 id 種別**）。逆参照先: 単元(lessonId)→`lessons.js`〔import/rawUnits/learningPath/lessonMetadata/lessonContexts〕・`labs.js` lessonIds・`practice.js` lessonIds・`stories.js` lessonIds・`figures.js` related.lessons・`glossary.js`（topics は自動生成で追随）／図解(labId)→unitLabRefs・practice.labIds・stories.labIds・figures.related.labs・context.connections.labId／問題(practiceId)→lessonMetadata.practiceIds・labs.practiceIds・stories.practiceIds・context.connections.practiceId／読み物(storyId)→context.storyIds・context.connections.storyId・figures.related.stories／数学者(figureId)→figures.related.figures。直す順＋`check` で残参照ゼロ確認 | CLAUDE.md（新§） | C1-6, C10-1 | ⬜ 未 |
 | F4 | model type のデータ形を文書化（各 type=circle-angle/right-triangle/line-graph/area が必要とするキー、または既存 model 例の見つけ方）。現状は `lessons-view.js` の描画関数を読むしかない | CLAUDE.md §2／design §4 | C1-7 | ⬜ 未 |
 | F5 | 練習問題の追加ガイドを補強：①単元⇄練習の両方向リンク（`practice.lessonIds`＋`lessonMetadata.practiceIds`）②mode→生成器の対応表の所在（`practice-generators.js`）③生成器の返り値形（modeLabel/title/prompt/steps）④step 各フィールドの意味（`check`=関数, answer, hint, choices?, example?, accept?）⑤`level`/`numberPolicy` は説明テキストである旨 | CLAUDE.md §4／design §4.3 | C2-2, C2-3, C2-4 | ⬜ 未 |
 | F6 | 実態と食い違う練習の既存記述を是正：(i) `practice.js` 冒頭コメント「生成・採点コードは app.js」→ `practice-generators.js` 等へ (ii) design §4.3 の practice 例を実体へ（`label`／`generator` フィールド無し・mode→生成器は対応表／`numberPolicy` は説明文） | practice.js, design §4.3 | C2-3, C2-4（＋C2-1 補強） | ⬜ 未 |
