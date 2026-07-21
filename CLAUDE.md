@@ -3,12 +3,12 @@
 中高生の学び直し用・数学の静的サイト。`src/` が正本、`docs/` は `npm run build` で生成する GitHub Pages 公開物。
 このファイルは**日々の作業手順・ツール・データ構造の現況**をまとめた入口。役割の違う文書へは重複させずリンクする:
 
-- 設計思想（なぜこの構造か）… [design/content-architecture.md](design/content-architecture.md)
+- 設計思想（なぜこの構造か）＋ リポジトリ構造・正本→公開物の生成モデル … [design/content-architecture.md](design/content-architecture.md)（§3 が構造・生成モデルの正本）
 - 完了した変更の履歴 … [CHANGELOG.md](CHANGELOG.md)
 - 未着手・進行中のタスク … [TODO.md](TODO.md)
-- 進行中のブラッシュアップ詳細 … [PROGRESS.md](PROGRESS.md)（完了後 CHANGELOG へ畳んで削除）
+- 継続作業トラッカー（ターン・セッションをまたぐ作業＝ブラッシュアップ・点検など。完了後は CHANGELOG へ畳む） … [PROGRESS.md](PROGRESS.md)
 
-> 内容が重複しそうになったら「実装の現況＝ここ」「設計意図＝architecture」「済んだこと＝CHANGELOG」「これからやること＝TODO」で振り分ける。
+> 内容が重複しそうになったら「作業手順・編集先＝ここ」「構造・生成モデル・設計意図＝architecture」「済んだこと＝CHANGELOG」「これからやること＝TODO」「継続作業の途中経過＝PROGRESS」で振り分ける。同じ事実を二重に持たない（片側だけ陳腐化する事故を防ぐ）。
 
 ---
 
@@ -113,3 +113,8 @@
 - 区切りごとに `npm run check` → `npm run build` → コミット＋プッシュ（`main` 直運用）。
 - 完了した変更は [CHANGELOG.md](CHANGELOG.md) に追記（種別ごと）。未着手は [TODO.md](TODO.md) に。
 - 大きめの継続作業は [PROGRESS.md](PROGRESS.md) にチェックリスト＋コミットハッシュを残し、ターンをまたいでも引き継げるようにする。
+
+### ドキュメント保守（実装が正本）
+- **ドキュメントが実装とズレたら、実装を正本にドキュメントを書き換える**（初版の記述として残さない。過去は git が保持）。
+- 役割分担を守り、同じ事実を二重に持たない：リポジトリ構造・正本→公開物の生成モデルは [design/content-architecture.md](design/content-architecture.md) §3、作業別の編集先・手順は本ファイル。
+- 矛盾を見つけたら、まず**決定的な確認**（`grep -cF`・実ファイルの Read）で事実を固定してから書き換える（記憶・推測で直さない）。内容を変えたら `npm run check`、区切りごとにコミット。
