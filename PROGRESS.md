@@ -60,7 +60,7 @@
 
 ## C. ドキュメント完備性の点検（発生しうる作業カタログ）
 
-「あるタスクを頼まれたとき、**ドキュメントを辿るだけで何を・どうやるかが全部分かるか**」を確かめる点検リスト。**点検フェーズは C0〜C11 完了（2026-07-21）**。判明した不足は下の「C 修正項目」（F1〜F18）に、各修正が解決する点検項目つきで登録済み。次は**修正フェーズ**（点検とはターンを分ける）。
+「あるタスクを頼まれたとき、**ドキュメントを辿るだけで何を・どうやるかが全部分かるか**」を確かめる点検リスト。**点検フェーズ C0〜C11 完了（2026-07-21）／修正フェーズ F1〜F18 完了（2026-07-22）**。各修正が解決する点検項目は下の「C 修正項目」表の通り。**C の全38項目の不足が解消済み**。
 
 **各項目の「完備」判定＝次の4点が「どの文書のどこ」を見れば辿れること:**
 (a) 対象の探し方（既存・重複の見つけ方） / (b) やり方（作成・編集の手順） / (c) 必須の関連作業（波及先とそのやり方） / (d) 検証・反映（`check` / `build` / 表示確認・公開）。
@@ -148,6 +148,6 @@
 | F13 | 学習マップは自動生成である旨を明文化：topics は `units` から自動生成（category=categoryForLesson(strand)・level=levelForLesson(range)・title/description=単元）で手動追加不要。有効な strand 値・category キー一覧（categoryLabels）、新 strand→categoryForLesson／新 range→levelForLesson を要更新 | CLAUDE.md §2/§4 | C6-1, C6-3（＋C6-2 補強） | ✅ 211a4ac |
 | F14 | design §4.4 の学習マップ例を実体へ：自動生成である旨と topic の形（category はキー・level は range 由来・field は title/description）に是正、手書きの `label`/`category:"数と式"` を修正 | design/content-architecture.md §4.4 | C6-1 補強 | ✅ f68c012 |
 | F15 | 検索インデックスの範囲と拡張方法を明文化：`search-view.js` が索引する5種（units/labs/practice/stories/figures）、新種別は import＋forEach を既存パターンで追加。§2 の js モジュール一覧に `search-view.js`（と欠けている他モジュール）を補う | CLAUDE.md §2 | C8-2 | ✅ 211a4ac |
-| F16 | 新しいページ／ルートの追加手順を明文化：nav.js の `pageIds`・router.js の route 分岐・index.html の `data-page` セクション＋ナビリンク・design §6 表の更新・preview 確認（既存を写す） | CLAUDE.md（新§）/design §6 | C9-1 | ⬜ 未 |
-| F17 | 新しい example 型の追加手順を明文化：format.js の workedExampleMarkup に分岐＋`validate-content.mjs` の validateExample 許可リスト（line 64）に型追加（必須）＋design §4.1.1 型表更新＋preview | CLAUDE.md §2/design §4.1.1 | C9-2 | ⬜ 未 |
+| F16 | 新しいページ／ルートの追加手順を明文化：nav.js の `pageIds`・router.js の route 分岐・index.html の `data-page` セクション＋ナビリンク・design §6 表の更新・preview 確認（既存を写す） | CLAUDE.md §4.7 | C9-1 | ✅ ae5d356 |
+| F17 | 新しい example 型の追加手順を明文化：format.js の workedExampleMarkup に分岐＋`validate-content.mjs` の validateExample 許可リスト（line 64）に型追加（必須）＋design §4.1.1 型表更新＋preview | CLAUDE.md §4.7 | C9-2 | ✅ ae5d356 |
 | F18 | CLAUDE.md にドキュメント保守の原則を明文化：実装が正本でズレたら実装に合わせて書き換える（過去は git）／構造=design §3・手順=CLAUDE.md の役割分担で二重管理しない／矛盾発見時は決定的確認（`grep -cF`・実ファイル）→書換→`check`→commit | CLAUDE.md（§0 または §5） | C11-4 | ✅ d844a1a |
