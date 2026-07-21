@@ -60,7 +60,7 @@
 
 ## C. ドキュメント完備性の点検（発生しうる作業カタログ）
 
-「あるタスクを頼まれたとき、**ドキュメントを辿るだけで何を・どうやるかが全部分かるか**」を確かめる点検リスト。**点検フェーズ C0〜C11 完了（2026-07-21）／修正フェーズ F1〜F18 完了（2026-07-22）**。各修正が解決する点検項目は下の「C 修正項目」表の通り。**C の全38項目の不足が解消済み**。
+「あるタスクを頼まれたとき、**ドキュメントを辿るだけで何を・どうやるかが全部分かるか**」を確かめる点検リスト。**点検フェーズ C0〜C11 完了（2026-07-21）／修正フェーズ F1〜F18 完了（2026-07-22）**。各修正が解決する点検項目は下の「C 修正項目」表の通り。**C の全38項目の不足が解消済み**（2026-07-22 のドライランで手順の軽微な改善 F19・F20 を追加検出＝低優先。下の「D」節）。
 
 **各項目の「完備」判定＝次の4点が「どの文書のどこ」を見れば辿れること:**
 (a) 対象の探し方（既存・重複の見つけ方） / (b) やり方（作成・編集の手順） / (c) 必須の関連作業（波及先とそのやり方） / (d) 検証・反映（`check` / `build` / 表示確認・公開）。
@@ -151,3 +151,21 @@
 | F16 | 新しいページ／ルートの追加手順を明文化：nav.js の `pageIds`・router.js の route 分岐・index.html の `data-page` セクション＋ナビリンク・design §6 表の更新・preview 確認（既存を写す） | CLAUDE.md §4.7 | C9-1 | ✅ ae5d356 |
 | F17 | 新しい example 型の追加手順を明文化：format.js の workedExampleMarkup に分岐＋`validate-content.mjs` の validateExample 許可リスト（line 64）に型追加（必須）＋design §4.1.1 型表更新＋preview | CLAUDE.md §4.7 | C9-2 | ✅ ae5d356 |
 | F18 | CLAUDE.md にドキュメント保守の原則を明文化：実装が正本でズレたら実装に合わせて書き換える（過去は git）／構造=design §3・手順=CLAUDE.md の役割分担で二重管理しない／矛盾発見時は決定的確認（`grep -cF`・実ファイル）→書換→`check`→commit | CLAUDE.md（§0 または §5） | C11-4 | ✅ d844a1a |
+| F19 | （ドライラン検出・低優先）§4/§2 に注記：数と式系の新単元を「数と計算(number)」カテゴリに入れるには `topics.js` の `categoryForLesson` の number 用 id リストに新 id を足す（strand=数と式 のままだと algebra に落ちる） | topics.js／CLAUDE.md §4 | C6-1・C6-3 補強 | ⬜ 未 |
+| F20 | （ドライラン検出・低優先）§4.6「練習」に対応表の具体名を補足：`practiceGenerators`（practice-generators.js・キー=mode id）に登録、発展問題は `advancedPracticeGenerators`（practice-advanced.js）＋practice.js の `advancedLevel`/`advancedPolicy` | CLAUDE.md §4.6 | C2-3 補強 | ⬜ 未 |
+
+## D. ドライラン検証（2026-07-22）— 単元ブラッシュアップ5項目で手順をなぞる
+
+整備した手順（§3／§4／§4.5〜§4.7／§4.6）を、保留中の B の5項目でトレースした結果、**5項目とも手順だけで「何を・どこで・どう」辿れた**。加えて次を検出:
+
+- **手順の軽微な欠落（→ F19・F20、低優先）**: ①数と式系の新単元を「数と計算(number)」に入れるには `categoryForLesson` の id リスト追加が要る（strand だけだと algebra に落ちる）②§4.6 練習の対応表名（`practiceGenerators`／発展は `advancedPracticeGenerators`）。
+- **容量・詰まりリスク（読み取り・部分修正）**:
+
+| ファイル | 行数 | リスク | 対処 |
+|---|---|---|---|
+| `src/assets/css/styles.css` | 3785 | **Read 2000行超で全文読めない** | `grep -F` でアンカー→範囲 Read→Edit。将来 CSS 分割を検討（TODO） |
+| `src/assets/js/labs-view.js` | 1731 | 大（図解追加時に触る） | grep アンカー推奨 |
+| `src/assets/js/practice-extra.js`／`practice-generators.js` | 1518／1479 | 大（練習追加時） | grep アンカー推奨 |
+| `src/content/figures.js`／`lessons.js` | 1117／1099 | 大（新単元で lessons.js 4か所） | §4「各 Edit 前に該当行を Read」で対処可 |
+
+- **項目別トレース**: 11＝§3 で可（`exam-review.js` は小）／4＝§4 で可・**F19 を踏む**／7＝§4.7＋§2＋§3 で可・**`styles.css` の CSS 追加が容量リスク**／2・5＝§4＋§4.6 で可・**F19＋F20**（有効数字の丸め採点は既存生成器を写す）。
