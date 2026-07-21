@@ -97,9 +97,9 @@
 - [x] C4-1 読み物を探す → ✅ **概ね完備**（場所は §2、`stories.js` を読めば一覧可・アプリ検索も対象）
 - [x] C4-2 読み物を追加する → ⚠ **不足（→ F9・F10）**：追加手順が未文書化。実フィールドは id/type/menuTitle/title/lead/lessonIds/labIds/practiceIds/sections:[{heading,body}]/sources/factCheck{status:"checked"}。history・society は出典HTTPS必須、肖像は portraits{src,alt,caption}＋実在。design §4.5 の例は必須の title/lead/sections（と menuTitle）を欠く（→F10）
 
-### C5 数学者図鑑（figures）
-- [ ] C5-1 図鑑を探す
-- [ ] C5-2 図鑑を追加する（本文キー・`\(` の2重バックスラッシュ・肖像画像の配置と参照・related の逆参照）
+### C5 数学者図鑑（figures） — 点検済み（2026-07-21）
+- [x] C5-1 図鑑を探す → ✅ **概ね完備**（場所は §2、`figures.js` を読めば一覧可・アプリ検索も索引済み）
+- [x] C5-2 図鑑を追加する → ⚠ **部分不足（→ F11・F12）**：`figures.js` 冒頭コメントが構造（fields・related・`\\(` 2重BS・era/region）を自己文書化しており概ね写せるが、①肖像画像の配置（`src/assets/img/portraits/<id>.webp`・実在必須）②検証の理解が欠落。CLAUDE.md §2 検証行が「figures は validateMathText 対象外・目視」と誤記（実際は line 152 で figures も対象・portrait 実在も検査）→F12
 
 ### C6 学習マップ・範囲・分野
 - [ ] C6-1 学習マップに単元を反映する（`topics.js`／categoryForLesson・levelForLesson）
@@ -143,3 +143,5 @@
 | F8 | design §4.2 の labs 例を実体へ：必須の `practiceIds`・`starterExample`（と `short`）を追加、実在しない `hostId` を削除 | design/content-architecture.md §4.2 | C3-2 補強 | ⬜ 未 |
 | F9 | 読み物の追加手順を新設：実フィールド（id/type/menuTitle/title/lead/lessonIds/labIds/practiceIds/sections:[{heading,body}]/sources/factCheck{status:"checked",note}）、history・society は出典 HTTPS 必須、肖像 portraits{src,alt,caption}＋実在、相互リンク逆参照。近い既存を写す＋`check` | CLAUDE.md（新§） | C4-2 | ⬜ 未 |
 | F10 | design §4.5 の読み物例を実体へ：必須の title/lead/sections（[{heading,body}]）と menuTitle を追加 | design/content-architecture.md §4.5 | C4-2 補強 | ⬜ 未 |
+| F11 | 数学者図鑑の追加手順を明文化：`figures.js` 冒頭コメントを入口に、実キー（id/name/reading/era/region/achievement/profile[]/contributions[]/portrait{src,alt,caption}/related{stories,figures,lessons,labs}）、肖像は `src/assets/img/portraits/<id>.webp` に置き実在必須、related は逆参照実在必須、近い既存を写す＋`check` | CLAUDE.md（新§） | C5-2 | ⬜ 未 |
+| F12 | CLAUDE.md §2 検証行の誤りを是正：「validateMathText の対象は units/labs/stories（figures は対象外・目視）」→ figures も対象（`validate-content.mjs` line 152、mathTextKeys に achievement/profile/contributions）。図鑑の数式・肖像実在・related 逆参照も `check` が検査 | CLAUDE.md §2 | C5-2 補強 | ⬜ 未 |
