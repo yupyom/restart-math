@@ -113,10 +113,10 @@
 - [x] C8-1 検索できるようワードを整備する → ✅ **完備**（`search-synonyms.js` 冒頭コメントが自己文書化：グループ形式・正規化が全角/半角/漢数字を自動吸収・部分一致は載せない・「配列に1行足すだけ」。場所は §2、`check` が空語・重複を検査。※新単元での整備喚起は F2）
 - [x] C8-2 検索対象に新しい種別を含める → ⚠ **部分不足（→ F15）**：`search-view.js` が索引する種別（units/labs/practice/stories/figures の5種）と、新種別を索引に加える手順（import＋forEach を既存パターンで追加）が未文書化。§2 の js モジュール一覧にも `search-view.js` が載っていない
 
-### C9 表示・仕組みの拡張
-- [ ] C9-1 新しいページ／ルートを追加する（nav `pageIds`・router・index.html・design §6）
-- [ ] C9-2 新しい example 型を追加する（`format.js` の workedExampleMarkup＋`validateExample`＋design §4.1.1）
-- [ ] C9-3 新しい検証ルールを `validate-content.mjs` に足す
+### C9 表示・仕組みの拡張 — 点検済み（2026-07-21）
+- [x] C9-1 新しいページ／ルートを追加する → ⚠ **不足（→ F16）**：手順が未文書化。実際は nav.js の `pageIds`＋router.js の route 分岐＋index.html の `data-page` セクション＋ナビリンク＋design §6 表の更新（＋preview）。既存を読めばパターンは分かるが手順が無い
+- [x] C9-2 新しい example 型を追加する → ⚠ **不足（→ F17）**：format.js の workedExampleMarkup に分岐を足すだけでなく、`validate-content.mjs` の validateExample の許可リスト（line 64）にも型を加えないと `check` が落ちる、という必須関連作業が未明示。design §4.1.1 の型表更新も。model type（§2）には拡張手順があるが example type には無い
+- [x] C9-3 新しい検証ルールを `validate-content.mjs` に足す → ✅ **概ね完備**（場所は §2/§7、assert の既存パターンを写す。design §7 が「検査の正本はスクリプト本体」と明示）
 
 ### C10 削除・リネーム・移動の波及
 - [ ] C10-1 id 変更・削除時に、全逆参照をどう洗い出して直すか（チェックリスト）
@@ -148,3 +148,5 @@
 | F13 | 学習マップは自動生成である旨を明文化：topics は `units` から自動生成（category=categoryForLesson(strand)・level=levelForLesson(range)・title/description=単元）で手動追加不要。有効な strand 値・category キー一覧（categoryLabels）、新 strand→categoryForLesson／新 range→levelForLesson を要更新 | CLAUDE.md §2/§4 | C6-1, C6-3（＋C6-2 補強） | ⬜ 未 |
 | F14 | design §4.4 の学習マップ例を実体へ：自動生成である旨と topic の形（category はキー・level は range 由来・field は title/description）に是正、手書きの `label`/`category:"数と式"` を修正 | design/content-architecture.md §4.4 | C6-1 補強 | ⬜ 未 |
 | F15 | 検索インデックスの範囲と拡張方法を明文化：`search-view.js` が索引する5種（units/labs/practice/stories/figures）、新種別は import＋forEach を既存パターンで追加。§2 の js モジュール一覧に `search-view.js`（と欠けている他モジュール）を補う | CLAUDE.md §2 | C8-2 | ⬜ 未 |
+| F16 | 新しいページ／ルートの追加手順を明文化：nav.js の `pageIds`・router.js の route 分岐・index.html の `data-page` セクション＋ナビリンク・design §6 表の更新・preview 確認（既存を写す） | CLAUDE.md（新§）/design §6 | C9-1 | ⬜ 未 |
+| F17 | 新しい example 型の追加手順を明文化：format.js の workedExampleMarkup に分岐＋`validate-content.mjs` の validateExample 許可リスト（line 64）に型追加（必須）＋design §4.1.1 型表更新＋preview | CLAUDE.md §2/design §4.1.1 | C9-2 | ⬜ 未 |
