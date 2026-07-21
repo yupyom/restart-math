@@ -108,6 +108,20 @@
 3. 練習を付けるなら `practice.js` に登録し、生成器を `practice-generators.js`（追補は `practice-extra.js`）へ。step 型は `{ label, question, hint, check, answer, choices?, example?, accept? }`。
 4. `npm run check`（`learningPath` と単元IDの一致もここで検査）→ `npm run build` → `npm run units` で番号を確認 → 表示に関わるので `npm run preview` で1回確認 → コミット。
 
+## 4.5 id のリネーム・削除（波及チェックリスト）
+
+id（単元・図解・問題・読み物・数学者）を変える／消すときは、**その id を参照している箇所をすべて直してから** `npm run check` を通す。check は逆参照の欠落（dangling）を検出するので、**残参照ゼロ＝check が通る**ことを完了条件にする（記憶で数えず check に確認させる）。まず `grep -rF -- "<old-id>" src/` で洗い出すと速い。
+
+参照される側の一覧（種別ごとの直し先）:
+
+- **単元 `lessonId`** … `lessons.js`（import 行・`rawUnits`・`learningPath`・`lessonMetadata`・`lessonContexts` のキー）／`labs.js` の `lessonIds`／`practice.js` の `lessonIds`／`stories.js` の `lessonIds`／`figures.js` の `related.lessons`／`glossary.js` の `lessonId`。※`topics.js` は units から自動生成なので追随（手当て不要）。
+- **図解 `labId`** … `labs.js` 本体の `id`／`practice.js` の `labIds`／`stories.js` の `labIds`／`figures.js` の `related.labs`／`lessonContexts` の `connections.labId`。※単元の `labIds`・`recommendedLabId` は `unitLabRefs`（labs の `lessonIds` 逆引き）由来で自動追随。
+- **問題 `practiceId`** … `practice.js` 本体の `id`／`lessonMetadata` の `practiceIds`／`labs.js` の `practiceIds`／`stories.js` の `practiceIds`／`lessonContexts` の `connections.practiceId`。
+- **読み物 `storyId`** … `stories.js` 本体の `id`／`lessonContexts` の `storyIds` と `connections.storyId`／`figures.js` の `related.stories`。
+- **数学者 `figureId`** … `figures.js` 本体の `id`／他 figure の `related.figures`。
+
+削除は上の参照を消してから本体エントリを消す。リネームは新旧を漏れなく置換する。仕上げに `npm run check` →（通れば）`npm run build`。
+
 ## 5. コミット/ドキュメント運用
 
 - 区切りごとに `npm run check` → `npm run build` → コミット＋プッシュ（`main` 直運用）。
