@@ -71,19 +71,20 @@
   - `definitions`: `[{ term, meaning, example, boundary }]` →「言葉をほどく」カード（空配列ならカード非表示）。
   - `connections`: `[{ kind, title, summary, labId?|storyId?|practiceId? }]` →「どこで役立つ？」カード。`kind` は分類ラベル（history/model/notation… 現状は描画に未使用だが全エントリに付ける慣習）。`labId`→単元の `labIds`、`storyId`→`context.storyIds`、`practiceId`→`practiceIds` に**登録必須（逆参照検査あり）**。`context.storyIds` は読み物ボタンの列で、`connections.storyId` の登録先も兼ねる。
   - ※ ここでの `connections`（＝`context.connections`）は「どこで役立つ？」カード用で、「次の一手」（下記 `recommended*`）とは別物。
-- `model`: 図。dispatcher は `lessons-view.js` の `unitModelMarkup`。現行の `type` は `circle-angle` / `right-triangle` / `line-graph` / `area` の4種（`inscribed-angle` は無い）。**新しい type を足すときは dispatcher に分岐＋描画関数＋（必要なら）CSS＋ブラウザ確認**、という順で行う。
+- `model`: 図。dispatcher は `lessons-view.js` の `unitModelMarkup`。現行の `type` は4種（`inscribed-angle` は無い）。共通キー＝`title`・`description`・`formula?`（式。`workedExampleMarkup` で描画）。type 別の追加キー: `circle-angle`／`right-triangle`＝図は固定でラベルも SVG 埋め込み（追加キー無し）、`line-graph`＝`a`・`b`（`y=ax+b` を描画）、`area`＝`height`・`firstWidth`・`secondWidth`。各 type のデータ形の正本は `lessons-view.js` の描画関数。**新しい type を足すときは dispatcher に分岐＋描画関数＋（必要なら）CSS＋ブラウザ確認**、という順で行う。
 - 「次の一手」＝ `lessons.js` が合成する `recommendedLabId` / `recommendedPracticeId` / `recommendedNextLessonId`（本文に書かない）。`npm run check` が各単元に最低1つあるか検査する。**トップレベルの `connections` フィールドは存在しない**（関連リンクは `context.connections` に置く）。
 - ヒント・note は一般論でなく実際の数値で語り、その単元までに教えた道具だけを前提にする。証明例は答案にそのまま書ける文章を step の `text` に1行ずつ、赤の心の声を `note` に。
 
 ### その他のコンテンツ（`src/content/`）
-`stories.js`（読み物）/ `figures.js`（数学者図鑑。`JSON.stringify` 生成なのでソース上は `\\(` と2重バックスラッシュ）/ `labs.js`（図解ラボのカタログ）/ `practice.js`（問題モード設定）/ `glossary.js` / `topics.js`（学習マップ＝単元の入口。本文を複製しない）/ `search-synonyms.js`。
+`stories.js`（読み物）/ `figures.js`（数学者図鑑。`JSON.stringify` 生成なのでソース上は `\\(` と2重バックスラッシュ）/ `labs.js`（図解ラボのカタログ）/ `practice.js`（問題モード設定）/ `glossary.js` / `topics.js`（学習マップ。**`units` から自動生成するので手で足さない**。`category`＝`categoryForLesson(strand)`＝キー〔number/algebra/function/geometry/data/logic/sequence〕、`level`＝`levelForLesson(range)`＝1〜5。未知の strand は algebra・未知の range は level 1 に落ちるので、新しい strand 値→`categoryForLesson`、新しい range 値→`levelForLesson` を要更新）/ `search-synonyms.js`。
 
 ### 表示・ロジック（`src/assets/`）
-- `js/` … 役割別モジュール。単元描画＝`lessons-view.js`（model 描画関数もここ）、図解ラボ＝`labs-view.js`、問題生成＝`practice-generators.js`/`practice-advanced.js`/`practice-extra.js`、整形＝`format.js`、状態＝`state.js`、ナビ＝`nav.js`/`router.js`。エントリは `app.js`（init のみ）。
+- `js/` … 役割別モジュール（エントリは `app.js`＝init のみ）。単元描画＝`lessons-view.js`（model 描画関数もここ）、図解ラボ＝`labs-view.js`、問題＝`practice-view.js`＋生成器 `practice-generators.js`/`practice-advanced.js`/`practice-extra.js`、読み物＝`stories-view.js`、図鑑＝`figures-view.js`、学習マップ＝`map-view.js`、検索＝`search-view.js`、用語リンク＝`glossary-links.js`、ページ送り＝`pager.js`、整形＝`format.js`/`math-utils.js`、状態＝`state.js`、ナビ＝`nav.js`/`router.js`、雑多＝`utils.js`。
+- 検索の索引（`search-view.js`）が対象にするのは units・labs・practice・stories・figures の**5種**。新しい種別を検索に含めるには import＋forEach を既存パターンで追加する。
 - `css/` … 現状は `styles.css` の**1ファイル**（base/layout/components/lesson/practice/figures や図の `.series`/`.axis` などを内包。ファイル分割はしていない）。
 
 ### 検証（`npm run check` の実体）
-- `scripts/validate-content.mjs` … ID重複・`lessonId`/`labId`/`practiceId`/`storyId` 逆参照・数式に生HTMLが混ざらないか・全単元に「次の一手」があるか。`validateMathText` の対象は units/labs/stories（figures は対象外なので図鑑は目視）。
+- `scripts/validate-content.mjs` … ID重複・`lessonId`/`labId`/`practiceId`/`storyId` 逆参照・`example` の型と構造・`context` の3キーと逆参照・読み物の出典/事実確認・肖像ファイルの実在・数式の区切り漏れや生HTML混入・全単元に「次の一手」があるか。`validateMathText` の対象は **units/labs/stories/figures**（figures も対象。`achievement`/`profile`/`contributions` を検査）。検査項目の網羅は design §7 を参照。
 - `scripts/test-practice.mjs` … 全練習モードを多数生成し自己受理などを検査。
 
 ---
