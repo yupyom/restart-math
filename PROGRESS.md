@@ -81,11 +81,11 @@
 - [x] C1-8 単元に補足カード（context）を付ける → ✅ **完備**（§2 context 行＋design §11.2：lessonContexts 登録・3キー・逆参照・kind。D5/D6 で整備済み）
 - [x] C1-9 「次の一手」を成立させる → ✅ **完備**（§2：recommended* は labIds〔unitLabRefs〕/practiceIds〔lessonMetadata〕/nextLessonId から合成、`check` が最低1つを検査）
 
-### C2 練習問題（practice）
-- [ ] C2-1 練習モードを探す
-- [ ] C2-2 単元に練習を追加・紐付ける（`practice.js` 登録＋`lessonMetadata.practiceIds`＋生成器）
-- [ ] C2-3 新しい問題生成器を作る（step 型・`accept`・`test-practice` で検証）
-- [ ] C2-4 難度・上限・前提を調整する（level / numberPolicy）
+### C2 練習問題（practice） — 点検済み（2026-07-21）
+- [x] C2-1 練習モードを探す → ✅ **概ね完備**（場所は §2、`practice.js` を読めば全モード一覧可。※`practice.js` 冒頭コメントが生成コードを app.js と誤記→ F6 で是正）
+- [x] C2-2 単元に練習を追加・紐付ける → ⚠ **不足（→ F5）**：`practice.js` 登録・生成器・step型は §4-3 にあるが、単元⇄練習の**両方向リンク**（`practice.lessonIds` ＋ `lessonMetadata.practiceIds`）を揃える点が明示されていない
+- [x] C2-3 新しい問題生成器を作る → ⚠ **不足（→ F5・F6）**：生成器の返り値形（modeLabel/title/prompt/steps）・**mode→生成器の対応表の所在**・step 各フィールドの意味（`check` は関数等）が未文書化。design §4.3 は `generator` フィールドを示すが実体は対応表方式（F6）
+- [x] C2-4 難度・上限・前提を調整する（level / numberPolicy） → ⚠ **部分不足（→ F5・F6）**：`numberPolicy` は実体では説明文（例「答えが2桁以内」）だが design §4.3 は policy コード（`radicand-under-100`）と誤記。取りうる値・生成器での効き方も未文書化
 
 ### C3 図解ラボ（labs）
 - [ ] C3-1 図解を探す
@@ -137,3 +137,5 @@
 | F2 | §4「新しい単元を追加する手順」に必須の関連作業を追記：①新規前の重複検索（`npm run units -- 語`）②検索ワード整備（`search-synonyms.js`／`glossary.js` に語を追加）③対の問題を作らない場合は TODO 化 ④（任意）context 追加・図解リンク | CLAUDE.md（§4） | C1-4（＋C1-2 補強・C8-1 の新単元分） | ⬜ 未 |
 | F3 | 単元 id のリネーム・削除の波及チェックリストを新設（逆参照先＝`lessons.js`〔import/rawUnits/learningPath/lessonMetadata/lessonContexts〕・`labs.js`〔lessonIds〕・`practice.js`・`stories.js`・`figures.js`〔related.lessons〕・`glossary.js`・`topics.js`・`context.connections`。直す順＋`check` で残参照ゼロ確認） | CLAUDE.md（新§） | C1-6, C10-1 | ⬜ 未 |
 | F4 | model type のデータ形を文書化（各 type=circle-angle/right-triangle/line-graph/area が必要とするキー、または既存 model 例の見つけ方）。現状は `lessons-view.js` の描画関数を読むしかない | CLAUDE.md §2／design §4 | C1-7 | ⬜ 未 |
+| F5 | 練習問題の追加ガイドを補強：①単元⇄練習の両方向リンク（`practice.lessonIds`＋`lessonMetadata.practiceIds`）②mode→生成器の対応表の所在（`practice-generators.js`）③生成器の返り値形（modeLabel/title/prompt/steps）④step 各フィールドの意味（`check`=関数, answer, hint, choices?, example?, accept?）⑤`level`/`numberPolicy` は説明テキストである旨 | CLAUDE.md §4／design §4.3 | C2-2, C2-3, C2-4 | ⬜ 未 |
+| F6 | 実態と食い違う練習の既存記述を是正：(i) `practice.js` 冒頭コメント「生成・採点コードは app.js」→ `practice-generators.js` 等へ (ii) design §4.3 の practice 例を実体へ（`label`／`generator` フィールド無し・mode→生成器は対応表／`numberPolicy` は説明文） | practice.js, design §4.3 | C2-3, C2-4（＋C2-1 補強） | ⬜ 未 |
