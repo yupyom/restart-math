@@ -93,9 +93,9 @@
 - [x] C3-3 図解の操作コードを編集する（labs-view.js） → ✅ **概ね完備**（場所は §2、編集の一般フロー〔§0/§3/§5〕＋`preview` 確認〔§3-5〕で辿れる）
 - [x] C3-4 単元⇄図解の相互リンク → ✅ **概ね完備**（§2 D5「labIds＝unitLabRefs＝図解側 lessonIds の逆参照」＋design §4.2/§5 で向きが辿れる）
 
-### C4 読み物（stories）
-- [ ] C4-1 読み物を探す
-- [ ] C4-2 読み物を追加する（type/title/lead/sections/factCheck=checked、history・society は出典 HTTPS 必須、肖像 src/alt/caption 実在、相互リンク）
+### C4 読み物（stories） — 点検済み（2026-07-21）
+- [x] C4-1 読み物を探す → ✅ **概ね完備**（場所は §2、`stories.js` を読めば一覧可・アプリ検索も対象）
+- [x] C4-2 読み物を追加する → ⚠ **不足（→ F9・F10）**：追加手順が未文書化。実フィールドは id/type/menuTitle/title/lead/lessonIds/labIds/practiceIds/sections:[{heading,body}]/sources/factCheck{status:"checked"}。history・society は出典HTTPS必須、肖像は portraits{src,alt,caption}＋実在。design §4.5 の例は必須の title/lead/sections（と menuTitle）を欠く（→F10）
 
 ### C5 数学者図鑑（figures）
 - [ ] C5-1 図鑑を探す
@@ -141,3 +141,5 @@
 | F6 | 実態と食い違う練習の既存記述を是正：(i) `practice.js` 冒頭コメント「生成・採点コードは app.js」→ `practice-generators.js` 等へ (ii) design §4.3 の practice 例を実体へ（`label`／`generator` フィールド無し・mode→生成器は対応表／`numberPolicy` は説明文） | practice.js, design §4.3 | C2-3, C2-4（＋C2-1 補強） | ⬜ 未 |
 | F7 | 図解ラボの追加手順を新設：実フィールド（id/title/short/category/lessonIds〔必須・逆参照〕/practiceIds〔必須・逆参照〕/objectIntro/observe/starterExample〔必須〕）と、描画は近い既存図解を写して `labs-view.js` に追加＋`preview` 確認（lab.id で描画対応） | CLAUDE.md（新§） | C3-2（＋C3-3 補強） | ⬜ 未 |
 | F8 | design §4.2 の labs 例を実体へ：必須の `practiceIds`・`starterExample`（と `short`）を追加、実在しない `hostId` を削除 | design/content-architecture.md §4.2 | C3-2 補強 | ⬜ 未 |
+| F9 | 読み物の追加手順を新設：実フィールド（id/type/menuTitle/title/lead/lessonIds/labIds/practiceIds/sections:[{heading,body}]/sources/factCheck{status:"checked",note}）、history・society は出典 HTTPS 必須、肖像 portraits{src,alt,caption}＋実在、相互リンク逆参照。近い既存を写す＋`check` | CLAUDE.md（新§） | C4-2 | ⬜ 未 |
+| F10 | design §4.5 の読み物例を実体へ：必須の title/lead/sections（[{heading,body}]）と menuTitle を追加 | design/content-architecture.md §4.5 | C4-2 補強 | ⬜ 未 |
