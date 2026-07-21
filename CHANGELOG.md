@@ -16,6 +16,7 @@
 ### Docs
 - `design/content-architecture.md` §3「コンテンツの正本と公開物」を現況へ刷新。`build` が **検証付きの完全コピー（バンドルなし）** であること・`docs` は `src` の鏡像で結合ファイルは生成されないこと・構造ツリー（`lessons/<id>.js` 分割、全 content/scripts）を明記。§4.1（`lessons.js`＝目次）・§4.2（ラボ描画は `labs-view.js`）の陳腐化も是正。§3 を「構造・生成モデルの正本」、CLAUDE.md を「手順の正本」とし相互リンクで役割分担（二重管理による片側陳腐化の再発防止）。
 - `CLAUDE.md`: `context` の型記述を実装に合わせ修正（`{title,body}` ではなく `why`/`definitions`/`connections` 必須・逆参照検査あり）。§2 冒頭に構造・生成モデルは design §3 が正本である旨のリンクを追加。
+- **ドキュメント×実装の矛盾解消（D1〜D6）**: 実装を正本に開発ドキュメントを現況化。CLAUDE.md §2 の型記述（model type=4種／example=5系統／css=1本／`context` は `lessonContexts` 登録／トップレベル `connections` は不在で「次の一手」は `recommended*`／`connections` に `kind`）、design §4.1・§4.1.1（本文キーと example 5型）・§11.2（文脈データは `lessonContexts` 登録）・§6（`figures`・`search` ルート追加）・§7（検査項目を `validate-content.mjs` の実体へ）、README「教材データの編集場所」を修正。
 
 ### Added — 単元ブラッシュアップ 第1弾（コミット 24e9de4。依頼11項目のうち5項目。残りと詳細は [PROGRESS.md](PROGRESS.md)）
 - 単元3 符号と計算順序: 同レベルの計算は左から順（`3÷6×2` の誤答例つき）

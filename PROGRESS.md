@@ -1,12 +1,12 @@
 # 継続作業トラッカー（ターン・セッションをまたぐ作業）
 
 ターンをまたぐ継続作業を、**1単位ごとに1コミット**して実ハッシュとともに残す台帳。次ターンはまずここを読めば続きが分かる。
-いま進めているのは **A. 開発ドキュメント整備**。**B. 単元ブラッシュアップ**は ⏸ 次セッション以降。
+**A. 開発ドキュメント整備**は D1〜D6 完了（2026-07-21）。**B. 単元ブラッシュアップ**は ⏸ 次セッション以降。
 単元番号はユーザーの言う「単元N」= `npm run units` の N 番目（learningPath 順）。詳しい手順は [CLAUDE.md](CLAUDE.md)。
 
 > **状態の正本は git（`git log` の実ハッシュ）とディスク（`grep -cF` で実在確認）。** 表がgitと食い違うときはgitを信じる。
 
-## A. 開発ドキュメント整備（実装との矛盾解消）★いま進行中
+## A. 開発ドキュメント整備（実装との矛盾解消）✅ 完了（D1〜D6）
 
 実装を正本に、開発ドキュメントの記述を現況へ合わせる。棚卸しで確認した**実装の事実（＝正本）**を先に固定し、次ターンで再調査せず直せるようにする:
 
@@ -21,7 +21,7 @@
 | D1 | CLAUDE.md §2 の型記述を実装へ一致（model type 4種／example 5系統／css 1本） | ✅ | 57da479 | CLAUDE.md |
 | D2 | design §4.1・§4.1.1 の example 型表に `walkthrough` 追加＋初版コード例の是正 | ✅ | a0c7bf9 | design/content-architecture.md |
 | D3 | README.md「教材データの編集場所」を現況化（`lessons/<id>.js`・分割モジュール） | ✅ | c550ea7 | README.md |
-| D4 | （任意・優先度低）design §6 ルート・§7 検査リストを router / validate-content と突き合わせ | ⬜ 未 | - | design/content-architecture.md |
+| D4 | design §6 ルート・§7 検査リストを router / validate-content と突き合わせ（figures・search 追加、検査項目を実体へ） | ✅ | 7a3321d | design/content-architecture.md |
 | D5 | （D2着手中に発見）CLAUDE.md §2 の型記述の残課題：`context` は本文でなく `lessonContexts`（lessons.js）に登録する点を明示／トップレベル `connections?` は実使用ゼロの疑い（要確認のうえ訂正 or 削除） | ✅ | 7f21db0 | CLAUDE.md |
 | D6 | （D5着手中に発見）文脈データ例を実体へ：design §11.2 の `context` を `lessonContexts` 登録形に書換＋`definitions` に `example` 補い。あわせて `connections` の実体は `kind` 付き（全57件・描画未使用）と判明し CLAUDE.md §2 の `kind` 欠落も是正 | ✅ | 06bcfb4 | design/content-architecture.md, CLAUDE.md |
 

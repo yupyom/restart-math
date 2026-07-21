@@ -5,12 +5,8 @@
 
 ## 進行中
 
-- **開発ドキュメントと実装の矛盾解消（現在の主作業）** — 実装を正本に各文書を現況化する。単位ごとに1コミットし、状態と実ハッシュは [PROGRESS.md](PROGRESS.md)「開発ドキュメント整備」を更新。棚卸し済みの単位:
-  - **D1** CLAUDE.md §2 の型記述を実装へ一致（model type=4種で `inscribed-angle` 削除／example type=5系統で `aligned-steps`・`word-problem` 追加／css=`styles.css` 1本に訂正）
-  - **D2** design §4.1・§4.1.1 の example 型と単元コード例を現況化（最多の `walkthrough` を型表に追加、初版フィールドの是正）
-  - **D3** README.md「教材データの編集場所」を現況化（単元＝`lessons/<id>.js`、図解/採点/遷移＝分割モジュール `labs-view.js` 等）
-  - **D4（任意・優先度低）** design §6 ルート一覧・§7 ビルド検査リストを実装（router / validate-content.mjs）と突き合わせ補正
-- **単元ブラッシュアップ（依頼11項目）** — ⏸ **次セッション以降**（今セッションはドキュメント整備に専念）。完了 6（1・3・6・9・10・8）、残り 5（作業量の軽い順: 11・4・7・2・5）。詳細は [PROGRESS.md](PROGRESS.md)。
+- ~~開発ドキュメントと実装の矛盾解消~~ → ✅ **完了（D1〜D6・2026-07-21）**。CLAUDE.md §2 の型記述、design §3/§4.1/§11.2/§6/§7、README を実装に一致させた。詳細は [CHANGELOG.md](CHANGELOG.md)「Docs」／[PROGRESS.md](PROGRESS.md)「A」。
+- **単元ブラッシュアップ（依頼11項目）** — ⏸ **次セッション以降**。完了 6（1・3・6・9・10・8）、残り 5（作業量の軽い順: 11・4・7・2・5）。詳細は [PROGRESS.md](PROGRESS.md)。
   ※新単元は CLAUDE.md「4. 新しい単元を追加する手順」に従い、練習問題を付けるなら practice.js＋生成器まで揃える。
 
 ## 未着手の候補
