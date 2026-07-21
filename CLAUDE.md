@@ -147,6 +147,27 @@ id（単元・図解・問題・読み物・数学者）を変える／消すと
 - 肖像画像は `src/assets/img/portraits/<id>.webp` に置く（実在必須）。`related.*` は実在必須（`check` が逆参照検査）。
 - `npm run check`（`figures` も数式区切り・肖像実在・related を検査）。
 
+## 4.7 表示・仕組みを拡張する
+
+いずれも表示に関わるので最後に `npm run preview` で確認。既存を1つ写すのが基本。
+
+### 新しいページ／ルート
+1. `nav.js` の `pageIds` に id を足す。
+2. `index.html` に `data-page="<id>"` のセクションを追加し、ナビに `data-page-link="<id>"` のリンクを足す。
+3. `router.js` の `handleRoute` に `route.page === "<id>"` の分岐を足す（id 付きで開くなら `route.id` を使う。リンクは `routeHash("<id>", …)`）。
+4. [design/content-architecture.md](design/content-architecture.md) §6 のルート表を更新。
+5. `npm run preview` で確認。
+
+### 新しい example 型
+1. `format.js` の `workedExampleMarkup` に `value.type === "<新型>"` の分岐と描画を足す。
+2. **`scripts/validate-content.mjs` の `validateExample` の許可リスト**（`["aligned-steps","word-problem","narrative","walkthrough"]`）に新型を加える（**忘れると check が「不正な型」で弾く**）。必要なら型ごとの構造検査も足す。
+3. design §4.1.1 の型表と CLAUDE.md §2 の `example` 行に新型を追記。
+4. `npm run check` → `npm run preview`。
+
+### 新しい model 型 / 検証ルール
+- model 型は §2「`model`」の手順（dispatcher に分岐＋描画関数＋（必要なら）CSS＋preview）。データ形の正本は `lessons-view.js` の描画関数。
+- 検証ルールは `scripts/validate-content.mjs` に `assert(...)` を足す（既存パターンを写す。検査項目の網羅は design §7）。
+
 ## 5. コミット/ドキュメント運用
 
 - 区切りごとに `npm run check` → `npm run build` → コミット＋プッシュ（`main` 直運用）。
