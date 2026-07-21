@@ -133,7 +133,7 @@
 
 | 修正ID | 内容 | 対象 | 解決する点検項目 | 状態 |
 |---|---|---|---|---|
-| F1 | CLAUDE.md 冒頭の文書ナビを実態へ：design を「設計思想＋リポジトリ構造・生成モデル(§3)」に拡張、PROGRESS を「継続作業トラッカー（A/B/C…）」に一般化、L11 の振り分けにも PROGRESS の役割を追記 | CLAUDE.md | C0-3 | ⬜ 未 |
+| F1 | CLAUDE.md 冒頭の文書ナビを実態へ：design を「設計思想＋リポジトリ構造・生成モデル(§3)」に拡張、PROGRESS を「継続作業トラッカー（A/B/C…）」に一般化、L11 の振り分けにも PROGRESS の役割を追記 | CLAUDE.md | C0-3 | ✅ d844a1a |
 | F2 | §4「新しい単元を追加する手順」に必須の関連作業を追記：①新規前の重複検索（`npm run units -- 語`）②検索ワード整備（`search-synonyms.js`／`glossary.js` に語を追加）③対の問題を作らない場合は TODO 化 ④（任意）context 追加・図解リンク | CLAUDE.md（§4） | C1-4（＋C1-2 補強・C8-1 の新単元分） | ⬜ 未 |
 | F3 | id のリネーム・削除の波及チェックリストを新設（**全 id 種別**）。逆参照先: 単元(lessonId)→`lessons.js`〔import/rawUnits/learningPath/lessonMetadata/lessonContexts〕・`labs.js` lessonIds・`practice.js` lessonIds・`stories.js` lessonIds・`figures.js` related.lessons・`glossary.js`（topics は自動生成で追随）／図解(labId)→unitLabRefs・practice.labIds・stories.labIds・figures.related.labs・context.connections.labId／問題(practiceId)→lessonMetadata.practiceIds・labs.practiceIds・stories.practiceIds・context.connections.practiceId／読み物(storyId)→context.storyIds・context.connections.storyId・figures.related.stories／数学者(figureId)→figures.related.figures。直す順＋`check` で残参照ゼロ確認 | CLAUDE.md（新§） | C1-6, C10-1 | ⬜ 未 |
 | F4 | model type のデータ形を文書化（各 type=circle-angle/right-triangle/line-graph/area が必要とするキー、または既存 model 例の見つけ方）。現状は `lessons-view.js` の描画関数を読むしかない | CLAUDE.md §2／design §4 | C1-7 | ✅ 211a4ac |
@@ -150,4 +150,4 @@
 | F15 | 検索インデックスの範囲と拡張方法を明文化：`search-view.js` が索引する5種（units/labs/practice/stories/figures）、新種別は import＋forEach を既存パターンで追加。§2 の js モジュール一覧に `search-view.js`（と欠けている他モジュール）を補う | CLAUDE.md §2 | C8-2 | ✅ 211a4ac |
 | F16 | 新しいページ／ルートの追加手順を明文化：nav.js の `pageIds`・router.js の route 分岐・index.html の `data-page` セクション＋ナビリンク・design §6 表の更新・preview 確認（既存を写す） | CLAUDE.md（新§）/design §6 | C9-1 | ⬜ 未 |
 | F17 | 新しい example 型の追加手順を明文化：format.js の workedExampleMarkup に分岐＋`validate-content.mjs` の validateExample 許可リスト（line 64）に型追加（必須）＋design §4.1.1 型表更新＋preview | CLAUDE.md §2/design §4.1.1 | C9-2 | ⬜ 未 |
-| F18 | CLAUDE.md にドキュメント保守の原則を明文化：実装が正本でズレたら実装に合わせて書き換える（過去は git）／構造=design §3・手順=CLAUDE.md の役割分担で二重管理しない／矛盾発見時は決定的確認（`grep -cF`・実ファイル）→書換→`check`→commit | CLAUDE.md（§0 または §5） | C11-4 | ⬜ 未 |
+| F18 | CLAUDE.md にドキュメント保守の原則を明文化：実装が正本でズレたら実装に合わせて書き換える（過去は git）／構造=design §3・手順=CLAUDE.md の役割分担で二重管理しない／矛盾発見時は決定的確認（`grep -cF`・実ファイル）→書換→`check`→commit | CLAUDE.md（§0 または §5） | C11-4 | ✅ d844a1a |
