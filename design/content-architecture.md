@@ -269,7 +269,7 @@ export const unit = {
 
 ## 6. 画面構成とスマートフォンでの優先順位
 
-ハッシュで開くページを、次の七つに整理します。
+ハッシュで開くページを、次の九つに整理します（`assets/js/nav.js` の `pageIds` が正）。
 
 | URL | 役割 | 画面上で最初に見せる内容 |
 | --- | --- | --- |
@@ -279,9 +279,11 @@ export const unit = {
 | `#labs/<lab-id>` | 図解 | 具体物、操作、観察すること |
 | `#practice/<practice-id>` | 問題 | 一問、今の手順、ヒント |
 | `#stories/<story-id>` | 読み物 | ルールの役割、短い確認、教材へ戻る導線 |
+| `#figures/<figure-id>` | 数学者図鑑 | 人物、業績、関連する単元・読み物 |
 | `#map` | 学習マップ | 次に選べる少数の単元 |
+| `#search` | 検索 | 単元・図解・読み物・数学者を横断して探す |
 
-現行の `#lessons` のような大分類ハッシュも残し、旧リンクを壊しません。詳細ルートは、たとえば `#lessons/linear-equations` とします。
+現行の `#lessons` のような大分類ハッシュも残し、旧リンクを壊しません。詳細ルートは単元 `#lessons/linear-equations`、範囲で絞る `#lessons/range/<range>`、図鑑 `#figures/<figure-id>` のようにします。
 
 ### モバイルの原則
 
@@ -295,13 +297,17 @@ export const unit = {
 
 数式は MathJax の TeX として保存します。表示用 HTML を組み立てるときに `<` や `>` が HTML タグとして扱われないよう、本文・例・要点・ラベルは必ず `escapeHtml()` を通します。
 
-さらに、ビルド時に次を検査します。
+さらに、ビルド時に `scripts/validate-content.mjs`（＋練習は `scripts/test-practice.mjs`）が内容を検査します（`npm run check` と `npm run build` の両方が通す）。**検査項目の正本はスクリプト本体**で、主なものは次のとおり:
 
-- 単元・図解・問題・学習マップの ID が重複していないこと
-- 参照される `lessonId`、`labId`、`practiceId` が必ず存在すること
-- すべての単元に少なくとも一つの「次の一手」があること
-- 数式を含む文字列に生の HTML タグが混ざっていないこと
-- `docs/` の `index.html` がすべてのローカル CSS・JS を参照できること
+- 単元・図解・問題・学習マップ・読み物・数学者・用語・検索同義語の ID／語が重複していないこと
+- 相互リンク（`lessonId`・`labId`・`practiceId`・`storyId`・図鑑の関連参照、`context.connections` の逆参照）がすべて実在すること
+- すべての単元に「次の一手」（`nextLessonId`／`labIds`／`practiceIds`、および `recommended*`）が最低一つあること
+- `example` が型（文字列／`aligned-steps`／`walkthrough`／`word-problem`／`narrative`）ごとの構造を満たすこと（式にカンマを入れない等）
+- `context` を持つなら `why`・`definitions`・`connections` の3つがそろい、逆参照が通ること
+- 読み物が出典（history/society は HTTPS 必須）と事実確認（`factCheck.status: "checked"`）を備え、肖像ファイルが実在すること
+- 数式を含む文字列が `\(...\)`／`\[...\]` で区切られ、教材データに生の HTML タグが混ざっていないこと
+- `docs/`（および `src/`）の `index.html` が参照するローカル CSS・JS・画像がすべて存在すること
+- 練習問題が各モードで自己受理できること（`test-practice.mjs`）
 
 ## 8. 移行の順番
 
