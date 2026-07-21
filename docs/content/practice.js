@@ -1,4 +1,4 @@
-// 出題の「教材としての設定」。実際の問題生成・採点コードは assets/js/app.js に置く。
+// 出題の「教材としての設定」。実際の問題生成・採点コードは assets/js/practice-generators.js（追補 practice-extra.js / practice-advanced.js）に置く。
 import { units } from "./lessons.js";
 
 const rawPracticeCatalog = [

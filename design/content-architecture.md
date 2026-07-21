@@ -176,13 +176,17 @@ export const unit = {
 {
   id: "equation-blocks",
   title: "x袋と1ブロック",
+  short: "方程式ブロック",          // 一覧・検索での短い見出し
   category: "方程式",
-  lessonIds: ["linear-equations"],
+  lessonIds: ["linear-equations"],  // 必須・逆参照（この図解を使う単元）
+  practiceIds: ["equation"],        // 必須・逆参照（対応する練習）
   objectIntro: "同じ数の1ブロックを、左右から同時に取る",
   observe: "左右の合計はいつも同じ",
-  hostId: "equation-lab"
+  starterExample: "例：左に x袋1つと1ブロック2つ、右に1ブロック5つ。両側から1ブロック2つを取ると x=3 が見える。", // 必須
 }
 ```
+
+`lessonIds`・`practiceIds`・`starterExample` は必須（`check` が逆参照と存在を検査）。`hostId` フィールドは無く、キャンバス描画は次項のとおり `id` 対応で `labs-view.js` に書きます。
 
 図解の表示と実際の操作コードは分けます。上のデータは「どの単元から何の図解へつなぐか」を担当し、キャンバス描画やスライダー処理は、現在は `assets/js/labs-view.js` 等の役割別モジュールにあります（`app.js` は初期化のみ）。この分割後も、教材データの参照方法は変わりません。
 
@@ -206,32 +210,35 @@ export const unit = {
 ```js
 {
   id: "simplify-radical",
-  title: "平方数を外へ出す",
-  lessonIds: ["simplify-roots"],
-  labIds: ["radical-simplifier"],
+  label: "平方数を外へ出す",          // 一覧の見出し（title ではない）
+  lessonIds: ["simplify-roots"],      // 逆参照
+  labIds: ["radical-simplifier"],     // 逆参照
   level: "はじめの一問",
-  numberPolicy: "radicand-under-100",
-  generator: "generateRadicalProblem"
+  numberPolicy: "根号の中は100未満に収める", // 説明テキスト（コード値ではない）
 }
 ```
+
+`generator` フィールドは持ちません。モード `id` → 生成器の対応は `assets/js/practice-generators.js` の対応表で結びます。生成器は純関数で `{ modeLabel, title, prompt, steps: [{ label, question, hint, check, answer, choices?, example?, accept? }] }` を返し、`test-practice.mjs` が全モードの自己受理を検査します（`check` の一部）。
 
 最初の問題は、原則として答えや途中計算が 2 桁程度に収まる設定にします。問題を解けない理由が、規則の理解ではなく繰り上がり・九九・大きな数の分解にならないようにするためです。慣れてから選べる「少し進んだ問題」を別に追加します。
 
 ### 4.4 学習マップ (`topics.js`)
 
-学習マップは新しい本文を持たず、単元への入口です。単元データの `id` を参照し、重複して説明を抱えません。
+学習マップは新しい本文を持たず、単元への入口です。`topics.js` は各 `unit` から**自動生成**するので、手で項目を足しません（新単元は `strand` と `range` を正しく設定すれば自動でマップに載ります）。
 
 ```js
-{
-  id: "topic-linear-equations",
-  lessonId: "linear-equations",
-  category: "数と式",
-  level: 1,
-  label: "一次方程式"
-}
+// topics.js —— units から自動生成する（手動追加しない）
+export const topics = units.map((unit) => ({
+  id: `topic-${unit.id}`,
+  lessonId: unit.id,
+  category: categoryForLesson(unit),  // strand → キー（number/algebra/function/geometry/data/logic/sequence）
+  level: levelForLesson(unit),        // range → 1〜5
+  title: unit.title,
+  description: unit.summary,
+}));
 ```
 
-これにより、単元名や範囲の修正は一か所で済みます。
+`category` は日本語ラベルではなく**キー**で、`categoryForLesson(strand)` が決めます（表示名は `categoryLabels`）。`level` は `levelForLesson(range)` が決めます。**新しい `strand` 値を足したら `categoryForLesson`、新しい `range` 値を足したら `levelForLesson` を更新**しないと既定分類（algebra／level 1）に落ちます。これにより、単元名や範囲の修正は一か所で済みます。
 
 ### 4.5 読み物 (`stories.js`)
 
@@ -240,14 +247,23 @@ export const unit = {
 ```js
 {
   id: "equal-sign-keeps-balance",
-  type: "rule",
+  type: "rule",                        // rule / history / society
+  menuTitle: "等号の役割",             // メニューの短い見出し
+  title: "等号は「左右が同じ」の宣言",   // 必須
+  lead: "等号は答えを書く記号ではなく、左右が等しいという約束です。", // 必須
   lessonIds: ["identities-equations", "linear-equations"],
   labIds: ["equation-lab"],
   practiceIds: ["equation"],
-  sources: [],
-  factCheck: { status: "checked", note: "外部の事実を含まない" }
+  sections: [                          // 必須。各節は { heading, body }
+    { heading: "困る場面", body: "…" },
+    { heading: "共有する約束", body: "…" },
+  ],
+  sources: [],                         // history / society は HTTPS 出典を1つ以上（必須）
+  factCheck: { status: "checked", note: "外部の事実を含まない" }, // status は "checked" 必須
 }
 ```
+
+肖像を使う読み物は `portraits: [{ src, alt, caption }]` を付け、画像ファイルは実在必須（`check` が確認）。
 
 人物史・社会・統計を扱う `history` / `society` の読み物では、`sources` に HTTPS の出典を少なくとも一つ入れます。出典と `factCheck.status` はビルド前の内容検査で確認します。
 
