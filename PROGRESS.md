@@ -106,8 +106,8 @@
 - [x] C6-2 新しい range 値を導入したときの levelForLesson 更新 → ✅ **完備**（§4-2 に明記）。※strand 側の同種注意（新 strand→categoryForLesson 要更新）は F13 で補う
 - [x] C6-3 strand の割り当て → ⚠ **部分不足（→ F13）**：どこに書くか（lessonMetadata）は §2/§4-2 で辿れるが、有効な strand 値・category キー（categoryLabels: number/algebra/function/geometry/data/logic/sequence）と strand→category 対応が未文書化
 
-### C7 用語集（glossary）
-- [ ] C7-1 用語を追加する（term / lessonId、重複・長さ）
+### C7 用語集（glossary） — 点検済み（2026-07-21）
+- [x] C7-1 用語を追加する → ✅ **完備**（`glossary.js` 冒頭コメントが自己文書化：形式 `{ term, lessonId }`・いつ足す/足さない〔一般語は避ける・stopTerms〕・単元 context の definitions から自動追加される旨まで明記。場所は §2、`check` が length≥2・重複・lessonId 実在を検査）→ **新たな不足なし**
 
 ### C8 検索（search）
 - [ ] C8-1 検索できるようワードを整備する（`search-synonyms.js`・表記揺れ）
