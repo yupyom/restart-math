@@ -8,6 +8,12 @@
 
 ## [Unreleased]
 
+_（作業中でまだ push していない変更だけをここに書く。push する区切りで下の `## YYYY-MM-DD`（JST・コミット実日時）セクションへ畳み、`[Unreleased]` には未 push 分だけを残す。→ 運用ルールは [CLAUDE.md](CLAUDE.md) §5。）_
+
+現在なし。
+
+## 2026-07-21〜22
+
 ### Infra
 - **コンテンツを1テーマ1ファイルへ分割**（単元と同じ「per-file＋index が合成」の型）: 数学者図鑑 `figures/<id>.js`（b11a6b2）・読み物 `stories/<id>.js`（b4d0129）・図解ラボ `labs/<id>.js`（f3273f3）・出題設定 `practice/<id>.js`（48ce5e5）。各エントリの原文をそのまま per-file へ移し、index（`figures.js`/`stories.js`/`labs.js`/`practice.js`）は import と一覧・カタログ合成だけを持つ。`storySourcePolicy`・`unitLabRefs`・`advancedPolicies`＋並べ替えは index に原文保持。分割前後で `figures`/`figureCatalog`・`stories`/`storyCatalog`/`storySourcePolicy`・`labs`/`labCatalog`/`unitLabRefs`・`practiceCatalog` が `deepStrictEqual` で完全一致することを確認。
 - **`styles.css`（3785行）を役割ごとの部分ファイルへ分割**（79f0280）: base/home/shell/lessons/labs/lab-diagrams/practice/stories-map/responsive/figures の10ファイルにカスケード順を保って分け、`styles.css` は `@import` 集約に。各部分は原本の連続バイトスライスで、連結が原本と md5 一致（描画は完全に不変）。`index.html` は従来どおり `styles.css` だけを link。ブラウザで全リクエスト200・エラーゼロ・主要ページ描画一致を確認。
@@ -16,6 +22,7 @@
 - 編集ガイド `CLAUDE.md` を運用の単一入口として整備。`CHANGELOG.md`（本ファイル）を新設し `TODO.md` をスリム化。
 
 ### Docs
+- **ドキュメント更新のタイミングを明文化**（CLAUDE.md §5）: 実装とドキュメントは同じ push に含めて整合させる／CHANGELOG は push する区切りの内容を `## YYYY-MM-DD`（JST）へ直接書き、`[Unreleased]` は未 push 分だけに使う／PROGRESS の完了フェーズは CHANGELOG へ畳んで落とす。あわせて滞留していた 07-21〜22 の `[Unreleased]` を日付セクションへ畳んだ。
 - コンテンツ／CSS 分割に合わせ開発ドキュメントを現況化: CLAUDE.md §2（その他コンテンツ＝per-file＋index／css＝`@import` 集約の部分ファイル）・§4.5 波及チェックリスト（逆参照先を per-file へ）・§4.6 追加手順（`<type>/<id>.js` を作り index の import・配列に足す）・§4.7（CSS は部分ファイルへ）、design §3.2 構造ツリー・§4.2/§4.3/§4.5 の場所表記を更新（d89b8f4 で先行の F19/F20 補完済み）。
 - **手順の軽微な欠落 F19・F20 を補完**（d89b8f4）: 数と式系の新単元を「数と計算(number)」に入れるには `topics.js` の `categoryForLesson` の固定 id リストに新 id が要る点（§2/§4-2）、練習の生成器対応表名 `practiceGenerators`／`advancedPracticeGenerators`（§4.6）を実装で裏取りのうえ明記。
 - `design/content-architecture.md` §3「コンテンツの正本と公開物」を現況へ刷新。`build` が **検証付きの完全コピー（バンドルなし）** であること・`docs` は `src` の鏡像で結合ファイルは生成されないこと・構造ツリー（`lessons/<id>.js` 分割、全 content/scripts）を明記。§4.1（`lessons.js`＝目次）・§4.2（ラボ描画は `labs-view.js`）の陳腐化も是正。§3 を「構造・生成モデルの正本」、CLAUDE.md を「手順の正本」とし相互リンクで役割分担（二重管理による片側陳腐化の再発防止）。
