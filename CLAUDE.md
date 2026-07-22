@@ -6,7 +6,7 @@
 - 設計思想（なぜこの構造か）＋ リポジトリ構造・正本→公開物の生成モデル … [design/content-architecture.md](design/content-architecture.md)（§3 が構造・生成モデルの正本）
 - 完了した変更の履歴 … [CHANGELOG.md](CHANGELOG.md)
 - 未着手・進行中のタスク … [TODO.md](TODO.md)
-- 継続作業トラッカー（ターン・セッションをまたぐ作業＝ブラッシュアップ・点検など。完了後は CHANGELOG へ畳む） … [PROGRESS.md](PROGRESS.md)
+- 継続作業トラッカー（ターン・セッションをまたぐ作業＝ブラッシュアップ・点検など。要約は完了時に CHANGELOG へ畳む） … [PROGRESS.md](PROGRESS.md)（現在アクティブな継続作業はなし。完了フェーズ A/B/C の詳細アーカイブとして残置。次の大きめ継続作業はここに新フェーズを足す）
 
 > 内容が重複しそうになったら「作業手順・編集先＝ここ」「構造・生成モデル・設計意図＝architecture」「済んだこと＝CHANGELOG」「これからやること＝TODO」「継続作業の途中経過＝PROGRESS」で振り分ける。同じ事実を二重に持たない（片側だけ陳腐化する事故を防ぐ）。
 
