@@ -1,0 +1,221 @@
+.story-picker {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.story-picker-button {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.story-picker-button span {
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.story-picker-button strong {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.story-picker-button:hover,
+.story-picker-button:focus-visible {
+  border-color: var(--line);
+  background: white;
+  box-shadow: 0 8px 18px rgba(53, 43, 31, 0.07);
+  outline: none;
+}
+
+.story-picker-button.active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.story-picker-button:focus-visible {
+  outline: 3px solid rgba(20, 104, 109, 0.28);
+  outline-offset: 2px;
+}
+
+.story-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: clamp(1rem, 3vw, 1.8rem);
+  background: white;
+}
+
+.story-kicker {
+  margin: 0 0 0.4rem;
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.story-lead,
+.story-section p,
+.story-source-note {
+  font-family: var(--font-reading);
+  font-size: 18px;
+  line-height: 2;
+}
+
+.story-lead {
+  margin: 1rem 0 1.4rem;
+  color: var(--muted);
+}
+
+.story-section {
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.story-section h4 {
+  margin: 0;
+}
+
+.story-section p {
+  margin: 0.5rem 0 0;
+}
+
+/* 読み物の人物イラスト。広い画面では本文の右に回り込ませる。 */
+.story-portraits {
+  float: right;
+  display: grid;
+  gap: 0.9rem;
+  width: 200px;
+  margin: 0.4rem 0 1rem 1.4rem;
+}
+
+.story-portrait {
+  margin: 0;
+}
+
+.story-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+}
+
+.story-portrait figcaption {
+  margin-top: 0.45rem;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* 回り込みは本文までにして、出典や戻る導線は全幅で置く */
+.story-sources,
+.story-panel .learning-actions {
+  clear: both;
+}
+
+@media (max-width: 680px) {
+  .story-portraits {
+    float: none;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: auto;
+    margin: 0.6rem 0 1rem;
+  }
+
+  .story-portrait {
+    width: min(200px, 44%);
+  }
+}
+
+.story-sources {
+  margin: 1.6rem 0 2rem;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  background: #f5f7ff;
+}
+
+.story-sources h4 {
+  margin: 0;
+}
+
+.story-sources ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.story-sources a {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.map-controls {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.topic-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  background: white;
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.topic-meta {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+
+.topic-card h3 {
+  font-size: 1.05rem;
+}
+
+.topic-card p {
+  color: var(--muted);
+  margin: 0.55rem 0 1rem;
+  font-size: 0.95rem;
+}
+
+.topic-card a {
+  color: var(--primary-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.map-pager {
+  justify-content: center;
+}
+
+.site-footer {
+  width: min(calc(100% - 2rem), var(--max));
+  margin: 1.4rem auto 3rem;
+  padding: 1.2rem;
+  text-align: center;
+  color: var(--muted);
+}
+

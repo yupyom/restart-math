@@ -1,0 +1,233 @@
+.home-index {
+  margin-top: 2rem;
+}
+
+.home-index-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+  gap: 1.2rem;
+  align-items: stretch;
+}
+
+.home-index h1 {
+  max-width: 15em;
+  font-size: clamp(2rem, 4.5vw, 3.8rem);
+}
+
+.home-index-lead,
+.usage-guide li span,
+.usage-guide > p,
+.site-index-card p {
+  font-family: var(--font-reading);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.9;
+}
+
+.home-index-lead {
+  max-width: 48rem;
+  margin: 1rem 0 0;
+  color: var(--muted);
+}
+
+.usage-guide {
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: #f4f7f5;
+}
+
+.usage-guide h2 {
+  font-size: 1.35rem;
+}
+
+.usage-guide ol {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1rem 0;
+  padding-left: 1.35rem;
+}
+
+.usage-guide li {
+  padding-left: 0.2rem;
+}
+
+.usage-guide li strong,
+.usage-guide li span {
+  display: block;
+}
+
+.usage-guide li span,
+.usage-guide > p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+
+.usage-guide > p {
+  margin: 0;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+}
+
+.site-index-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.site-index-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 0.7rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: white;
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.site-index-card > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.site-index-card > strong {
+  align-self: center;
+  font-size: 1.05rem;
+}
+
+.site-index-card p,
+.site-index-card em {
+  grid-column: 1 / -1;
+}
+
+.site-index-card p {
+  margin: 0.25rem 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.75;
+}
+
+.site-index-card em {
+  color: var(--primary-dark);
+  font-size: 0.85rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.site-index-card:hover,
+.site-index-card:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 10px 24px rgba(47, 111, 115, 0.12);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+code {
+  display: inline-block;
+  padding: 0.35rem 0.55rem;
+  border-radius: 10px;
+  background: #f2eadc;
+  color: #27333b;
+  font-weight: 700;
+}
+
+.coverage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.coverage-card {
+  min-height: 320px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem;
+  background: white;
+}
+
+.coverage-card.strong {
+  background: linear-gradient(145deg, #f2fbf7, #fffdf7);
+}
+
+.coverage-card.medium {
+  background: linear-gradient(145deg, #fff8ed, #fffdf7);
+}
+
+.coverage-card.light {
+  background: linear-gradient(145deg, #f5f7ff, #fffdf7);
+}
+
+.coverage-status {
+  display: inline-flex;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-weight: 700;
+  margin: 0.8rem 0;
+}
+
+.coverage-card ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  color: #50606c;
+}
+
+.range-action {
+  width: 100%;
+  margin-top: 1rem;
+  border: 1px solid rgba(47, 111, 115, 0.32);
+  border-radius: 14px;
+  padding: 0.65rem 0.8rem;
+  background: white;
+  color: var(--primary-dark);
+  cursor: pointer;
+  font-weight: 700;
+  text-align: left;
+}
+
+.range-action:hover,
+.range-action:focus-visible {
+  outline: none;
+  background: var(--primary);
+  color: white;
+}
+
+.lesson-filter-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin: -0.4rem 0 1rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(47, 111, 115, 0.24);
+  border-radius: 16px;
+  background: #eff8f6;
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.text-button {
+  border: 0;
+  padding: 0.25rem;
+  background: transparent;
+  color: var(--primary-dark);
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+

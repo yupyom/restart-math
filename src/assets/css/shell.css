@@ -1,0 +1,122 @@
+.content-shell {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.content-main {
+  min-width: 0;
+}
+
+.content-shell > :last-child {
+  min-width: 0;
+}
+
+.content-menu {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 0.8rem;
+  background: #fbf4e8;
+  align-self: start;
+  position: sticky;
+  top: 6rem;
+  max-height: calc(100vh - 7rem);
+  overflow: auto;
+}
+
+.content-menu-title {
+  font-weight: 700;
+  margin: 0.3rem 0.5rem 0.7rem;
+}
+
+/* スマホ用の目次開閉ボタン。PCでは表示しない。 */
+.content-menu-toggle {
+  display: none;
+}
+
+/* IDなしの #lessons / #stories で表示する一覧ページ */
+.content-index {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.index-card {
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: #fffdf7;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.index-card:hover,
+.index-card:focus-visible {
+  border-color: #2f6f73;
+  box-shadow: 0 4px 14px rgba(53, 43, 31, 0.08);
+}
+
+.index-card-meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.index-card strong {
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.index-card-summary {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.back-to-index {
+  display: inline-block;
+  margin-bottom: 0.9rem;
+}
+
+.unit-buttons {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.unit-button {
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: left;
+  border-radius: 14px;
+  padding: 0.7rem 0.75rem;
+  cursor: pointer;
+  color: #43515c;
+}
+
+.unit-button strong {
+  display: block;
+  color: var(--ink);
+}
+
+.unit-button span {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.unit-button.active,
+.unit-button:hover,
+.unit-button:focus-visible {
+  background: white;
+  border-color: var(--line);
+  outline: none;
+  box-shadow: 0 8px 18px rgba(53, 43, 31, 0.07);
+}
+

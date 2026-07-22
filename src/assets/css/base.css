@@ -1,0 +1,351 @@
+:root {
+  --bg: #f7f3ea;
+  --paper: #fffdf7;
+  --ink: #1f2933;
+  --muted: #667085;
+  --line: #e4d9c8;
+  --primary: #2f6f73;
+  --primary-dark: #184c50;
+  --primary-soft: #d9ece7;
+  --accent: #f2994a;
+  --accent-soft: #fde7cd;
+  --blue: #407bff;
+  --pink: #d9468a;
+  --green: #2f9e6d;
+  --shadow: 0 18px 60px rgba(53, 43, 31, 0.12);
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+  --radius-md: 14px;
+  --max: 1180px;
+  --font-ui: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", "Yu Gothic UI", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-reading: "Noto Serif JP", "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Times New Roman", serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(242, 153, 74, 0.2), transparent 32rem),
+    radial-gradient(circle at 88% 8%, rgba(47, 111, 115, 0.2), transparent 28rem),
+    linear-gradient(180deg, #fbf7ef 0%, var(--bg) 48%, #fffaf1 100%);
+  font-family: var(--font-ui);
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #fffdf7, #f8f0e3);
+  border: 1px solid var(--line);
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 20;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  background: var(--primary-dark);
+  color: white;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.site-header {
+  padding: 1rem;
+}
+
+.top-nav {
+  width: min(100%, var(--max));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 253, 247, 0.82);
+  border: 1px solid rgba(228, 217, 200, 0.88);
+  border-radius: 999px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(53, 43, 31, 0.08);
+  position: sticky;
+  top: 1rem;
+  z-index: 10;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  text-decoration: none;
+  min-width: fit-content;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  color: white;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  font-weight: 700;
+  font-size: 1.3rem;
+  box-shadow: 0 8px 18px rgba(47, 111, 115, 0.25);
+}
+
+.brand strong,
+.brand small {
+  display: block;
+  line-height: 1.2;
+}
+
+.brand small {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--muted);
+  padding: 0.55rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.92rem;
+}
+
+/* 単元・図解・問題はメインコンテンツなので、ナビでも太字で目立たせる */
+.nav-links a.nav-primary {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.nav-links a:hover,
+.nav-links a:focus-visible,
+.nav-links a.active {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  outline: none;
+}
+
+.app-page {
+  animation: page-in 0.18s ease both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section,
+.lab-card,
+.problem-card {
+  border: 1px solid rgba(228, 217, 200, 0.92);
+  background: rgba(255, 253, 247, 0.92);
+  box-shadow: var(--shadow);
+}
+
+.eyebrow {
+  margin: 0 0 0.45rem;
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  margin: 0;
+}
+
+h1 {
+  max-width: 12em;
+  font-size: clamp(2.4rem, 6vw, 5.2rem);
+  letter-spacing: -0.06em;
+}
+
+h2 {
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  letter-spacing: -0.04em;
+}
+
+h3 {
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+/* 見出し・操作はゴシック、説明文・例は明朝で役割を分ける。 */
+.section-heading > p,
+.coverage-card li,
+.unit-summary,
+.prose p,
+.prose li,
+.learning-actions p,
+.lab-result,
+.problem-prompt,
+.step-list li,
+.hint-panel p,
+.topic-card p {
+  font-family: var(--font-reading);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 2;
+  letter-spacing: 0.015em;
+}
+
+.unit-panel mjx-container,
+.lab-card mjx-container,
+.problem-card mjx-container {
+  font-size: 1.08em;
+}
+
+/* 本文の段落に長いインライン数式が入ると、画面幅を突き破って横スクロールを生む
+   （とくにスマホ）。読み物・図鑑・単元本文のインライン数式だけ、はみ出すときは
+   数式の中で横スクロールさせ、行の外へあふれないようにする。max-width が効くよう
+   inline-block にし、overflow を付けても文字の縦位置がずれないよう vertical-align
+   を明示する（overflow を指定するとベースラインが箱の下端に移るため）。 */
+.example-intro mjx-container:not([display="true"]),
+.unit-summary mjx-container:not([display="true"]),
+.story-lead mjx-container:not([display="true"]),
+.story-section p mjx-container:not([display="true"]),
+.figure-detail-achievement mjx-container:not([display="true"]),
+.figure-section p mjx-container:not([display="true"]) {
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  vertical-align: middle;
+  /* MathJax の描画は端数で 1px ほどはみ出すことがあり、そのままだと短い式にも
+     横スクロールバーが出て行の高さがずれる。バーは隠し、長い式はスマホのスワイプで
+     スクロールできるようにする（バーの有無はスクロールできるかに影響しない）。 */
+  scrollbar-width: none;
+}
+
+.example-intro mjx-container:not([display="true"])::-webkit-scrollbar,
+.unit-summary mjx-container:not([display="true"])::-webkit-scrollbar,
+.story-lead mjx-container:not([display="true"])::-webkit-scrollbar,
+.story-section p mjx-container:not([display="true"])::-webkit-scrollbar,
+.figure-detail-achievement mjx-container:not([display="true"])::-webkit-scrollbar,
+.figure-section p mjx-container:not([display="true"])::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.answer-row,
+.problem-top,
+.lab-title-row,
+.progress-row,
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button.primary {
+  color: white;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  box-shadow: 0 10px 22px rgba(47, 111, 115, 0.22);
+}
+
+.button.ghost {
+  color: var(--primary-dark);
+  background: white;
+  border-color: var(--line);
+}
+
+.section {
+  width: min(calc(100% - 2rem), var(--max));
+  margin: 1.4rem auto;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border-radius: var(--radius-xl);
+}
+
+.section-heading {
+  margin-bottom: 1.4rem;
+}
+
+.section-heading p:not(.eyebrow) {
+  max-width: 48rem;
+  color: var(--muted);
+  margin: 0.8rem 0 0;
+}
+
+/* 見出しは 1 行（フル幅）、リード文はその下に置く縦積み。
+   リード文は一覧ページだけに出し、詳細ページでは JS が hidden にして上部を軽くする。 */
+.section-lead-persistent {
+  margin-top: 0.8rem;
+}
+

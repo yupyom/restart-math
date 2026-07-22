@@ -1,0 +1,198 @@
+@media (max-width: 980px) {
+  .top-nav {
+    align-items: flex-start;
+    border-radius: 28px;
+    flex-direction: column;
+  }
+
+  .nav-links {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .home-index-intro,
+  .content-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .coverage-grid,
+  .site-index-grid,
+  .topic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .content-menu {
+    position: static;
+    max-height: none;
+    overflow: hidden;
+    padding: 0.35rem 0.8rem;
+  }
+
+  /* 横フリックはやめて、ボタンで開閉する縦メニューにする */
+  .content-menu .content-menu-title {
+    display: none;
+  }
+
+  .content-menu-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.6rem 0.2rem;
+    border: none;
+    background: transparent;
+    font: inherit;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .content-menu-caret {
+    transition: transform 0.15s ease;
+  }
+
+  .content-menu.open .content-menu-caret {
+    transform: rotate(180deg);
+  }
+
+  .content-menu:not(.open) .unit-buttons,
+  .content-menu:not(.open) .lab-picker,
+  .content-menu:not(.open) .mode-tabs,
+  .content-menu:not(.open) .story-picker,
+  .content-menu:not(.open) .figure-picker {
+    display: none;
+  }
+
+  .content-menu.open .unit-buttons,
+  .content-menu.open .lab-picker,
+  .content-menu.open .mode-tabs,
+  .content-menu.open .story-picker,
+  .content-menu.open .figure-picker {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0.2rem 0 0.6rem;
+    max-height: 60vh;
+    overflow: auto;
+  }
+
+  .content-index {
+    grid-template-columns: 1fr;
+  }
+
+  .unit-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .connection-item,
+  .lesson-filter-status {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+}
+
+@media (max-width: 680px) {
+  .site-header {
+    padding: 0.5rem;
+  }
+
+  .top-nav {
+    top: 0.5rem;
+  }
+
+  .nav-links a {
+    padding: 0.45rem 0.55rem;
+    font-size: 0.85rem;
+  }
+
+  .nav-links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.25rem;
+  }
+
+  .nav-links a {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.62);
+  }
+
+  .section {
+    width: min(calc(100% - 1rem), var(--max));
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2.1rem, 14vw, 3.4rem);
+  }
+
+  .split-heading,
+  .problem-top,
+  .answer-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .coverage-grid,
+  .site-index-grid,
+  .lab-grid,
+  .topic-grid,
+  .control-grid,
+  .radical-hero,
+  .term-board {
+    grid-template-columns: 1fr;
+  }
+
+  .applied-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .set-card-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .geometry-lab-stage {
+    grid-template-columns: 1fr;
+  }
+
+  .euclid-step {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .pager {
+    justify-content: center;
+  }
+
+  .unit-panel {
+    min-height: auto;
+  }
+
+  .equation-model {
+    grid-template-columns: 1fr;
+  }
+
+  .equation-equals {
+    padding: 0.1rem;
+  }
+
+  .section-heading > p,
+  .coverage-card li,
+  .unit-summary,
+  .prose p,
+  .prose li,
+  .learning-actions p,
+  .lab-result,
+  .problem-prompt,
+  .step-list li,
+  .hint-panel p,
+  .topic-card p {
+    font-size: 18px;
+    line-height: 2;
+  }
+
+  .equation-display {
+    font-size: 1.12rem;
+  }
+}
+
