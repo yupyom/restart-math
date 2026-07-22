@@ -51,6 +51,7 @@ import { unit as conditionalProbability } from "./lessons/conditional-probabilit
 import { unit as geometryA } from "./lessons/geometry-a.js";
 import { unit as mathHumanActivities } from "./lessons/math-human-activities.js";
 import { unit as geometry } from "./lessons/geometry.js";
+import { unit as piAndApproximation } from "./lessons/pi-and-approximation.js";
 import { unit as pythagoreanTheorem } from "./lessons/pythagorean-theorem.js";
 import { unit as similarity } from "./lessons/similarity.js";
 import { unit as data } from "./lessons/data.js";
@@ -115,6 +116,7 @@ const rawUnits = [
   geometryA,
   mathHumanActivities,
   geometry,
+  piAndApproximation,
   pythagoreanTheorem,
   similarity,
   data,
@@ -132,6 +134,42 @@ const rawUnits = [
 
 // 本文を読んでいて「なぜ？」で止まったときだけ開く補助線です。
 const lessonContexts = {
+  "pi-and-approximation": {
+    why: {
+      question: "どうして \\(\\pi\\) を最後まで記号のまま運ぶの？",
+      answer:
+        "\\(\\pi\\) は割り切れず循環もしない無理数なので、\\(3.14\\) と書いた時点で必ずわずかな誤差が入ります。途中で近似すると、その誤差が計算のたびに積もっていきます。記号のまま進めれば \\(25\\pi\\) のような正確な形を保て、近似は最後の一回だけで済むので、誤差を最小にできます。",
+      tryIt:
+        "半径 \\(5\\) の円の面積を、先に \\(\\pi\\approx3\\) として \\(75\\)、記号のまま \\(25\\pi\\) を出してから \\(3.14\\) で \\(78.5\\)、と二通りで出して差を比べる",
+    },
+    definitions: [
+      {
+        term: "円周率 \\(\\pi\\)",
+        meaning:
+          "どんな円でも変わらない『円周 ÷ 直径』の値。\\(3.14159\\ldots\\) と循環せず無限に続く無理数",
+        example:
+          "直径 \\(10\\) の円の円周は \\(10\\pi\\approx31.4\\)。直径が2倍になれば円周も2倍で、比 \\(\\pi\\) は変わらない",
+        boundary:
+          "\\(3.14\\) や \\(\\dfrac{22}{7}\\) は覚えやすい近似値であって \\(\\pi\\) 本人ではない。等号ではなく \\(\\approx\\) でつなぐ",
+      },
+      {
+        term: "近似値",
+        meaning: "正確な値のかわりに使う、けたを区切った近い数。記号（正確な形）とはっきり区別する",
+        example:
+          "\\(36\\pi\\) が正確な形、\\(113.04\\) が近似値。『\\(\\pi\\) を用いて答えよ』なら \\(36\\pi\\) のままが正解",
+        boundary: "近似値どうしをさらに計算すると誤差が重なる。近似は『答えを出す最後の一歩』でだけ行う",
+      },
+      {
+        term: "誤差",
+        meaning: "近似値と正確な値とのずれ。丸めを早く始めるほど大きくなりやすい",
+        example:
+          "\\(\\pi\\) を \\(3\\) と置くと面積 \\(25\\pi\\) は \\(75\\)——正確な \\(78.5\\) からおよそ \\(3.5\\) もずれる",
+        boundary:
+          "小数第何位まで求めるかで \\(\\pi\\) を何けた使うかが決まる。必要なけたより一つ多く持って計算し、最後に丸める",
+      },
+    ],
+    connections: [],
+  },
   "exam-review": {
     why: {
       question: "答えが出たのに、どうしてもう一度「元の場面」に戻すの？",
@@ -1056,6 +1094,7 @@ const lessonMetadata = {
   "recurrence-relations": { strand: "数列", practiceIds: ["recurrence-relations", "sequence-sum"] },
   "mathematical-induction": { strand: "数列", practiceIds: ["mathematical-induction", "proof-fill"] },
   geometry: { strand: "図形", practiceIds: ["geometry-basics"] },
+  "pi-and-approximation": { strand: "数と式", practiceIds: [] },
   data: { strand: "データ", practiceIds: ["data-summary"] },
   "exam-review": { strand: "総合", practiceIds: ["exam-review", "equation", "distribute"] },
 };
@@ -1091,6 +1130,7 @@ export const learningPath = [
   "quadratic-inequalities",
   "parallel-lines-angles",
   "geometry",
+  "pi-and-approximation",
   "pythagorean-theorem",
   "similarity",
   "trig-ratios",

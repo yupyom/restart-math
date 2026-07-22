@@ -28,6 +28,7 @@ export const figure = {
       ],
       "lessons": [
         "geometry",
+        "pi-and-approximation",
         "pythagorean-theorem"
       ],
       "labs": [

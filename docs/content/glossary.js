@@ -13,6 +13,7 @@ export const glossaryTerms = [
   { term: "有理数", lessonId: "number-classification" },
   { term: "無理数", lessonId: "number-classification" },
   { term: "実数", lessonId: "number-classification" },
+  { term: "円周率", lessonId: "pi-and-approximation" },
   { term: "指数法則", lessonId: "exponent-rules" },
   { term: "累乗", lessonId: "exponent-rules" },
   { term: "指数", lessonId: "exponent-rules" },
