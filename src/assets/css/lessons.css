@@ -269,6 +269,53 @@
   font-weight: 700 !important;
 }
 
+.parabola-figure {
+  width: min(100%, 460px);
+}
+
+.graph-parabola {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.graph-region {
+  fill: rgba(47, 111, 115, 0.14);
+  stroke: none;
+}
+
+.graph-solution {
+  stroke: var(--accent);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.graph-solution-arrow {
+  fill: var(--accent);
+  stroke: none;
+}
+
+.graph-root {
+  fill: var(--pink);
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.graph-root-open {
+  fill: #ffffff;
+  stroke: var(--pink);
+  stroke-width: 3;
+}
+
+.graph-root-label {
+  fill: var(--pink) !important;
+  font-family: var(--font-ui) !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
 .unit-content-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

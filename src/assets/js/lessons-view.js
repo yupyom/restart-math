@@ -149,12 +149,122 @@ export function lineGraphModelMarkup(model) {
   );
 }
 
+// 放物線 y=a(x-r1)(x-r2) を「x 軸との交点＝解」として描く。
+// highlight があれば二次不等式の解の範囲（x 軸の上／下）を塗る。
+// 縦は真の値どおりではなく、根の近くの形が見えるよう根を中心に窓を取り自動スケールする概略図。
+export function parabolaModelMarkup(model) {
+  const a = Number.isFinite(Number(model.a)) && Number(model.a) !== 0 ? Number(model.a) : 1;
+  const roots = (Array.isArray(model.roots) ? model.roots.map(Number).filter(Number.isFinite) : [])
+    .slice(0, 2)
+    .sort((p, q) => p - q);
+  const highlight = model.highlight === "outside" || model.highlight === "between" ? model.highlight : null;
+  const hasRoots = roots.length === 2 && roots[1] > roots[0];
+
+  const center = hasRoots ? (roots[0] + roots[1]) / 2 : 0;
+  const spread = hasRoots ? roots[1] - roots[0] : 4;
+  const half = spread * 1.2;
+  const xLo = center - half;
+  const xHi = center + half;
+  const left = 64;
+  const right = 416;
+  const axisY = a >= 0 ? 250 : 150;
+  const mapX = (x) => left + ((x - xLo) / (xHi - xLo)) * (right - left);
+
+  const quad = (x) => (hasRoots ? a * (x - roots[0]) * (x - roots[1]) : a * x * x);
+  const samples = [];
+  const steps = 120;
+  for (let i = 0; i <= steps; i += 1) {
+    const x = xLo + ((xHi - xLo) * i) / steps;
+    samples.push({ x, y: quad(x) });
+  }
+  const rawMax = Math.max(0, ...samples.map((p) => p.y));
+  const rawMin = Math.min(0, ...samples.map((p) => p.y));
+  const scales = [];
+  if (rawMax > 0) scales.push((axisY - 52) / rawMax);
+  if (rawMin < 0) scales.push((356 - axisY) / -rawMin);
+  const vScale = scales.length ? Math.min(...scales) : 1;
+  const mapY = (y) => axisY - y * vScale;
+
+  const curve = samples
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${mapX(p.x).toFixed(1)} ${mapY(p.y).toFixed(1)}`)
+    .join(" ");
+
+  const gridLines = [];
+  const tickLabels = [];
+  for (let x = Math.ceil(xLo); x <= Math.floor(xHi); x += 1) {
+    gridLines.push(`<line class="graph-grid" x1="${mapX(x).toFixed(1)}" y1="44" x2="${mapX(x).toFixed(1)}" y2="364"></line>`);
+    if (x !== 0) tickLabels.push(`<text class="graph-tick" x="${mapX(x).toFixed(1)}" y="${axisY + 20}" text-anchor="middle">${x}</text>`);
+  }
+
+  const regionPath = (xa, xb) => {
+    const pts = samples.filter((p) => p.x >= xa - 1e-9 && p.x <= xb + 1e-9);
+    if (pts.length < 2) return "";
+    const along = pts.map((p) => `L ${mapX(p.x).toFixed(1)} ${mapY(p.y).toFixed(1)}`).join(" ");
+    return `M ${mapX(xa).toFixed(1)} ${axisY} ${along} L ${mapX(xb).toFixed(1)} ${axisY} Z`;
+  };
+  const bar = (xa, xb) =>
+    `<line class="graph-solution" x1="${mapX(xa).toFixed(1)}" y1="${axisY}" x2="${mapX(xb).toFixed(1)}" y2="${axisY}"></line>`;
+  const arrow = (px, dir) => {
+    const tip = dir === "left" ? px - 3 : px + 3;
+    const base = dir === "left" ? px + 9 : px - 9;
+    return `<path class="graph-solution-arrow" d="M ${tip.toFixed(1)} ${axisY} L ${base.toFixed(1)} ${axisY - 6} L ${base.toFixed(1)} ${axisY + 6} Z"></path>`;
+  };
+
+  let regions = "";
+  let solution = "";
+  if (highlight && hasRoots) {
+    const [r1, r2] = roots;
+    if (highlight === "between") {
+      regions = `<path class="graph-region" d="${regionPath(r1, r2)}"></path>`;
+      solution = bar(r1, r2);
+    } else {
+      regions = `<path class="graph-region" d="${regionPath(xLo, r1)}"></path><path class="graph-region" d="${regionPath(r2, xHi)}"></path>`;
+      solution = bar(xLo, r1) + bar(r2, xHi) + arrow(mapX(xLo), "left") + arrow(mapX(xHi), "right");
+    }
+  }
+
+  const rootMarkers = roots
+    .map(
+      (r) =>
+        `<circle class="graph-root${highlight ? " graph-root-open" : ""}" cx="${mapX(r).toFixed(1)}" cy="${axisY}" r="6"></circle>` +
+        `<text class="graph-root-label" x="${mapX(r).toFixed(1)}" y="${axisY - 14}" text-anchor="middle">x=${r}</text>`,
+    )
+    .join("");
+
+  const yAxis =
+    xLo <= 0 && xHi >= 0
+      ? `<line class="graph-axis" x1="${mapX(0).toFixed(1)}" y1="44" x2="${mapX(0).toFixed(1)}" y2="364"></line>
+         <text class="graph-axis-label" x="${(mapX(0) + 12).toFixed(1)}" y="54" text-anchor="start">y</text>`
+      : "";
+  const aria = hasRoots
+    ? `放物線が x 軸と x=${roots[0]} と x=${roots[1]} で交わる図`
+    : "放物線と x 軸の図";
+
+  return geometryModelShell(
+    model,
+    `
+      <svg class="geometry-figure parabola-figure" viewBox="0 0 480 400" role="img" aria-label="${escapeHtml(aria)}">
+        ${gridLines.join("")}
+        ${regions}
+        <line class="graph-axis" x1="${left}" y1="${axisY}" x2="${right}" y2="${axisY}"></line>
+        ${yAxis}
+        <text class="graph-axis-label" x="${right + 2}" y="${axisY - 8}" text-anchor="end">x</text>
+        ${tickLabels.join("")}
+        <path class="graph-parabola" d="${curve}"></path>
+        ${solution}
+        ${rootMarkers}
+      </svg>
+    `,
+  );
+}
+
 export function unitModelMarkup(unit) {
   const model = unit.model;
   if (!model) return "";
   if (model.type === "circle-angle") return circleAngleModelMarkup(model);
   if (model.type === "right-triangle") return rightTriangleModelMarkup(model);
   if (model.type === "line-graph") return lineGraphModelMarkup(model);
+  if (model.type === "parabola") return parabolaModelMarkup(model);
   if (model.type !== "area") return "";
 
   const height = Number(model.height);
