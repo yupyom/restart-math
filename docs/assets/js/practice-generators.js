@@ -441,10 +441,80 @@ export function generateSignificantFiguresProblem() {
   };
 }
 
+export function generateCirclePiProblem() {
+  const r1 = choose([3, 4, 5, 6, 7, 10]); // 面積の記号
+  const r2 = choose([3, 4, 5, 6, 7, 10]); // 円周の記号
+  // おうぎ形の面積係数（r^2 × θ/360 が整数になる組だけ precompute）
+  const [rs, deg, sectorCoef] = choose([
+    [4, 90, 4], [6, 120, 12], [6, 60, 6], [3, 120, 3], [4, 180, 8], [10, 90, 25], [6, 90, 9],
+  ]);
+  // 近似（kπ を π≈3.14 で。値は clean な literal を持つ）
+  const [kCoef, approxStr] = choose([
+    [25, "78.5"], [10, "31.4"], [100, "314"], [4, "12.56"], [16, "50.24"], [36, "113.04"], [50, "157"],
+  ]);
+  // 記号 vs 小数（正確な形＝係数×π。distractor は近似・丸め近似・π 抜き）
+  const rc = choose([3, 4, 5, 6]);
+  const areaCoef = rc * rc;
+  const approxOfArea = areaCoef * 3.14;
+  const exactForm = `${areaCoef}π`;
+  const piNorm = (s) => normalizeText(s).replace(/\\pi|pi|π/g, "π");
+  const symbolChoices = [
+    exactForm,
+    approxOfArea.toFixed(2),
+    `約${Math.round(approxOfArea)}`,
+    String(areaCoef),
+  ].sort(() => Math.random() - 0.5);
+
+  return {
+    modeLabel: "円と円周率",
+    title: "円の量を記号のまま出し、最後に近似する",
+    prompt: "円の面積・円周・おうぎ形を、まず π を含む正確な形で出し、必要なときだけ最後に近似します。",
+    steps: [
+      {
+        label: "面積（記号のまま）",
+        question: `半径 \\(${r1}\\) の円の面積は \\(\\square\\times\\pi\\)。\\(\\square\\) は？`,
+        hint: `面積は \\(\\pi r^2\\)。\\(\\pi\\) は記号のまま、\\(\\square\\) は \\(${r1}^2\\)。`,
+        check: (input) => Number(normalizeText(input)) === r1 * r1,
+        answer: String(r1 * r1),
+      },
+      {
+        label: "円周（記号のまま）",
+        question: `半径 \\(${r2}\\) の円の円周は \\(\\square\\times\\pi\\)。\\(\\square\\) は？`,
+        hint: `円周は \\(2\\pi r\\)。\\(\\square\\) は \\(2\\times${r2}\\)。`,
+        check: (input) => Number(normalizeText(input)) === 2 * r2,
+        answer: String(2 * r2),
+      },
+      {
+        label: "おうぎ形の面積",
+        question: `半径 \\(${rs}\\)・中心角 \\(${deg}^\\circ\\) のおうぎ形の面積は \\(\\square\\times\\pi\\)。\\(\\square\\) は？`,
+        hint: `おうぎ形は円全体 \\(\\pi r^2\\) の \\(\\dfrac{${deg}}{360}\\) 倍。\\(\\square=${rs}^2\\times\\dfrac{${deg}}{360}\\)。`,
+        check: (input) => Number(normalizeText(input)) === sectorCoef,
+        answer: String(sectorCoef),
+      },
+      {
+        label: "最後に近似",
+        question: `面積 \\(${kCoef}\\pi\\) を \\(\\pi\\approx3.14\\) で近似すると？`,
+        hint: `\\(${kCoef}\\times3.14\\) を計算する。近似はここで初めて（最後に一度だけ）。`,
+        check: (input) => Math.abs(Number(normalizeText(input)) - Number(approxStr)) < 0.005,
+        answer: approxStr,
+      },
+      {
+        label: "記号か小数か",
+        question: `半径 \\(${rc}\\) の円の面積を『\\(\\pi\\) を用いて正確に』表すとどれ？`,
+        hint: `正確な形は \\(\\pi\\) を残した \\(${areaCoef}\\pi\\)。小数にすると近似値になってしまう。`,
+        check: (input) => piNorm(input) === piNorm(exactForm),
+        answer: exactForm,
+        choices: symbolChoices,
+      },
+    ],
+  };
+}
+
 export const practiceGenerators = {
   ...extraPracticeGenerators,
   "fraction-arithmetic": generateFractionArithmeticProblem,
   "significant-figures": generateSignificantFiguresProblem,
+  "circle-pi": generateCirclePiProblem,
   "exam-review": generateExamReviewProblem,
   integer: generateIntegerProblem,
   "absolute-value": generateAbsoluteValueProblem,

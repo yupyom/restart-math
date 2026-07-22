@@ -247,8 +247,25 @@ const lessonContexts = {
         boundary:
           "小数第何位まで求めるかで \\(\\pi\\) を何けた使うかが決まる。必要なけたより一つ多く持って計算し、最後に丸める",
       },
+      {
+        term: "おうぎ形",
+        meaning:
+          "円を2本の半径で切り取った扇の形。中心角が円全体（\\(360^\\circ\\)）の何分のいくつかで、弧の長さも面積も決まる",
+        example:
+          "半径 \\(6\\)・中心角 \\(60^\\circ\\) は円全体の \\(\\dfrac{60}{360}=\\dfrac16\\)。面積は \\(\\pi\\times6^2\\times\\dfrac16=6\\pi\\)",
+        boundary:
+          "弧の長さと面積は別物。弧は \\(2\\pi r\\) の \\(\\dfrac{\\theta}{360}\\)、面積は \\(\\pi r^2\\) の \\(\\dfrac{\\theta}{360}\\)",
+      },
     ],
-    connections: [],
+    connections: [
+      {
+        kind: "practice",
+        title: "円の量を計算して確かめる",
+        summary:
+          "練習『円と円周率』は、面積・円周・おうぎ形を \\(\\pi\\) を含む正確な形で出し、最後に近似する手順を反復します。",
+        practiceId: "circle-pi",
+      },
+    ],
   },
   "exam-review": {
     why: {
@@ -1176,7 +1193,7 @@ const lessonMetadata = {
   "recurrence-relations": { strand: "数列", practiceIds: ["recurrence-relations", "sequence-sum"] },
   "mathematical-induction": { strand: "数列", practiceIds: ["mathematical-induction", "proof-fill"] },
   geometry: { strand: "図形", practiceIds: ["geometry-basics"] },
-  "pi-and-approximation": { strand: "数と式", practiceIds: [] },
+  "pi-and-approximation": { strand: "数と式", practiceIds: ["circle-pi"] },
   data: { strand: "データ", practiceIds: ["data-summary"] },
   "exam-review": { strand: "総合", practiceIds: ["exam-review", "equation", "distribute"] },
 };

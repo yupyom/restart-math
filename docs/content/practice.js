@@ -30,6 +30,7 @@ import { practice as dataAnalysis } from "./practice/data-analysis.js";
 import { practice as geometryProperties } from "./practice/geometry-properties.js";
 import { practice as numberTheory } from "./practice/number-theory.js";
 import { practice as geometryBasics } from "./practice/geometry-basics.js";
+import { practice as circlePi } from "./practice/circle-pi.js";
 import { practice as expansion } from "./practice/expansion.js";
 import { practice as factoring } from "./practice/factoring.js";
 import { practice as quadraticSolve } from "./practice/quadratic-solve.js";
@@ -88,6 +89,7 @@ const rawPracticeCatalog = [
   geometryProperties,
   numberTheory,
   geometryBasics,
+  circlePi,
   expansion,
   factoring,
   quadraticSolve,
