@@ -57,6 +57,7 @@ import { unit as pythagoreanTheorem } from "./lessons/pythagorean-theorem.js";
 import { unit as similarity } from "./lessons/similarity.js";
 import { unit as data } from "./lessons/data.js";
 import { unit as boxPlots } from "./lessons/box-plots.js";
+import { unit as significantFigures } from "./lessons/significant-figures.js";
 import { unit as arithmeticSequences } from "./lessons/arithmetic-sequences.js";
 import { unit as geometricSequences } from "./lessons/geometric-sequences.js";
 import { unit as sigmaNotation } from "./lessons/sigma-notation.js";
@@ -123,6 +124,7 @@ const rawUnits = [
   similarity,
   data,
   boxPlots,
+  significantFigures,
   arithmeticSequences,
   geometricSequences,
   sigmaNotation,
@@ -136,6 +138,44 @@ const rawUnits = [
 
 // 本文を読んでいて「なぜ？」で止まったときだけ開く補助線です。
 const lessonContexts = {
+  "significant-figures": {
+    why: {
+      question: "\\(3.2\\) と \\(3.20\\) は同じ数なのに、なぜ区別するの？",
+      answer:
+        "純粋な数としては \\(3.2=3.20\\) です。でも測定値としては、\\(3.2\\) は『小数第1位まで測った（第2位は不明）』、\\(3.20\\) は『小数第2位まで測って0だった』という別々の主張です。末尾の0を書くかどうかが、どこまで正確に測れたかを伝えます。だから測定値では、意味のある桁だけを有効数字として残します。",
+      tryIt:
+        "\\(3.2\\) cm と \\(3.20\\) cm が表す『ほんとうの長さの範囲』を、それぞれ \\(3.15\\)〜\\(3.25\\)、\\(3.195\\)〜\\(3.205\\) と書き出して比べる",
+    },
+    definitions: [
+      {
+        term: "有効数字",
+        meaning: "測定値のうち、意味のある（測って分かった）桁。位取りのための0は含めない",
+        example: "\\(0.0304\\) の有効数字は \\(3\\)・\\(0\\)・\\(4\\) の3桁。先頭の0は位取りだけ",
+        boundary: "末尾の0は測った桁として数えるが、先頭の0は数えない。ここが数え間違いの急所",
+      },
+      {
+        term: "測定値の幅",
+        meaning: "測定値が表す『ほんとうの値がありうる範囲』。いちばん下の桁の1つ下でぶれる",
+        example: "\\(3.2\\) cm は \\(3.15\\)〜\\(3.25\\) cm を意味する。ぴったり \\(3.2\\) ではない",
+        boundary: "有効数字が多いほど幅はせまい（＝精度が高い）。けたを増やすほど強い主張になる",
+      },
+      {
+        term: "科学的記数法",
+        meaning: "数を \\(a\\times10^{n}\\)（\\(1\\le a<10\\)）の形で書く方法。有効数字が何桁かをはっきり示せる",
+        example: "\\(1200\\) を有効数字2桁で表すなら \\(1.2\\times10^{3}\\)、3桁なら \\(1.20\\times10^{3}\\)",
+        boundary: "\\(1200\\) のままでは末尾の0が有効かどうか曖昧。記数法にすると桁数の主張が明確になる",
+      },
+    ],
+    connections: [
+      {
+        kind: "practice",
+        title: "有効数字を数え・丸める練習",
+        summary:
+          "練習『有効数字』は、桁数を数える・指定桁に丸める・かけ算の桁合わせ・途中で丸めないコツを一続きで確かめます。",
+        practiceId: "significant-figures",
+      },
+    ],
+  },
   "fraction-arithmetic": {
     why: {
       question: "たし算とかけ算で、なぜ分母のあつかいが違うの？",
@@ -1126,6 +1166,7 @@ const lessonMetadata = {
   "probability-a": { strand: "場合の数と確率", practiceIds: ["probability"] },
   "complementary-events": { strand: "場合の数と確率", practiceIds: ["complementary-events", "probability"] },
   "box-plots": { strand: "データの分析", practiceIds: ["quartiles", "data-summary"] },
+  "significant-figures": { strand: "データの分析", practiceIds: ["significant-figures"] },
   "geometry-a": { strand: "図形の性質", practiceIds: ["geometry-properties"] },
   "math-human-activities": { strand: "数学と人間の活動", practiceIds: ["number-theory"] },
   "arithmetic-sequences": { strand: "数列", practiceIds: ["arithmetic-sequence"] },
@@ -1181,6 +1222,7 @@ export const learningPath = [
   "geometry-a",
   "data",
   "box-plots",
+  "significant-figures",
   "data-analysis-i",
   "sets-propositions",
   "venn-diagrams",

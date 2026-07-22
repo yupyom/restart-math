@@ -369,9 +369,82 @@ export function generateFractionArithmeticProblem() {
   };
 }
 
+export function generateSignificantFiguresProblem() {
+  // 丸めは繊細なので、正解を precompute した設定から選ぶ（実行時に丸め計算をしない）。
+  const countConfigs = [
+    ["3.20", 3], ["0.045", 2], ["1.008", 4], ["0.0500", 3],
+    ["12.0", 3], ["6.02", 3], ["0.007", 1], ["45.60", 4], ["0.0304", 3],
+  ];
+  const [cNum, cFigs] = choose(countConfigs);
+
+  const roundConfigs = [
+    ["3.14159", 3, "3.14", 3.14], ["2.718", 2, "2.7", 2.7],
+    ["0.023857", 2, "0.024", 0.024], ["45.68", 3, "45.7", 45.7],
+    ["0.0709", 2, "0.071", 0.071], ["8.643", 2, "8.6", 8.6],
+  ];
+  const [rNum, rFigs, rStr, rVal] = choose(roundConfigs);
+
+  // かけ算の有効数字。桁の主張（末尾の0）を区別するため文字列一致で採点する。
+  const mulConfigs = [
+    ["2.5\\times4.2", "11", ["10.5", "10", "11.0"]],
+    ["3.14\\times2.0", "6.3", ["6.28", "6.30", "6"]],
+    ["1.2\\times0.50", "0.60", ["0.6", "0.600", "0.5"]],
+    ["0.25\\times1.6", "0.40", ["0.4", "0.400", "0.5"]],
+  ];
+  const [mExpr, mAns, mDistractors] = choose(mulConfigs);
+  const mulChoices = [mAns, ...mDistractors].sort(() => Math.random() - 0.5);
+
+  const practiceCorrect = "途中では丸めず、最後に一度だけ丸める";
+  const practiceChoices = [
+    practiceCorrect,
+    "計算のたびに丸める",
+    "はじめに全部四捨五入する",
+    "有効数字は気にしなくてよい",
+  ].sort(() => Math.random() - 0.5);
+
+  return {
+    modeLabel: "有効数字",
+    title: "有効数字を数える・丸める・そろえる",
+    prompt: "測定値の有効数字を読み、正しい桁数で答えます。",
+    steps: [
+      {
+        label: "桁数を数える",
+        question: `\\(${cNum}\\) の有効数字は何桁？`,
+        hint: "位取りのための先頭の0は数えない。小数点以下の末尾の0は『そこまで測った』印なので数える。",
+        check: (input) => Number(normalizeText(input)) === cFigs,
+        answer: String(cFigs),
+      },
+      {
+        label: "有効数字で丸める",
+        question: `\\(${rNum}\\) を有効数字 \\(${rFigs}\\) 桁に四捨五入すると？`,
+        hint: `左から数えて \\(${rFigs}\\) 桁を残し、その次の桁を四捨五入します。`,
+        check: (input) => Math.abs(Number(normalizeText(input)) - rVal) < 1e-6,
+        answer: rStr,
+      },
+      {
+        label: "かけ算の有効数字",
+        question: `測定値の積 \\(${mExpr}\\) を、正しい有効数字で表すと？（桁数は少ないほうに合わせる）`,
+        hint: "かけ算の答えの有効数字は、かけた値のうち桁数が最も少ないものに合わせます。ここではどちらも2桁。",
+        check: (input) => normalizeText(input) === normalizeText(mAns),
+        answer: mAns,
+        choices: mulChoices,
+      },
+      {
+        label: "途中丸めをしない",
+        question: "測定値の計算で精度を保つコツは？",
+        hint: "途中で丸めるたびに誤差が入る。円周率と近似の単元と同じで、丸めは最後の一回だけにする。",
+        check: (input) => normalizeText(input) === normalizeText(practiceCorrect),
+        answer: practiceCorrect,
+        choices: practiceChoices,
+      },
+    ],
+  };
+}
+
 export const practiceGenerators = {
   ...extraPracticeGenerators,
   "fraction-arithmetic": generateFractionArithmeticProblem,
+  "significant-figures": generateSignificantFiguresProblem,
   "exam-review": generateExamReviewProblem,
   integer: generateIntegerProblem,
   "absolute-value": generateAbsoluteValueProblem,
