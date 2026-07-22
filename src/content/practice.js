@@ -1,439 +1,117 @@
 // 出題の「教材としての設定」。実際の問題生成・採点コードは assets/js/practice-generators.js（追補 practice-extra.js / practice-advanced.js）に置く。
 import { units } from "./lessons.js";
 
+// 出題設定は1モード1ファイル（practice/<id>.js）。ここは import と rawPracticeCatalog の組み立て、発展設定(advancedPolicies)・並べ替えの合成だけを持つ。
+import { practice as integer } from "./practice/integer.js";
+import { practice as absoluteValue } from "./practice/absolute-value.js";
+import { practice as exponent } from "./practice/exponent.js";
+import { practice as arithmeticSequence } from "./practice/arithmetic-sequence.js";
+import { practice as vennCount } from "./practice/venn-count.js";
+import { practice as radical } from "./practice/radical.js";
+import { practice as squareRootMeaning } from "./practice/square-root-meaning.js";
+import { practice as rootOperations } from "./practice/root-operations.js";
+import { practice as substitution } from "./practice/substitution.js";
+import { practice as combine } from "./practice/combine.js";
+import { practice as distribute } from "./practice/distribute.js";
+import { practice as equation } from "./practice/equation.js";
+import { practice as sets } from "./practice/sets.js";
+import { practice as identities } from "./practice/identities.js";
+import { practice as inequality } from "./practice/inequality.js";
+import { practice as quadratic } from "./practice/quadratic.js";
+import { practice as functionValues } from "./practice/function-values.js";
+import { practice as quadraticSign } from "./practice/quadratic-sign.js";
+import { practice as trig } from "./practice/trig.js";
+import { practice as sineCosineRule } from "./practice/sine-cosine-rule.js";
+import { practice as trigSurvey } from "./practice/trig-survey.js";
+import { practice as counting } from "./practice/counting.js";
+import { practice as probability } from "./practice/probability.js";
+import { practice as dataSummary } from "./practice/data-summary.js";
+import { practice as dataAnalysis } from "./practice/data-analysis.js";
+import { practice as geometryProperties } from "./practice/geometry-properties.js";
+import { practice as numberTheory } from "./practice/number-theory.js";
+import { practice as geometryBasics } from "./practice/geometry-basics.js";
+import { practice as expansion } from "./practice/expansion.js";
+import { practice as factoring } from "./practice/factoring.js";
+import { practice as quadraticSolve } from "./practice/quadratic-solve.js";
+import { practice as permComb } from "./practice/perm-comb.js";
+import { practice as sequenceSum } from "./practice/sequence-sum.js";
+import { practice as quartiles } from "./practice/quartiles.js";
+import { practice as numberClassification } from "./practice/number-classification.js";
+import { practice as primeFactorization } from "./practice/prime-factorization.js";
+import { practice as simultaneousEquations } from "./practice/simultaneous-equations.js";
+import { practice as parallelLinesAngles } from "./practice/parallel-lines-angles.js";
+import { practice as pythagoreanTheorem } from "./practice/pythagorean-theorem.js";
+import { practice as similarity } from "./practice/similarity.js";
+import { practice as trigExtension } from "./practice/trig-extension.js";
+import { practice as functionNotation } from "./practice/function-notation.js";
+import { practice as logicConverse } from "./practice/logic-converse.js";
+import { practice as necessarySufficient } from "./practice/necessary-sufficient.js";
+import { practice as proofFill } from "./practice/proof-fill.js";
+import { practice as geometryProofs } from "./practice/geometry-proofs.js";
+import { practice as combinationsRepetition } from "./practice/combinations-repetition.js";
+import { practice as complementaryEvents } from "./practice/complementary-events.js";
+import { practice as conditionalProbability } from "./practice/conditional-probability.js";
+import { practice as sumAndGeneralTerm } from "./practice/sum-and-general-term.js";
+import { practice as differenceSequences } from "./practice/difference-sequences.js";
+import { practice as recurrenceRelations } from "./practice/recurrence-relations.js";
+import { practice as mathematicalInduction } from "./practice/mathematical-induction.js";
+import { practice as examReview } from "./practice/exam-review.js";
+
 const rawPracticeCatalog = [
-  {
-    id: "integer",
-    label: "整数の計算",
-    lessonIds: ["integers-signs", "integer-rules"],
-    labIds: ["number-line-lab"],
-    level: "はじめの一問",
-    numberPolicy: "答えが2桁以内",
-  },
-  {
-    id: "absolute-value",
-    label: "絶対値",
-    lessonIds: ["absolute-value", "absolute-value-equations"],
-    labIds: ["number-line-lab"],
-    level: "はじめの一問",
-    numberPolicy: "1桁の整数から距離を読む",
-  },
-  {
-    id: "exponent",
-    label: "指数法則",
-    lessonIds: ["exponent-rules"],
-    labIds: [],
-    level: "はじめの一問",
-    numberPolicy: "指数は1桁・回数を数えて確かめられる大きさ",
-  },
-  {
-    id: "arithmetic-sequence",
-    label: "等差数列",
-    lessonIds: ["arithmetic-sequences"],
-    labIds: [],
-    level: "はじめの一問",
-    numberPolicy: "公差は1桁・項番号は15以下",
-  },
-  {
-    id: "venn-count",
-    label: "ベン図の個数",
-    lessonIds: ["venn-diagrams"],
-    labIds: ["venn-lab"],
-    level: "はじめの一問",
-    numberPolicy: "全体は40人以下・重なりから順に埋める",
-  },
-  {
-    id: "radical",
-    label: "ルート整理",
-    lessonIds: ["simplify-roots"],
-    labIds: ["radical-lab"],
-    level: "はじめの一問",
-    numberPolicy: "ルートの中は100未満",
-  },
-  {
-    id: "square-root-meaning",
-    label: "平方と平方根",
-    lessonIds: ["powers-roots"],
-    labIds: ["radical-lab"],
-    level: "はじめの一問",
-    numberPolicy: "平方数は100以下",
-  },
-  {
-    id: "root-operations",
-    label: "ルートの計算",
-    lessonIds: ["root-operations"],
-    labIds: ["radical-lab", "term-lab"],
-    level: "はじめの一問",
-    numberPolicy: "係数は一桁・ルートの中は50以下",
-  },
-  {
-    id: "substitution",
-    label: "式の値",
-    lessonIds: ["letters-as-boxes"],
-    labIds: ["term-lab"],
-    level: "はじめの一問",
-    numberPolicy: "答えが2桁以内",
-  },
-  {
-    id: "combine",
-    label: "同類項",
-    lessonIds: ["like-terms"],
-    labIds: ["term-lab"],
-    level: "はじめの一問",
-    numberPolicy: "係数は一桁",
-  },
-  {
-    id: "distribute",
-    label: "分配法則",
-    lessonIds: ["distribution-numbers", "distribution-letters"],
-    labIds: ["distribution-lab"],
-    level: "はじめの一問",
-    numberPolicy: "係数は一桁・定数は2桁以内",
-  },
-  {
-    id: "equation",
-    label: "一次方程式",
-    lessonIds: ["linear-equations", "equation-modeling"],
-    labIds: ["equation-lab"],
-    level: "はじめの一問",
-    numberPolicy: "途中計算が2桁以内",
-  },
-  {
-    id: "sets",
-    label: "集合と命題",
-    lessonIds: ["sets-propositions"],
-    labIds: ["set-sort-lab"],
-    level: "はじめの一問",
-    numberPolicy: "1から12までの整数と短い命題",
-  },
-  {
-    id: "identities",
-    label: "恒等式と方程式",
-    lessonIds: ["identities-equations"],
-    labIds: ["equation-lab"],
-    level: "はじめの一問",
-    numberPolicy: "代入は一桁・展開は一段階",
-  },
-  {
-    id: "inequality",
-    label: "一次不等式",
-    lessonIds: ["linear-inequalities"],
-    labIds: ["inequality-lab", "number-line-lab"],
-    level: "基礎を確認",
-    numberPolicy: "境目は一桁",
-  },
-  {
-    id: "quadratic",
-    label: "二次関数",
-    lessonIds: ["quadratic-vertex"],
-    labIds: ["quadratic-lab"],
-    level: "基礎を確認",
-    numberPolicy: "頂点の座標は一桁",
-  },
-  {
-    id: "function-values",
-    label: "関数の式と値",
-    lessonIds: ["functions"],
-    labIds: ["function-lab"],
-    level: "はじめの一問",
-    numberPolicy: "係数・入力・出力は一桁中心",
-  },
-  {
-    id: "quadratic-sign",
-    label: "二次不等式",
-    lessonIds: ["quadratic-inequalities"],
-    labIds: ["quadratic-lab"],
-    level: "はじめの一問",
-    numberPolicy: "整数解は一桁・因数分解できる式",
-  },
-  {
-    id: "trig",
-    label: "三角比",
-    lessonIds: ["trig-ratios"],
-    labIds: ["trig-lab"],
-    level: "基礎を確認",
-    numberPolicy: "3・4・5などの基本比",
-  },
-  {
-    id: "sine-cosine-rule",
-    label: "正弦定理・余弦定理",
-    lessonIds: ["sine-cosine-rule"],
-    labIds: ["trig-lab"],
-    level: "はじめの一問",
-    numberPolicy: "直角や60度を含む計算しやすい三角形",
-  },
-  {
-    id: "trig-survey",
-    label: "三角比で測る",
-    lessonIds: ["trig-ratios", "sine-cosine-rule"],
-    labIds: ["trig-lab"],
-    level: "はじめの一問",
-    numberPolicy: "sin30°・cos60°・tan45° など、ちょうどの値になる角だけを使う",
-  },
-  {
-    id: "counting",
-    label: "場合の数",
-    lessonIds: ["counting-principles"],
-    labIds: ["probability-lab"],
-    level: "基礎を確認",
-    numberPolicy: "答えが2桁以内",
-  },
-  {
-    id: "probability",
-    label: "確率",
-    lessonIds: ["probability-a"],
-    labIds: ["probability-lab"],
-    level: "基礎を確認",
-    numberPolicy: "玉は合計7個以下を中心",
-  },
-  {
-    id: "data-summary",
-    label: "平均・中央値・範囲",
-    lessonIds: ["data"],
-    labIds: ["data-spread-lab"],
-    level: "はじめの一問",
-    numberPolicy: "5個以下の並べ替えやすい整数",
-  },
-  {
-    id: "data-analysis",
-    label: "分散・標準偏差",
-    lessonIds: ["data-analysis-i"],
-    labIds: ["data-spread-lab"],
-    level: "はじめの一問",
-    numberPolicy: "平均・分散・標準偏差が整数になる4個のデータ",
-  },
-  {
-    id: "geometry-properties",
-    label: "円と図形の性質",
-    lessonIds: ["geometry-a"],
-    labIds: ["geometry-properties-lab"],
-    level: "はじめの一問",
-    numberPolicy: "角度は30度・40度・60度を中心",
-  },
-  {
-    id: "number-theory",
-    label: "整数と互除法",
-    lessonIds: ["math-human-activities"],
-    labIds: ["euclidean-algorithm-lab"],
-    level: "はじめの一問",
-    numberPolicy: "120以下の整数・余りは3段階以内",
-  },
-  {
-    id: "geometry-basics",
-    label: "図形の基本量",
-    lessonIds: ["geometry"],
-    labIds: ["geometry-properties-lab", "trig-lab"],
-    level: "はじめの一問",
-    numberPolicy: "三角形の角と3・4・5などの直角三角形",
-  },
-  {
-    id: "expansion",
-    label: "展開・乗法公式",
-    lessonIds: ["expansion-formulas"],
-    labIds: ["distribution-lab"],
-    level: "はじめの一問",
-    numberPolicy: "(x+a)(x+b) 型・数は1桁",
-  },
-  {
-    id: "factoring",
-    label: "因数分解",
-    lessonIds: ["factoring"],
-    labIds: ["distribution-lab", "term-lab"],
-    level: "はじめの一問",
-    numberPolicy: "かけて c・たして b の2数さがし（まず正の数から）",
-  },
-  {
-    id: "quadratic-solve",
-    label: "二次方程式を解く",
-    lessonIds: ["quadratic-equations"],
-    labIds: ["quadratic-lab"],
-    level: "はじめの一問",
-    numberPolicy: "因数分解で解ける形・解は1桁の整数",
-  },
-  {
-    id: "perm-comb",
-    label: "順列と組合せ",
-    lessonIds: ["permutations", "combinations", "circular-permutations"],
-    labIds: ["probability-lab", "lattice-path-lab"],
-    level: "はじめの一問",
-    numberPolicy: "nは7以下・PとCの値を並べて比べる",
-  },
-  {
-    id: "sequence-sum",
-    label: "等比数列とΣ",
-    lessonIds: ["geometric-sequences", "sigma-notation", "geometric-series-sum"],
-    labIds: ["sigma-stairs-lab"],
-    level: "はじめの一問",
-    numberPolicy: "公比は2か3・Σは書き出して確かめられる大きさ",
-  },
-  {
-    id: "quartiles",
-    label: "四分位数と箱ひげ図",
-    lessonIds: ["box-plots"],
-    labIds: ["box-plot-lab"],
-    level: "はじめの一問",
-    numberPolicy: "整列済みの7個のデータから5つの数を読む",
-  },
-  {
-    id: "number-classification",
-    label: "数の分類",
-    lessonIds: ["number-classification"],
-    labIds: ["number-line-lab"],
-    level: "はじめの一問",
-    numberPolicy: "整数・分数・√・π を1つずつ、選択肢で判定する",
-  },
-  {
-    id: "prime-factorization",
-    label: "素因数分解",
-    lessonIds: ["prime-factorization"],
-    labIds: ["euclidean-algorithm-lab"],
-    level: "はじめの一問",
-    numberPolicy: "360以下の数を2・3・5だけで分解できる形にする",
-  },
-  {
-    id: "simultaneous-equations",
-    label: "連立方程式",
-    lessonIds: ["simultaneous-equations"],
-    labIds: ["equation-lab"],
-    level: "はじめの一問",
-    numberPolicy: "解は1桁の整数・たすだけで文字が消える形",
-  },
-  {
-    id: "parallel-lines-angles",
-    label: "平行線と角",
-    lessonIds: ["parallel-lines-angles"],
-    labIds: ["triangle-angle-lab"],
-    level: "はじめの一問",
-    numberPolicy: "角度は5度きざみ・対頂角と錯角を順に読む",
-  },
-  {
-    id: "pythagorean-theorem",
-    label: "三平方の定理",
-    lessonIds: ["pythagorean-theorem"],
-    labIds: ["geometry-properties-lab"],
-    level: "はじめの一問",
-    numberPolicy: "面積の組み替え証明を、3・4・5などの数でなぞる",
-  },
-  {
-    id: "similarity",
-    label: "相似",
-    lessonIds: ["similarity"],
-    labIds: ["triangle-angle-lab"],
-    level: "はじめの一問",
-    numberPolicy: "相似比は2倍・3倍から",
-  },
-  {
-    id: "trig-extension",
-    label: "三角比の拡張",
-    lessonIds: ["trig-extension"],
-    labIds: ["unit-semicircle-lab"],
-    level: "はじめの一問",
-    numberPolicy: "120°・135°・150°など、値が分数で書ける角だけ",
-  },
-  {
-    id: "function-notation",
-    label: "関数の記法 f(x)",
-    lessonIds: ["function-notation"],
-    labIds: ["function-lab"],
-    level: "はじめの一問",
-    numberPolicy: "係数・入力は1桁・f(2) の読み方から",
-  },
-  {
-    id: "logic-converse",
-    label: "逆・裏・対偶",
-    lessonIds: ["logic-converse"],
-    labIds: ["venn-lab"],
-    level: "はじめの一問",
-    numberPolicy: "短い命題の言いかえを選択肢から選ぶ",
-  },
-  {
-    id: "necessary-sufficient",
-    label: "必要条件と十分条件",
-    lessonIds: ["necessary-sufficient"],
-    labIds: ["venn-lab"],
-    level: "はじめの一問",
-    numberPolicy: "矢印の真偽を2回確かめてから答える",
-  },
-  {
-    id: "proof-fill",
-    label: "証明の穴埋め",
-    lessonIds: ["what-is-proof", "proof-practice"],
-    labIds: [],
-    level: "はじめの一問",
-    numberPolicy: "偶数・奇数の証明を、選択肢と穴埋めで一手ずつ",
-  },
-  {
-    id: "geometry-proofs",
-    label: "図形の証明",
-    lessonIds: ["geometry-proofs"],
-    labIds: ["triangle-angle-lab"],
-    level: "はじめの一問",
-    numberPolicy: "仮定・合同条件・根拠を選択肢から選ぶ",
-  },
-  {
-    id: "combinations-repetition",
-    label: "重複組合せ",
-    lessonIds: ["combinations-repetition"],
-    labIds: ["lattice-path-lab"],
-    level: "はじめの一問",
-    numberPolicy: "○と仕切りの図で数える・果物は6個以下",
-  },
-  {
-    id: "complementary-events",
-    label: "余事象",
-    lessonIds: ["complementary-events"],
-    labIds: ["probability-lab"],
-    level: "はじめの一問",
-    numberPolicy: "コインは3枚まで・『少なくとも』を裏側から数える",
-  },
-  {
-    id: "conditional-probability",
-    label: "条件付き確率",
-    lessonIds: ["conditional-probability"],
-    labIds: ["probability-lab"],
-    level: "はじめの一問",
-    numberPolicy: "40人のクラスの表から、分母の変わり方を追う",
-  },
-  {
-    id: "sum-and-general-term",
-    label: "和から一般項",
-    lessonIds: ["sum-and-general-term"],
-    labIds: ["sigma-stairs-lab"],
-    level: "はじめの一問",
-    numberPolicy: "和の式は n²+cn の形・引き算で項を取り出す",
-  },
-  {
-    id: "difference-sequences",
-    label: "階差数列",
-    lessonIds: ["difference-sequences"],
-    labIds: ["sigma-stairs-lab"],
-    level: "はじめの一問",
-    numberPolicy: "階差が1ずつ増える列で、第6項まで",
-  },
-  {
-    id: "recurrence-relations",
-    label: "漸化式",
-    lessonIds: ["recurrence-relations"],
-    labIds: [],
-    level: "はじめの一問",
-    numberPolicy: "隣の関係を2回使ってから、数列の正体を見抜く",
-  },
-  {
-    id: "mathematical-induction",
-    label: "数学的帰納法",
-    lessonIds: ["mathematical-induction"],
-    labIds: [],
-    level: "はじめの一問",
-    numberPolicy: "n=1 の確認と「次の一手」の型を選択肢で覚える",
-  },
-  {
-    id: "exam-review",
-    label: "総合演習",
-    lessonIds: ["exam-review"],
-    labIds: [],
-    level: "はじめの一問",
-    numberPolicy: "これまでの分野から1問ずつ、順不同で出題",
-  },
+  integer,
+  absoluteValue,
+  exponent,
+  arithmeticSequence,
+  vennCount,
+  radical,
+  squareRootMeaning,
+  rootOperations,
+  substitution,
+  combine,
+  distribute,
+  equation,
+  sets,
+  identities,
+  inequality,
+  quadratic,
+  functionValues,
+  quadraticSign,
+  trig,
+  sineCosineRule,
+  trigSurvey,
+  counting,
+  probability,
+  dataSummary,
+  dataAnalysis,
+  geometryProperties,
+  numberTheory,
+  geometryBasics,
+  expansion,
+  factoring,
+  quadraticSolve,
+  permComb,
+  sequenceSum,
+  quartiles,
+  numberClassification,
+  primeFactorization,
+  simultaneousEquations,
+  parallelLinesAngles,
+  pythagoreanTheorem,
+  similarity,
+  trigExtension,
+  functionNotation,
+  logicConverse,
+  necessarySufficient,
+  proofFill,
+  geometryProofs,
+  combinationsRepetition,
+  complementaryEvents,
+  conditionalProbability,
+  sumAndGeneralTerm,
+  differenceSequences,
+  recurrenceRelations,
+  mathematicalInduction,
+  examReview,
 ];
 
 const advancedPolicies = {
