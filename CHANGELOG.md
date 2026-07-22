@@ -22,7 +22,7 @@ _（作業中でまだ push していない変更だけをここに書く。push
 - 編集ガイド `CLAUDE.md` を運用の単一入口として整備。`CHANGELOG.md`（本ファイル）を新設し `TODO.md` をスリム化。
 
 ### Docs
-- **ドキュメント更新のタイミングを明文化**（CLAUDE.md §5）: 実装とドキュメントは同じ push に含めて整合させる／CHANGELOG は push する区切りの内容を `## YYYY-MM-DD`（JST）へ直接書き、`[Unreleased]` は未 push 分だけに使う／PROGRESS の完了フェーズは CHANGELOG へ畳んで落とす。あわせて滞留していた 07-21〜22 の `[Unreleased]` を日付セクションへ畳んだ。
+- **ドキュメント更新のタイミングを明文化**（CLAUDE.md §5）: 実装とドキュメントは同じ push に含めて整合させる／CHANGELOG は push する区切りの内容を `## YYYY-MM-DD`（JST）へ直接書き、`[Unreleased]` は未 push 分だけに使う／TODO・PROGRESS の完了分は「進行中」から落とす。あわせて (1) 滞留していた 07-21〜22 の `[Unreleased]` を日付セクションへ畳み、(2) 完了済みの開発ドキュメント整備（D1–D6）・完備性点検/修正（C0–C11／F1–F20）を TODO「進行中」から外して**残る継続作業を単元ブラッシュアップのみ**に整理、PROGRESS ヘッダの状態表記も現況へ更新。
 - コンテンツ／CSS 分割に合わせ開発ドキュメントを現況化: CLAUDE.md §2（その他コンテンツ＝per-file＋index／css＝`@import` 集約の部分ファイル）・§4.5 波及チェックリスト（逆参照先を per-file へ）・§4.6 追加手順（`<type>/<id>.js` を作り index の import・配列に足す）・§4.7（CSS は部分ファイルへ）、design §3.2 構造ツリー・§4.2/§4.3/§4.5 の場所表記を更新（d89b8f4 で先行の F19/F20 補完済み）。
 - **手順の軽微な欠落 F19・F20 を補完**（d89b8f4）: 数と式系の新単元を「数と計算(number)」に入れるには `topics.js` の `categoryForLesson` の固定 id リストに新 id が要る点（§2/§4-2）、練習の生成器対応表名 `practiceGenerators`／`advancedPracticeGenerators`（§4.6）を実装で裏取りのうえ明記。
 - `design/content-architecture.md` §3「コンテンツの正本と公開物」を現況へ刷新。`build` が **検証付きの完全コピー（バンドルなし）** であること・`docs` は `src` の鏡像で結合ファイルは生成されないこと・構造ツリー（`lessons/<id>.js` 分割、全 content/scripts）を明記。§4.1（`lessons.js`＝目次）・§4.2（ラボ描画は `labs-view.js`）の陳腐化も是正。§3 を「構造・生成モデルの正本」、CLAUDE.md を「手順の正本」とし相互リンクで役割分担（二重管理による片側陳腐化の再発防止）。
