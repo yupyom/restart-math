@@ -9,6 +9,10 @@
     "check": "node scripts/validate-content.mjs && node scripts/test-practice.mjs",
     "units": "node scripts/list-units.mjs",
     "unit": "node scripts/show-unit.mjs",
-    "preview": "node scripts/dev-server.mjs"
+    "preview": "node scripts/dev-server.mjs",
+    "shot": "node scripts/shot.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.61.1"
   }
 }

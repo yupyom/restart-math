@@ -42,11 +42,13 @@
 | `npm run units -- 26` / `-- 二次` | 〃 | 番号 or 部分一致で単元を特定（ファイルパスも表示） |
 | `npm run unit -- <id\|番号>` | show-unit.mjs | **1単元の本文 .js を丸ごと出力**（Read の代替・行ズレ対策） |
 | `npm run preview` | dev-server.mjs | `src/` を no-store 配信（`http://localhost:4319/`）。新しい表示部品の確認用 |
+| `npm run shot -- <ルート> [セレクタ]` | shot.mjs | **ヘッドレスの system Chrome で確実にスクショ**（要素単位・MathJax 組版待ち）。PNG を `.shots/` に保存し Read で確認 |
 
 補足:
 - 直接 `node scripts/<name>.mjs …` でも同じ（npm のヘッダ行が邪魔なときは node 直呼び）。
 - `docs/` を配信して確認したいときは `python3 -m http.server 4173 --directory docs`。
 - ブラウザ確認は**新しい表示部品を作ったときだけ**でよい。本文の質の確認はユーザーが行う。
+- **表示部品の視覚確認は `npm run shot` が確実**（アプリ内ブラウザペインのスクショはスクロール同期ズレ・ペイン非表示でブレやすい）。例：`npm run shot -- lessons/quadratic-inequalities ".parabola-figure"` で図だけを切り出して保存。正しさの判定は `read_page`/DOM アサーション（要素構造・computed style・path データ）を主軸にし、`shot` は見た目の確認・共有に使う。`playwright-core`（devDependency）＋システム Chrome を使うので専用ブラウザの DL は不要。撮った PNG は `.shots/`（gitignore 済み）に出る。
 
 ---
 
