@@ -11,6 +11,7 @@ import { unit as powersRoots } from "./lessons/powers-roots.js";
 import { unit as simplifyRoots } from "./lessons/simplify-roots.js";
 import { unit as rootOperations } from "./lessons/root-operations.js";
 import { unit as numberClassification } from "./lessons/number-classification.js";
+import { unit as fractionArithmetic } from "./lessons/fraction-arithmetic.js";
 import { unit as lettersAsBoxes } from "./lessons/letters-as-boxes.js";
 import { unit as likeTerms } from "./lessons/like-terms.js";
 import { unit as distributionLetters } from "./lessons/distribution-letters.js";
@@ -76,6 +77,7 @@ const rawUnits = [
   simplifyRoots,
   rootOperations,
   numberClassification,
+  fractionArithmetic,
   lettersAsBoxes,
   likeTerms,
   distributionLetters,
@@ -134,6 +136,44 @@ const rawUnits = [
 
 // 本文を読んでいて「なぜ？」で止まったときだけ開く補助線です。
 const lessonContexts = {
+  "fraction-arithmetic": {
+    why: {
+      question: "たし算とかけ算で、なぜ分母のあつかいが違うの？",
+      answer:
+        "分数は『1を何等分したいくつ分か』を表します。たし算・ひき算は同じ大きさの部品どうしでないと数えられないので、分母（＝1等分の大きさ）をそろえてから分子を足し引きします。かけ算は『全体の一部の、そのまた一部』を取り出す操作なので、分子どうし・分母どうしをそのまま掛けて新しい大きさを作れます。だから通分が要るのはたし算・ひき算だけです。",
+      tryIt:
+        "\\(\\frac12+\\frac13\\) を、まず分母を6にそろえて \\(\\frac36+\\frac26=\\frac56\\) と出す。かけ算 \\(\\frac12\\times\\frac13=\\frac16\\) は通分なしでよいことと見比べる",
+    },
+    definitions: [
+      {
+        term: "通分",
+        meaning: "分母のちがう分数を、共通の分母（多くは最小公倍数）にそろえること。たし算・ひき算の前に行う",
+        example: "\\(\\frac56\\) と \\(\\frac14\\) は分母を12にそろえて \\(\\frac{10}{12}\\) と \\(\\frac{3}{12}\\)",
+        boundary: "通分しても分数の大きさは変わらない（分子と分母を同じ数で掛けているだけ）。かけ算・わり算では通分は不要",
+      },
+      {
+        term: "約分",
+        meaning: "分子と分母を同じ数で割って、より簡単な分数に直すこと。最大公約数で割ると一度で既約分数になる",
+        example: "\\(\\frac{6}{36}\\) は分子分母を6で割って \\(\\frac16\\)",
+        boundary: "約分できるのは分子と分母の共通の約数があるときだけ。値は変わらない",
+      },
+      {
+        term: "逆数",
+        meaning: "分子と分母を入れかえた数。もとの数に掛けると1になる。わり算はこの逆数のかけ算に直せる",
+        example: "\\(\\frac49\\) の逆数は \\(\\frac94\\)。\\(\\frac23\\div\\frac49=\\frac23\\times\\frac94\\)",
+        boundary: "0 に逆数はない（0 で割れないのと同じ理由）",
+      },
+    ],
+    connections: [
+      {
+        kind: "practice",
+        title: "分数の四則を反復する",
+        summary:
+          "練習『分数の四則』は、通分のたし引き・約分のかけ算・逆数のわり算に加えて、比の約分と概算まで一続きで出します。手を動かして型を体にいれましょう。",
+        practiceId: "fraction-arithmetic",
+      },
+    ],
+  },
   "pi-and-approximation": {
     why: {
       question: "どうして \\(\\pi\\) を最後まで記号のまま運ぶの？",
@@ -1038,6 +1078,7 @@ const lessonMetadata = {
   "absolute-value": { strand: "数と式", practiceIds: ["absolute-value"] },
   "integer-rules": { strand: "数と式", practiceIds: ["integer"] },
   "number-classification": { strand: "数と式", practiceIds: ["number-classification", "square-root-meaning"] },
+  "fraction-arithmetic": { strand: "数と式", practiceIds: ["fraction-arithmetic"] },
   "exponent-rules": { strand: "数と式", practiceIds: ["exponent"] },
   "expansion-formulas": { strand: "数と式", practiceIds: ["expansion", "distribute"] },
   factoring: { strand: "数と式", practiceIds: ["factoring", "distribute"] },
@@ -1106,6 +1147,7 @@ export const learningPath = [
   "absolute-value",
   "integer-rules",
   "number-classification",
+  "fraction-arithmetic",
   "distribution-numbers",
   "letters-as-boxes",
   "like-terms",

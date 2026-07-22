@@ -270,8 +270,108 @@ export function generateExamReviewProblem() {
   return { ...problem, title: `総合演習：${problem.title}` };
 }
 
+export function generateFractionArithmeticProblem() {
+  // たし算・ひき算の材料（通分が必要な、互いに異なる分母のペア）。退化（答え 0）は避ける。
+  const denomPairs = [[2, 3], [3, 4], [4, 6], [2, 5], [3, 6], [2, 4], [4, 8], [3, 9], [5, 10], [6, 8]];
+  let d1;
+  let d2;
+  let n1;
+  let n2;
+  let op1;
+  for (let tries = 0; tries < 20; tries += 1) {
+    [d1, d2] = choose(denomPairs);
+    n1 = randomInt(1, d1 - 1);
+    n2 = randomInt(1, d2 - 1);
+    op1 = choose(["+", "-"]);
+    if (op1 === "-" && n1 * d2 < n2 * d1) {
+      [n1, d1, n2, d2] = [n2, d2, n1, d1];
+    }
+    if (!(op1 === "-" && n1 * d2 === n2 * d1)) break;
+  }
+  const lcdDen = d1 * d2;
+  const addSubNum = op1 === "+" ? n1 * d2 + n2 * d1 : n1 * d2 - n2 * d1;
+  const opWord = op1 === "+" ? "足す" : "引く";
+
+  // かけ算（約分が起きる材料）
+  const p1n = randomInt(1, 4);
+  const p1d = choose([6, 8, 9, 10]);
+  const p2n = choose([2, 3, 4]);
+  const p2d = randomInt(2, 5);
+  const mulNum = p1n * p2n;
+  const mulDen = p1d * p2d;
+
+  // わり算（逆数をかける）
+  const q1n = randomInt(1, 4);
+  const q1d = choose([3, 4, 5, 6]);
+  const q2n = choose([2, 3, 4, 5]);
+  const q2d = choose([2, 3, 4]);
+  const divNum = q1n * q2d;
+  const divDen = q1d * q2n;
+
+  // 比（最も簡単な整数比＝互いに素なペア × 倍率）
+  const [rp, rq] = choose([[2, 3], [3, 4], [3, 5], [4, 5], [2, 5], [5, 6]]);
+  const rk = randomInt(2, 4);
+  const ra = rp * rk;
+  const rb = rq * rk;
+
+  // 概算（小数第1位に四捨五入）。正解から 0.3 以上離れた distractor を3つ添える。
+  const [en, ed] = choose([[5, 8], [7, 8], [5, 6], [7, 9], [3, 8], [4, 9], [5, 9], [7, 10]]);
+  const estRounded = Math.round((en / ed) * 10) / 10;
+  const estSet = new Set([estRounded.toFixed(1)]);
+  [-0.3, 0.3, 0.5].forEach((delta) => {
+    const v = Math.round((estRounded + delta) * 10) / 10;
+    if (v > 0 && v < 1.6) estSet.add(v.toFixed(1));
+  });
+  const estChoices = [...estSet].sort(() => Math.random() - 0.5);
+
+  return {
+    modeLabel: "分数の四則",
+    title: "通分・約分・逆数で計算する",
+    prompt: "分数のたし算・ひき算・かけ算・わり算を、約分した分数で答えます。",
+    steps: [
+      {
+        label: op1 === "+" ? "たし算（通分）" : "ひき算（通分）",
+        question: `\\(\\frac{${n1}}{${d1}}${op1}\\frac{${n2}}{${d2}}\\) は？（約分した分数で）`,
+        hint: `分母を \\(${lcdDen}\\) にそろえます。\\(\\frac{${n1}}{${d1}}=\\frac{${n1 * d2}}{${lcdDen}}\\)、\\(\\frac{${n2}}{${d2}}=\\frac{${n2 * d1}}{${lcdDen}}\\)。分子を${opWord}と \\(${n1 * d2}${op1}${n2 * d1}\\)。`,
+        check: (input) => sameRational(input, addSubNum, lcdDen),
+        answer: `\\(${fractionText(addSubNum, lcdDen)}\\)`,
+      },
+      {
+        label: "かけ算",
+        question: `\\(\\frac{${p1n}}{${p1d}}\\times\\frac{${p2n}}{${p2d}}\\) は？（約分した分数で）`,
+        hint: `かけ算は分子どうし・分母どうし。分子 \\(${p1n}\\times${p2n}\\)、分母 \\(${p1d}\\times${p2d}\\) を計算し、最後に約分します。`,
+        check: (input) => sameRational(input, mulNum, mulDen),
+        answer: `\\(${fractionText(mulNum, mulDen)}\\)`,
+      },
+      {
+        label: "わり算（逆数）",
+        question: `\\(\\frac{${q1n}}{${q1d}}\\div\\frac{${q2n}}{${q2d}}\\) は？（約分した分数で）`,
+        hint: `わり算は逆数をかけます。\\(\\div\\frac{${q2n}}{${q2d}}=\\times\\frac{${q2d}}{${q2n}}\\) にして、分子 \\(${q1n}\\times${q2d}\\)、分母 \\(${q1d}\\times${q2n}\\)。`,
+        check: (input) => sameRational(input, divNum, divDen),
+        answer: `\\(${fractionText(divNum, divDen)}\\)`,
+      },
+      {
+        label: "比を約分",
+        question: `\\(${ra}:${rb}\\) を最も簡単な整数の比にすると \\(\\square:\\triangle\\)。左の数 \\(\\square\\) は？`,
+        hint: `比は分数と同じで約分できます。\\(${ra}\\) と \\(${rb}\\) の共通の約数（ここでは \\(${rk}\\)）で両方を割ります。`,
+        check: (input) => Number(normalizeText(input)) === rp,
+        answer: String(rp),
+      },
+      {
+        label: "概算",
+        question: `\\(\\frac{${en}}{${ed}}\\) を小数第1位までのおよその値にすると、いちばん近いのはどれ？`,
+        hint: `分子 ÷ 分母 \\(=${en}\\div${ed}\\) を小数に直し、小数第1位で四捨五入します。`,
+        check: (input) => Math.abs(Number(normalizeText(input)) - estRounded) < 0.05,
+        answer: estRounded.toFixed(1),
+        choices: estChoices,
+      },
+    ],
+  };
+}
+
 export const practiceGenerators = {
   ...extraPracticeGenerators,
+  "fraction-arithmetic": generateFractionArithmeticProblem,
   "exam-review": generateExamReviewProblem,
   integer: generateIntegerProblem,
   "absolute-value": generateAbsoluteValueProblem,

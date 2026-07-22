@@ -28,6 +28,7 @@ function categoryForLesson(unit) {
       "number-classification",
       "exponent-rules",
       "pi-and-approximation",
+      "fraction-arithmetic",
     ].includes(unit.id)
       ? "number"
       : "algebra";

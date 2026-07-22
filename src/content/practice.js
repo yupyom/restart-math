@@ -37,6 +37,7 @@ import { practice as permComb } from "./practice/perm-comb.js";
 import { practice as sequenceSum } from "./practice/sequence-sum.js";
 import { practice as quartiles } from "./practice/quartiles.js";
 import { practice as numberClassification } from "./practice/number-classification.js";
+import { practice as fractionArithmetic } from "./practice/fraction-arithmetic.js";
 import { practice as primeFactorization } from "./practice/prime-factorization.js";
 import { practice as simultaneousEquations } from "./practice/simultaneous-equations.js";
 import { practice as parallelLinesAngles } from "./practice/parallel-lines-angles.js";
@@ -93,6 +94,7 @@ const rawPracticeCatalog = [
   sequenceSum,
   quartiles,
   numberClassification,
+  fractionArithmetic,
   primeFactorization,
   simultaneousEquations,
   parallelLinesAngles,
