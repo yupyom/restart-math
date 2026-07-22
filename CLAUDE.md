@@ -76,7 +76,7 @@
 - ヒント・note は一般論でなく実際の数値で語り、その単元までに教えた道具だけを前提にする。証明例は答案にそのまま書ける文章を step の `text` に1行ずつ、赤の心の声を `note` に。
 
 ### その他のコンテンツ（`src/content/`）
-`stories.js`（読み物）/ `figures.js`（数学者図鑑。`JSON.stringify` 生成なのでソース上は `\\(` と2重バックスラッシュ）/ `labs.js`（図解ラボのカタログ）/ `practice.js`（問題モード設定）/ `glossary.js` / `topics.js`（学習マップ。**`units` から自動生成するので手で足さない**。`category`＝`categoryForLesson(strand)`＝キー〔number/algebra/function/geometry/data/logic/sequence〕、`level`＝`levelForLesson(range)`＝1〜5。未知の strand は algebra・未知の range は level 1 に落ちるので、新しい strand 値→`categoryForLesson`、新しい range 値→`levelForLesson` を要更新）/ `search-synonyms.js`。
+`stories.js`（読み物）/ `figures.js`（数学者図鑑。`JSON.stringify` 生成なのでソース上は `\\(` と2重バックスラッシュ）/ `labs.js`（図解ラボのカタログ）/ `practice.js`（問題モード設定）/ `glossary.js` / `topics.js`（学習マップ。**`units` から自動生成するので手で足さない**。`category`＝`categoryForLesson(unit)`＝キー〔number/algebra/function/geometry/data/logic/sequence〕、`level`＝`levelForLesson(range)`＝1〜5。未知の strand は algebra・未知の range は level 1 に落ちるので、新しい strand 値→`categoryForLesson`、新しい range 値→`levelForLesson` を要更新。**注意**：`categoryForLesson` は単純な strand→category ではない。strand が `数と式`／`数学と人間の活動`／`総合` の単元は、`categoryForLesson` 内の**固定 id リストに載っているものだけ `number`**、残りは `algebra` に落ちる。数と式系の新単元を「数と計算(number)」に入れたいなら、この id リストに新 id を足す〔→ §4-2 の注記〕）/ `search-synonyms.js`。
 
 ### 表示・ロジック（`src/assets/`）
 - `js/` … 役割別モジュール（エントリは `app.js`＝init のみ）。単元描画＝`lessons-view.js`（model 描画関数もここ）、図解ラボ＝`labs-view.js`、問題＝`practice-view.js`＋生成器 `practice-generators.js`/`practice-advanced.js`/`practice-extra.js`、読み物＝`stories-view.js`、図鑑＝`figures-view.js`、学習マップ＝`map-view.js`、検索＝`search-view.js`、用語リンク＝`glossary-links.js`、ページ送り＝`pager.js`、整形＝`format.js`/`math-utils.js`、状態＝`state.js`、ナビ＝`nav.js`/`router.js`、雑多＝`utils.js`。
@@ -105,6 +105,7 @@
    - import 1行、`rawUnits` 配列に1行、`learningPath` の挿入位置に1行、`lessonMetadata` に `{ strand, practiceIds }` を1行。
    - `learningPath` は「使う概念が先に現れる順」。挿入で以降の単元番号がずれるのは仕様。
    - `strand` は topics.js の `categoryForLesson`/`levelForLesson` が参照。新しい `strand` 値は `categoryForLesson`、新しい `range` 値は `levelForLesson` も要更新（未対応だと algebra／level 1 に落ちる）。学習マップは units から自動生成なので手当ては不要。
+   - **数と式系の新単元を「数と計算(number)」カテゴリに入れたいときは追加作業が要る**：strand が `数と式`／`数学と人間の活動`／`総合` の単元は、`topics.js` の `categoryForLesson` にある**固定 id リストに載っているものだけ `number`**、残りは `algebra` に落ちる。number に入れたい新 id をこのリストに足す（strand だけ合わせても number にはならない）。
 3. 対の練習を付けるなら §4.6「練習」の手順で `practice.js` 登録＋生成器＋`lessonMetadata.practiceIds` を揃える。**今すぐ作らないなら [TODO.md](TODO.md) に起票**しておく。
 4. **必須の関連作業**：検索で見つかるよう `search-synonyms.js`／`glossary.js` にこの単元の語を必要に応じて足す。（任意）補足カードは `lessonContexts`、図解リンクは `labs.js` 側の `lessonIds` に単元 id を足す。
 5. `npm run check`（`learningPath` と単元IDの一致もここで検査）→ `npm run build` → `npm run units` で番号を確認 → 表示に関わるので `npm run preview` で1回確認 → コミット。
@@ -129,7 +130,10 @@ id（単元・図解・問題・読み物・数学者）を変える／消すと
 
 ### 練習（practice）
 - `practice.js` に1エントリ追加：`{ id, label, lessonIds, labIds, level, numberPolicy }`。`numberPolicy` は説明テキスト（例「答えが2桁以内」。コード値ではない）。
-- 生成器を `practice-generators.js`（追補 `practice-extra.js` / 発展 `practice-advanced.js`）に純関数で書き、**モード id → 生成器の対応表**（同ファイル内）に登録する（`practice.js` に `generator` フィールドは無い）。生成器は `{ modeLabel, title, prompt, steps: [...] }` を返す。step 型は `{ label, question, hint, check, answer, choices?, example?, accept? }`（`check` は入力を受け取り真偽を返す関数）。
+- 生成器を純関数で書き、**モード id をキーにした対応表**に登録する（`practice.js` に `generator` フィールドは無い。`practice-view.js` が `practiceGenerators[mode.id]`／`advancedPracticeGenerators[mode.id]` で引く）:
+  - **基本問題** … `practice-generators.js` の `practiceGenerators`（キー＝mode id）。関数を `practice-extra.js` に置く場合は `extraPracticeGenerators` に登録すれば `practiceGenerators` に spread で合流する。
+  - **発展問題（少し進んだ問題）** … `practice-advanced.js` の `advancedPracticeGenerators`（同上、追補は `practice-extra.js` の `extraAdvancedGenerators`）。あわせて `practice.js` に `advancedLevel`（ラベル）と `advancedPolicy`（説明文。`advancedPolicies[practice.id]`）を足すと発展タブが出る。
+  - 生成器は `{ modeLabel, title, prompt, steps: [...] }` を返す。step 型は `{ label, question, hint, check, answer, choices?, example?, accept? }`（`check` は入力を受け取り真偽を返す関数）。
 - **単元⇄練習の両方向**を揃える：`practice.lessonIds` に単元 id、`lessonMetadata`（lessons.js）の `practiceIds` にこの practiceId。片方だけだと単元からの「次の一手」に出ない。
 - `npm run check`（`test-practice.mjs` が全モードの自己受理を検査）。
 
