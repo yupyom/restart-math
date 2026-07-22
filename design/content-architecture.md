@@ -87,16 +87,18 @@ npm run build ＝ scripts/build.mjs
 ├── src/                         ← 編集する正本（ここだけ触る）
 │   ├── index.html               画面の骨組み
 │   ├── assets/
-│   │   ├── css/styles.css        見た目（現状は1ファイル）
+│   │   ├── css/                  見た目。styles.css は @import 集約、実体は役割別の部分ファイル
+│   │   │   ├── styles.css        部分ファイルを記述順(=カスケード順)に @import する集約（index.html はこれだけ link）
+│   │   │   └── base/home/shell/lessons/labs/lab-diagrams/practice/stories-map/responsive/figures .css  役割別（編集はこちら）
 │   │   └── js/                   役割別モジュール（app.js=初期化 / lessons-view / labs-view / practice-* / router / nav / state …）
-│   └── content/                 教材データ（構造化された正本）
+│   └── content/                 教材データ（構造化された正本。★は「1テーマ1ファイル＋index が合成」）
 │       ├── lessons/<id>.js       ★単元本文＝1単元1ファイル（約62本・いちばん編集する）
 │       ├── lessons.js            目次：lessons/ を import し表示順 learningPath 等を合成
-│       ├── labs.js               図解カタログ
-│       ├── practice.js           問題モード設定（生成器は assets/js/practice-*.js）
-│       ├── stories.js            読み物
-│       ├── figures.js            数学者図鑑
-│       ├── topics.js             学習マップ（単元への入口）
+│       ├── labs/<id>.js  labs.js       ★図解1件＋index（labs・labCatalog・unitLabRefs を合成）
+│       ├── practice/<id>.js  practice.js  ★出題設定1モード＋index（rawPracticeCatalog 組立・advancedPolicies・並べ替え）
+│       ├── stories/<id>.js  stories.js   ★読み物1件＋index（storySourcePolicy 保持・stories・storyCatalog を合成）
+│       ├── figures/<id>.js  figures.js   ★数学者1人＋index（figures・figureCatalog を合成）
+│       ├── topics.js             学習マップ（単元から自動生成）
 │       ├── glossary.js           用語
 │       └── search-synonyms.js    検索の同義語
 ├── scripts/                     Node スクリプト（package.json の npm run から呼ぶ）
@@ -168,9 +170,9 @@ export const unit = {
 
 たとえば複数の等式をカンマでつないだ文章を自動で縦計算に変換してはいけません。互除法なら各行が別の等式、分配法則の途中式なら同じ式の変形、文章題なら式の前に状況説明が必要です。この区別をデータで持ち、表示側の推測に任せないことを品質基準にします。
 
-### 4.2 図解 (`labs.js`)
+### 4.2 図解 (1件＝`labs/<id>.js`、index＝`labs.js`)
 
-図解は「遊べる部品」ではなく、特定の誤解をほどくための教材です。`id`、対応単元、初めに見せる具体物、確かめる不変量をデータとして持ちます。
+図解は「遊べる部品」ではなく、特定の誤解をほどくための教材です。`id`、対応単元、初めに見せる具体物、確かめる不変量をデータとして持ちます。各図解は 1 件 1 ファイル（`labs/<id>.js` が `export const lab`）で、`labs.js` が import して `labs`・`labCatalog`・`unitLabRefs` を合成します（追加手順は [CLAUDE.md](../CLAUDE.md) §4.6）。
 
 ```js
 {
@@ -203,9 +205,9 @@ export const unit = {
 
 各図解は、スライダーの現在値、図、説明文を同時に更新します。数だけを動かして「何を変えたのか」が分からなくならないことを、操作の必須条件にします。
 
-### 4.3 問題 (`practice.js`)
+### 4.3 問題 (1モード＝`practice/<id>.js`、index＝`practice.js`)
 
-問題は「出題器の設定」と「採点・解説の処理」を分けます。設定側には、初期難度・数の上限・前提単元・関連図解を置きます。
+問題は「出題器の設定」と「採点・解説の処理」を分けます。設定側には、初期難度・数の上限・前提単元・関連図解を置きます。設定は 1 モード 1 ファイル（`practice/<id>.js` が `export const practice`）で、`practice.js` が `rawPracticeCatalog` を組み立て、発展設定 `advancedPolicies` と learningPath 順の並べ替えで `practiceCatalog` を合成します。
 
 ```js
 {
@@ -240,9 +242,9 @@ export const topics = units.map((unit) => ({
 
 `category` は日本語ラベルではなく**キー**で、`categoryForLesson(strand)` が決めます（表示名は `categoryLabels`）。`level` は `levelForLesson(range)` が決めます。**新しい `strand` 値を足したら `categoryForLesson`、新しい `range` 値を足したら `levelForLesson` を更新**しないと既定分類（algebra／level 1）に落ちます。これにより、単元名や範囲の修正は一か所で済みます。
 
-### 4.5 読み物 (`stories.js`)
+### 4.5 読み物 (1件＝`stories/<id>.js`、index＝`stories.js`)
 
-読み物は、単元本文を長くせずに「なぜその約束が必要か」を補う教材です。`type`、対応する単元・図解・問題、本文、出典、事実確認の状態を持たせます。
+読み物は、単元本文を長くせずに「なぜその約束が必要か」を補う教材です。`type`、対応する単元・図解・問題、本文、出典、事実確認の状態を持たせます。1 件 1 ファイル（`stories/<id>.js` が `export const story`）で、`stories.js` が出典方針 `storySourcePolicy` を保持しつつ `stories`・`storyCatalog` を合成します。
 
 ```js
 {

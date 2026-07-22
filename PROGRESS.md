@@ -12,7 +12,7 @@
 
 - **model type**（`unitModelMarkup` @ `assets/js/lessons-view.js`）= `circle-angle` / `right-triangle` / `line-graph` / `area` の**4種**。`inscribed-angle` は実装にも使用単元にも無い。
 - **example type**（`workedExampleMarkup` @ `assets/js/format.js`）= 文字列 / `aligned-steps` / `walkthrough` / `word-problem` / `narrative` の**5系統**（単元実使用: walkthrough 49・narrative 5・word-problem 3・aligned-steps 2）。
-- **css** = `src/assets/css/styles.css` **1本のみ**（分割されていない）。
+- **css** = 当時は `src/assets/css/styles.css` 1本（→ **2026-07-22 に役割別10部分ファイル＋`@import` 集約へ分割済み**・79f0280）。
 - **js** = 役割別に分割（`app.js`=初期化、`lessons-view`/`labs-view`/`practice-view`/`router`/`nav`/`state`…）。単元本文=`content/lessons/<id>.js`（62本）、`lessons.js`=目次。
 - **npm scripts** = build / check / units / unit / preview（CLAUDE.md §1 の表と一致・修正不要）。
 
@@ -39,7 +39,7 @@
 | 8 | 二次方程式: 判別式が負→複素数（虚数単位i）への入口（数II） | ✅ | 8bdb14b | lessons/quadratic-equations.js |
 | 11 | 学び直し総合の拡充（重み付け評価・成長率予測・グラフにだまされない） | ⬜ 未 | - | lessons/exam-review.js |
 | 4 | 新単元: 円周率と近似（記号のまま計算→最後に近似、記号/小数の見分け） | ⬜ 未 | - | 新規 lessons/<id>.js ＋ lessons.js |
-| 7 | 二次不等式にtitle特化＋両単元に放物線と解の図（新model type: parabola） | ⬜ 未 | - | lessons/quadratic-*.js, lessons-view.js, css/styles.css |
+| 7 | 二次不等式にtitle特化＋両単元に放物線と解の図（新model type: parabola） | ⬜ 未 | - | lessons/quadratic-*.js, lessons-view.js, css/lessons.css |
 | 2 | 新単元: 分数の四則演算＋練習問題（比率・概算も） | ⬜ 未 | - | 新規 ＋ practice.js ＋ 生成器 |
 | 5 | 新単元: 有効数字＋練習問題（定義・計算・途中丸めで精度低下） | ⬜ 未 | - | 新規 ＋ practice.js ＋ 生成器 |
 
@@ -56,6 +56,7 @@
 
 ## 済んだ基盤
 - 62単元を `src/content/lessons/<id>.js` に分割（deepStrictEqual で完全一致検証済み）＝コミット 95e0c0f
+- 図鑑/読み物/図解/出題設定も 1テーマ1ファイルへ分割（2026-07-22）＝figures b11a6b2・stories b4d0129・labs f3273f3・practice 48ce5e5（各 deepStrictEqual 一致）。`styles.css` を役割別10部分ファイル＋`@import` 集約に分割＝79f0280（連結＝原本 md5一致・ブラウザ確認済み）。
 - `npm run units`（番号→id→ファイル）、`npm run unit`（1単元の本文を丸ごと出力）、CLAUDE.md（編集ルール・型・地図）、CHANGELOG.md、TODO.md スリム化。
 
 ## C. ドキュメント完備性の点検（発生しうる作業カタログ）
@@ -163,9 +164,10 @@
 
 | ファイル | 行数 | リスク | 対処 |
 |---|---|---|---|
-| `src/assets/css/styles.css` | 3785 | **Read 2000行超で全文読めない** | `grep -F` でアンカー→範囲 Read→Edit。将来 CSS 分割を検討（TODO） |
-| `src/assets/js/labs-view.js` | 1731 | 大（図解追加時に触る） | grep アンカー推奨 |
-| `src/assets/js/practice-extra.js`／`practice-generators.js` | 1518／1479 | 大（練習追加時） | grep アンカー推奨 |
-| `src/content/figures.js`／`lessons.js` | 1117／1099 | 大（新単元で lessons.js 4か所） | §4「各 Edit 前に該当行を Read」で対処可 |
+| ~~`src/assets/css/styles.css`~~ | ~~3785~~ | ✅ **解消（79f0280）** 役割別10部分ファイルへ分割・`@import` 集約。編集は部分ファイルへ | 済 |
+| ~~`src/content/figures.js`~~ | ~~1117~~ | ✅ **解消（b11a6b2）** `figures/<id>.js` へ分割（stories/labs/practice も同様に per-file 化） | 済 |
+| `src/assets/js/labs-view.js` | 1731 | 大（図解追加時に触る・**JS描画ロジックで content 分割の対象外**） | grep アンカー推奨 |
+| `src/assets/js/practice-extra.js`／`practice-generators.js` | 1518／1479 | 大（練習追加時・**生成器ロジックで content 分割の対象外**） | grep アンカー推奨 |
+| `src/content/lessons.js` | 1099 | 大（新単元で 4か所・**目次 index で本文は `lessons/<id>.js`**） | §4「各 Edit 前に該当行を Read」で対処可 |
 
-- **項目別トレース**: 11＝§3 で可（`exam-review.js` は小）／4＝§4 で可・**F19 を踏む**／7＝§4.7＋§2＋§3 で可・**`styles.css` の CSS 追加が容量リスク**／2・5＝§4＋§4.6 で可・**F19＋F20**（有効数字の丸め採点は既存生成器を写す）。
+- **項目別トレース**: 11＝§3 で可（`exam-review.js` は小）／4＝§4 で可・**F19 を踏む**／7＝§4.7＋§2＋§3 で可（parabola の CSS は分割後の `css/lessons.css` へ＝容量リスクは解消）／2・5＝§4＋§4.6 で可・**F19＋F20**（有効数字の丸め採点は既存生成器を写す）。

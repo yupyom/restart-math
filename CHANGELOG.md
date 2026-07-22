@@ -9,11 +9,15 @@
 ## [Unreleased]
 
 ### Infra
+- **コンテンツを1テーマ1ファイルへ分割**（単元と同じ「per-file＋index が合成」の型）: 数学者図鑑 `figures/<id>.js`（b11a6b2）・読み物 `stories/<id>.js`（b4d0129）・図解ラボ `labs/<id>.js`（f3273f3）・出題設定 `practice/<id>.js`（48ce5e5）。各エントリの原文をそのまま per-file へ移し、index（`figures.js`/`stories.js`/`labs.js`/`practice.js`）は import と一覧・カタログ合成だけを持つ。`storySourcePolicy`・`unitLabRefs`・`advancedPolicies`＋並べ替えは index に原文保持。分割前後で `figures`/`figureCatalog`・`stories`/`storyCatalog`/`storySourcePolicy`・`labs`/`labCatalog`/`unitLabRefs`・`practiceCatalog` が `deepStrictEqual` で完全一致することを確認。
+- **`styles.css`（3785行）を役割ごとの部分ファイルへ分割**（79f0280）: base/home/shell/lessons/labs/lab-diagrams/practice/stories-map/responsive/figures の10ファイルにカスケード順を保って分け、`styles.css` は `@import` 集約に。各部分は原本の連続バイトスライスで、連結が原本と md5 一致（描画は完全に不変）。`index.html` は従来どおり `styles.css` だけを link。ブラウザで全リクエスト200・エラーゼロ・主要ページ描画一致を確認。
 - 単元本文を1単元1ファイル `src/content/lessons/<id>.js` へ分割（`lessons.js` は目次＋表示順 `learningPath`＋メタデータ合成のみ）。旧・新の `units`/`learningPath` を `deepStrictEqual` で完全一致検証（95e0c0f）。
 - `npm run units`（番号→id→ファイル）、`npm run unit -- <id|番号>`（1単元の本文を丸ごと出力＝Read の代替）を追加。
 - 編集ガイド `CLAUDE.md` を運用の単一入口として整備。`CHANGELOG.md`（本ファイル）を新設し `TODO.md` をスリム化。
 
 ### Docs
+- コンテンツ／CSS 分割に合わせ開発ドキュメントを現況化: CLAUDE.md §2（その他コンテンツ＝per-file＋index／css＝`@import` 集約の部分ファイル）・§4.5 波及チェックリスト（逆参照先を per-file へ）・§4.6 追加手順（`<type>/<id>.js` を作り index の import・配列に足す）・§4.7（CSS は部分ファイルへ）、design §3.2 構造ツリー・§4.2/§4.3/§4.5 の場所表記を更新（d89b8f4 で先行の F19/F20 補完済み）。
+- **手順の軽微な欠落 F19・F20 を補完**（d89b8f4）: 数と式系の新単元を「数と計算(number)」に入れるには `topics.js` の `categoryForLesson` の固定 id リストに新 id が要る点（§2/§4-2）、練習の生成器対応表名 `practiceGenerators`／`advancedPracticeGenerators`（§4.6）を実装で裏取りのうえ明記。
 - `design/content-architecture.md` §3「コンテンツの正本と公開物」を現況へ刷新。`build` が **検証付きの完全コピー（バンドルなし）** であること・`docs` は `src` の鏡像で結合ファイルは生成されないこと・構造ツリー（`lessons/<id>.js` 分割、全 content/scripts）を明記。§4.1（`lessons.js`＝目次）・§4.2（ラボ描画は `labs-view.js`）の陳腐化も是正。§3 を「構造・生成モデルの正本」、CLAUDE.md を「手順の正本」とし相互リンクで役割分担（二重管理による片側陳腐化の再発防止）。
 - `CLAUDE.md`: `context` の型記述を実装に合わせ修正（`{title,body}` ではなく `why`/`definitions`/`connections` 必須・逆参照検査あり）。§2 冒頭に構造・生成モデルは design §3 が正本である旨のリンクを追加。
 - **ドキュメント×実装の矛盾解消（D1〜D6）**: 実装を正本に開発ドキュメントを現況化。CLAUDE.md §2 の型記述（model type=4種／example=5系統／css=1本／`context` は `lessonContexts` 登録／トップレベル `connections` は不在で「次の一手」は `recommended*`／`connections` に `kind`）、design §4.1・§4.1.1（本文キーと example 5型）・§11.2（文脈データは `lessonContexts` 登録）・§6（`figures`・`search` ルート追加）・§7（検査項目を `validate-content.mjs` の実体へ）、README「教材データの編集場所」を修正。

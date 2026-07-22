@@ -76,12 +76,18 @@
 - ヒント・note は一般論でなく実際の数値で語り、その単元までに教えた道具だけを前提にする。証明例は答案にそのまま書ける文章を step の `text` に1行ずつ、赤の心の声を `note` に。
 
 ### その他のコンテンツ（`src/content/`）
-`stories.js`（読み物）/ `figures.js`（数学者図鑑。`JSON.stringify` 生成なのでソース上は `\\(` と2重バックスラッシュ）/ `labs.js`（図解ラボのカタログ）/ `practice.js`（問題モード設定）/ `glossary.js` / `topics.js`（学習マップ。**`units` から自動生成するので手で足さない**。`category`＝`categoryForLesson(unit)`＝キー〔number/algebra/function/geometry/data/logic/sequence〕、`level`＝`levelForLesson(range)`＝1〜5。未知の strand は algebra・未知の range は level 1 に落ちるので、新しい strand 値→`categoryForLesson`、新しい range 値→`levelForLesson` を要更新。**注意**：`categoryForLesson` は単純な strand→category ではない。strand が `数と式`／`数学と人間の活動`／`総合` の単元は、`categoryForLesson` 内の**固定 id リストに載っているものだけ `number`**、残りは `algebra` に落ちる。数と式系の新単元を「数と計算(number)」に入れたいなら、この id リストに新 id を足す〔→ §4-2 の注記〕）/ `search-synonyms.js`。
+**単元と同じく「1テーマ1ファイル＋index が合成」の型**（2026-07-22 に分割）。各 index は import と一覧・カタログの合成だけを持ち、**本体データは per-file を編集する**:
+- `figures.js`（index）＋ `figures/<id>.js`（数学者1人1ファイル。`export const figure`。数式はソース上 `\\(` の2重バックスラッシュ）。index が `figures` 配列・`figureCatalog` を合成。
+- `stories.js`（index。`storySourcePolicy` はここに原文保持）＋ `stories/<id>.js`（読み物1件。`export const story`）。index が `stories`・`storyCatalog` を合成。
+- `labs.js`（index。単元→図解の対応表 `unitLabRefs` はここに原文保持）＋ `labs/<id>.js`（図解1件。`export const lab`）。index が `labs`・`labCatalog` を合成。
+- `practice.js`（index。発展設定 `advancedPolicies` と learningPath 順の並べ替えはここ）＋ `practice/<id>.js`（出題設定1モード。`export const practice`）。index が `rawPracticeCatalog` を組み立て `practiceCatalog` を合成。
+
+その他（分割していない）: `glossary.js` / `topics.js`（学習マップ。**`units` から自動生成するので手で足さない**。`category`＝`categoryForLesson(unit)`＝キー〔number/algebra/function/geometry/data/logic/sequence〕、`level`＝`levelForLesson(range)`＝1〜5。未知の strand は algebra・未知の range は level 1 に落ちるので、新しい strand 値→`categoryForLesson`、新しい range 値→`levelForLesson` を要更新。**注意**：`categoryForLesson` は単純な strand→category ではない。strand が `数と式`／`数学と人間の活動`／`総合` の単元は、`categoryForLesson` 内の**固定 id リストに載っているものだけ `number`**、残りは `algebra` に落ちる。数と式系の新単元を「数と計算(number)」に入れたいなら、この id リストに新 id を足す〔→ §4-2 の注記〕）/ `search-synonyms.js`。
 
 ### 表示・ロジック（`src/assets/`）
 - `js/` … 役割別モジュール（エントリは `app.js`＝init のみ）。単元描画＝`lessons-view.js`（model 描画関数もここ）、図解ラボ＝`labs-view.js`、問題＝`practice-view.js`＋生成器 `practice-generators.js`/`practice-advanced.js`/`practice-extra.js`、読み物＝`stories-view.js`、図鑑＝`figures-view.js`、学習マップ＝`map-view.js`、検索＝`search-view.js`、用語リンク＝`glossary-links.js`、ページ送り＝`pager.js`、整形＝`format.js`/`math-utils.js`、状態＝`state.js`、ナビ＝`nav.js`/`router.js`、雑多＝`utils.js`。
 - 検索の索引（`search-view.js`）が対象にするのは units・labs・practice・stories・figures の**5種**。新しい種別を検索に含めるには import＋forEach を既存パターンで追加する。
-- `css/` … 現状は `styles.css` の**1ファイル**（base/layout/components/lesson/practice/figures や図の `.series`/`.axis` などを内包。ファイル分割はしていない）。
+- `css/` … `styles.css` は**役割ごとの部分ファイルを記述順（＝カスケード順）に読み込む `@import` 集約ファイル**（2026-07-22 に分割）。`index.html` は従来どおり `styles.css` だけを `<link>` する。**個々のスタイルの編集は部分ファイルへ**（`base.css`／`home.css`／`shell.css`／`lessons.css`／`labs.css`／`lab-diagrams.css`〔ラボ用SVG図〕／`practice.css`／`stories-map.css`／`responsive.css`〔横断メディアクエリ〕／`figures.css`）。**読み込み順を変えると見た目が変わる**ので `styles.css` の `@import` の順序は保つ。分割は原本の連続バイトスライス（連結＝原本 md5一致）で、labs/practice/検索の規則は現状の並びのまま一部混在する（例: 練習の操作UIは `labs.css` にある）。
 
 ### 検証（`npm run check` の実体）
 - `scripts/validate-content.mjs` … ID重複・`lessonId`/`labId`/`practiceId`/`storyId` 逆参照・`example` の型と構造・`context` の3キーと逆参照・読み物の出典/事実確認・肖像ファイルの実在・数式の区切り漏れや生HTML混入・全単元に「次の一手」があるか。`validateMathText` の対象は **units/labs/stories/figures**（figures も対象。`achievement`/`profile`/`contributions` を検査）。検査項目の網羅は design §7 を参照。
@@ -114,13 +120,13 @@
 
 id（単元・図解・問題・読み物・数学者）を変える／消すときは、**その id を参照している箇所をすべて直してから** `npm run check` を通す。check は逆参照の欠落（dangling）を検出するので、**残参照ゼロ＝check が通る**ことを完了条件にする（記憶で数えず check に確認させる）。まず `grep -rF -- "<old-id>" src/` で洗い出すと速い。
 
-参照される側の一覧（種別ごとの直し先）:
+参照される側の一覧（種別ごとの直し先）。※コンテンツは per-file 分割済み（figures/stories/labs/practice も 1件1ファイル）。**id 自体は index（`<type>.js`）の import 行・配列にも出る**ので、リネーム／削除ではそこも直す:
 
-- **単元 `lessonId`** … `lessons.js`（import 行・`rawUnits`・`learningPath`・`lessonMetadata`・`lessonContexts` のキー）／`labs.js` の `lessonIds`／`practice.js` の `lessonIds`／`stories.js` の `lessonIds`／`figures.js` の `related.lessons`／`glossary.js` の `lessonId`。※`topics.js` は units から自動生成なので追随（手当て不要）。
-- **図解 `labId`** … `labs.js` 本体の `id`／`practice.js` の `labIds`／`stories.js` の `labIds`／`figures.js` の `related.labs`／`lessonContexts` の `connections.labId`。※単元の `labIds`・`recommendedLabId` は `unitLabRefs`（labs の `lessonIds` 逆引き）由来で自動追随。
-- **問題 `practiceId`** … `practice.js` 本体の `id`／`lessonMetadata` の `practiceIds`／`labs.js` の `practiceIds`／`stories.js` の `practiceIds`／`lessonContexts` の `connections.practiceId`。
-- **読み物 `storyId`** … `stories.js` 本体の `id`／`lessonContexts` の `storyIds` と `connections.storyId`／`figures.js` の `related.stories`。
-- **数学者 `figureId`** … `figures.js` 本体の `id`／他 figure の `related.figures`。
+- **単元 `lessonId`** … `lessons.js`（import 行・`rawUnits`・`learningPath`・`lessonMetadata`・`lessonContexts` のキー）／`labs/<id>.js` の `lessonIds`／`practice/<id>.js` の `lessonIds`（＋`labs.js`・`practice.js` の `unitLabRefs`）／`stories/<id>.js` の `lessonIds`／`figures/<id>.js` の `related.lessons`／`glossary.js` の `lessonId`。※`topics.js` は units から自動生成なので追随（手当て不要）。
+- **図解 `labId`** … `labs/<id>.js` の `id`（＋`labs.js` index の import・`labs` 配列）／`labs.js` の `unitLabRefs`／`practice/<id>.js` の `labIds`／`stories/<id>.js` の `labIds`／`figures/<id>.js` の `related.labs`／`lessonContexts`（lessons.js）の `connections.labId`。※単元の `labIds`・`recommendedLabId` は `unitLabRefs`（labs.js）由来で自動追随。
+- **問題 `practiceId`** … `practice/<id>.js` の `id`（＋`practice.js` index の import・`rawPracticeCatalog`・`advancedPolicies` のキー）／`lessonMetadata`（lessons.js）の `practiceIds`／`labs/<id>.js` の `practiceIds`／`stories/<id>.js` の `practiceIds`／`lessonContexts` の `connections.practiceId`。
+- **読み物 `storyId`** … `stories/<id>.js` の `id`（＋`stories.js` index の import・`stories` 配列）／`lessonContexts` の `storyIds` と `connections.storyId`／`figures/<id>.js` の `related.stories`。
+- **数学者 `figureId`** … `figures/<id>.js` の `id`（＋`figures.js` index の import・`figures` 配列）／他 `figures/<id>.js` の `related.figures`。
 
 削除は上の参照を消してから本体エントリを消す。リネームは新旧を漏れなく置換する。仕上げに `npm run check` →（通れば）`npm run build`。
 
@@ -129,7 +135,7 @@ id（単元・図解・問題・読み物・数学者）を変える／消すと
 各種別の**データ型の例**は [design/content-architecture.md](design/content-architecture.md) §4.2〜§4.5、ここは**手順**。基本は「近い既存を1つ写して差し替える」。内容を変えたら必ず `npm run check`（＋表示物は `npm run preview`）→ `npm run build` → コミット。
 
 ### 練習（practice）
-- `practice.js` に1エントリ追加：`{ id, label, lessonIds, labIds, level, numberPolicy }`。`numberPolicy` は説明テキスト（例「答えが2桁以内」。コード値ではない）。
+- `practice/<id>.js` を作る：`export const practice = { id, label, lessonIds, labIds, level, numberPolicy }`（近い既存の `practice/<id>.js` を写す）。`numberPolicy` は説明テキスト（例「答えが2桁以内」。コード値ではない）。そのうえで `practice.js`（index）の**import 行**と **`rawPracticeCatalog` 配列**に1行ずつ足す。
 - 生成器を純関数で書き、**モード id をキーにした対応表**に登録する（`practice.js` に `generator` フィールドは無い。`practice-view.js` が `practiceGenerators[mode.id]`／`advancedPracticeGenerators[mode.id]` で引く）:
   - **基本問題** … `practice-generators.js` の `practiceGenerators`（キー＝mode id）。関数を `practice-extra.js` に置く場合は `extraPracticeGenerators` に登録すれば `practiceGenerators` に spread で合流する。
   - **発展問題（少し進んだ問題）** … `practice-advanced.js` の `advancedPracticeGenerators`（同上、追補は `practice-extra.js` の `extraAdvancedGenerators`）。あわせて `practice.js` に `advancedLevel`（ラベル）と `advancedPolicy`（説明文。`advancedPolicies[practice.id]`）を足すと発展タブが出る。
@@ -138,22 +144,22 @@ id（単元・図解・問題・読み物・数学者）を変える／消すと
 - `npm run check`（`test-practice.mjs` が全モードの自己受理を検査）。
 
 ### 図解ラボ（labs）
-- `labs.js` に1エントリ追加：`{ id, title, short, category, lessonIds, practiceIds, objectIntro, observe, starterExample }`。`lessonIds`・`practiceIds`・`starterExample` は必須（`check` が逆参照と存在を検査）。`hostId` フィールドは無い。
+- `labs/<id>.js` を作る：`export const lab = { id, title, short, category, lessonIds, practiceIds, objectIntro, observe, starterExample }`（近い既存の `labs/<id>.js` を写す）。`lessonIds`・`practiceIds`・`starterExample` は必須（`check` が逆参照と存在を検査）。`hostId` フィールドは無い。そのうえで `labs.js`（index）の**import 行**と **`labs` 配列**に1行ずつ足す。単元との対応（次の一手）を付けるなら `labs.js` の `unitLabRefs` にも単元 id→lab id を足す。
 - 描画・操作コードは `labs-view.js` に `id` 対応で追加（近い既存図解を写す）。表示物なので `npm run preview` で確認。
 
 ### 読み物（stories）
-- `stories.js` に1エントリ追加：`{ id, type, menuTitle, title, lead, lessonIds, labIds, practiceIds, sections: [{ heading, body }], sources, factCheck }`。`type` は `rule`／`history`／`society`。`factCheck.status` は `"checked"` 必須。
+- `stories/<id>.js` を作る：`export const story = { id, type, menuTitle, title, lead, lessonIds, labIds, practiceIds, sections: [{ heading, body }], sources, factCheck }`（近い既存の `stories/<id>.js` を写す）。`type` は `rule`／`history`／`society`。`factCheck.status` は `"checked"` 必須。そのうえで `stories.js`（index）の**import 行**と **`stories` 配列**に1行ずつ足す。
 - `history`／`society` は `sources` に HTTPS 出典を1つ以上（`{ title, url }`）。肖像を使うなら `portraits: [{ src, alt, caption }]`（画像は `src/` 配下に実在）。
 - `npm run check`（出典・事実確認・肖像実在・相互リンクを検査）。
 
 ### 数学者図鑑（figures）
-- `figures.js` は先頭コメントが構造を説明している（まず読む）。1エントリ追加：`{ id, name, reading, era, region, achievement, profile: [...], contributions: [...], portrait: { src, alt, caption }, related: { stories, figures, lessons, labs } }`。本文の数式はソース上 `\\(` の2重バックスラッシュ。
+- `figures.js`（index）の先頭コメントが構造を説明している（まず読む）。`figures/<id>.js` を作る：`export const figure = { id, name, reading, era, region, achievement, profile: [...], contributions: [...], portrait: { src, alt, caption }, related: { stories, figures, lessons, labs } }`（近い既存の `figures/<id>.js` を写す）。本文の数式はソース上 `\\(` の2重バックスラッシュ。そのうえで `figures.js` の**import 行**と **`figures` 配列**に1行ずつ足す。
 - 肖像画像は `src/assets/img/portraits/<id>.webp` に置く（実在必須）。`related.*` は実在必須（`check` が逆参照検査）。
 - `npm run check`（`figures` も数式区切り・肖像実在・related を検査）。
 
 ## 4.7 表示・仕組みを拡張する
 
-いずれも表示に関わるので最後に `npm run preview` で確認。既存を1つ写すのが基本。
+いずれも表示に関わるので最後に `npm run preview` で確認。既存を1つ写すのが基本。**CSS を足すときは集約ファイル `styles.css` ではなく役割に合う部分ファイル**（`lessons.css`／`labs.css`／`practice.css`… §2 css 参照）へ書く。
 
 ### 新しいページ／ルート
 1. `nav.js` の `pageIds` に id を足す。
