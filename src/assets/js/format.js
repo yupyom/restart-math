@@ -212,6 +212,50 @@ export function displayEquationTeX(value) {
   return `\\[\\begin{aligned}${rows.join("\\\\")}\\end{aligned}\\]`;
 }
 
+// 1本の式の連鎖（例: S=\pi\times10^2=100\pi\approx100\times3.14=314）を、
+// 関係記号（=・\approx・\to・\Rightarrow）ごとに改行して縦に積む。関係記号を
+// & で縦にそろえるので、狭い画面でも各行が短くなり横に溢れない。
+// displayEquationTeX との違いは「= だけでなく \approx なども区切りにする」点で、
+// 数値を近似していく確認用の例（\approx を含む連鎖）を折り返すために使う。
+export function stackedEquationTeX(value) {
+  const source = value.trim();
+  // 並記モード（\quad・下かっこ等）は displayEquationTeX と同じくそのまま出す。
+  if (/\\quad|\\qquad|\\underbrace|\\overbrace|\\Longrightarrow|\\Leftrightarrow|\\iff/.test(source)) {
+    return `\\[${source}\\]`;
+  }
+
+  const relations = ["\\Rightarrow", "\\approx", "\\to", "="];
+  // 先頭からスキャンし、関係記号で { rel, term } の並びに分ける（先頭は左辺で rel=null）。
+  const parts = [];
+  let buffer = "";
+  let rel = null;
+  let i = 0;
+  while (i < source.length) {
+    const hit = relations.find((token) => source.startsWith(token, i));
+    if (hit) {
+      parts.push({ rel, term: buffer.trim() });
+      rel = hit;
+      buffer = "";
+      i += hit.length;
+    } else {
+      buffer += source[i];
+      i += 1;
+    }
+  }
+  parts.push({ rel, term: buffer.trim() });
+
+  // 関係記号が1個以下、または分割でかっこが壊れる場合は素直に1行で表示。
+  if (parts.length <= 2 || !parts.every((part) => hasBalancedBraces(part.term))) {
+    return `\\[${source}\\]`;
+  }
+
+  const rows = [`${parts[0].term}&${parts[1].rel} ${parts[1].term}`];
+  for (let k = 2; k < parts.length; k += 1) {
+    rows.push(`&${parts[k].rel} ${parts[k].term}`);
+  }
+  return `\\[\\begin{aligned}${rows.join("\\\\")}\\end{aligned}\\]`;
+}
+
 export function workedExampleMarkup(value) {
   if (value && typeof value === "object" && value.type === "aligned-steps") {
     const rows = value.rows.map((row) => alignEquationRow(row)).join("\\\\");

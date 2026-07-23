@@ -343,6 +343,24 @@
   padding-left: 1.2rem;
 }
 
+/* ── 長い数式で版面（ページ全体）が横に割れないための土台 ──────────────
+   グリッド項目は既定 min-width:auto（＝min-content）。折り返せないインライン
+   数式（\(...\)）があると、項目がその数式の最小幅まで広がり、狭い画面では
+   ページを横に突き破って全体が横スクロールしてしまう。
+   ① min-width:0 で各項目を列幅に収める。
+   ② それでも収まらない長い数式は、各ボックスの中だけで横スクロールさせ、
+      ページ本体は動かさない（数式は切らずに読める）。 */
+.unit-content-grid > * {
+  min-width: 0;
+}
+
+.note-box,
+.example-box,
+.mini-check {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 .example-box {
   border-left: 4px solid var(--primary);
 }
@@ -500,6 +518,25 @@
   padding: 0.75rem;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.78);
+}
+
+/* 単独の式を折り返して見せる版。式ボックス（.equation-display）のスクロール影は
+   白背景を前提にしているので、カードも不透明な白でそろえる。ラベルは式の上に置き、
+   横余白を詰めて式が使える幅を最大化する。 */
+.mini-check .check-example-equation {
+  padding: 0.65rem 0.55rem 0.5rem;
+  background: #ffffff;
+}
+
+.check-example-equation > strong {
+  display: block;
+  margin-bottom: 0.1rem;
+}
+
+.check-example-equation .equation-display {
+  padding-top: 0;
+  padding-bottom: 0.15rem;
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
 }
 
 .mini-check .learning-action {

@@ -6,7 +6,7 @@ import { stories, storyCatalog } from "../../content/stories.js";
 import { state } from "./state.js";
 import { $, jumpToTop, scheduleMathTypeset, toggleSectionLead } from "./utils.js";
 import { routeHash } from "./nav.js";
-import { escapeHtml, formatTextWithMath, term, workedExampleMarkup } from "./format.js";
+import { escapeHtml, formatTextWithMath, stackedEquationTeX, term, workedExampleMarkup } from "./format.js";
 import { linkifyGlossaryTerms } from "./glossary-links.js";
 import { renderPageNumbers } from "./pager.js";
 import { readRoute } from "./router.js";
@@ -298,6 +298,21 @@ export function unitModelMarkup(unit) {
   `;
 }
 
+// 「まずはこの例：」の例示。全体がひとつの式 \(...\) だけのときは、関係記号
+// （=・≈ など）ごとに改行して縦に積み（長い連鎖でも狭い画面で横に溢れない）、
+// 収まらない行だけ式内で横スクロールにする。式のまわりに文章がある例（複数の式を
+// 含む説明文など）は、分断せず従来どおりインラインの散文で見せる。
+function checkExampleMarkup(example) {
+  const trimmed = String(example).trim();
+  const isSingleEquation =
+    /^\\\([\s\S]*\\\)$/.test(trimmed) && trimmed.indexOf("\\(", 2) === -1;
+  if (isSingleEquation) {
+    const inner = trimmed.replace(/^\\\(|\\\)$/g, "");
+    return `<div class="check-example check-example-equation"><strong>まずはこの例：</strong><div class="equation-display">${escapeHtml(stackedEquationTeX(inner))}</div></div>`;
+  }
+  return `<p class="check-example"><strong>まずはこの例：</strong>${formatTextWithMath(trimmed)}</p>`;
+}
+
 export function confirmationMarkup(unit) {
   const lab = labCatalog[unit.labIds?.[0]];
   const example = unit.checkExample || lab?.starterExample;
@@ -307,7 +322,7 @@ export function confirmationMarkup(unit) {
     <div class="mini-check prose">
       <h4>${title}</h4>
       <p>${formatTextWithMath(unit.check)}</p>
-      ${example ? `<p class="check-example"><strong>まずはこの例：</strong>${formatTextWithMath(example)}</p>` : ""}
+      ${example ? checkExampleMarkup(example) : ""}
       ${
         lab
           ? `<button class="learning-action primary" type="button" data-open-lab="${escapeHtml(lab.id)}">図解「${escapeHtml(lab.short)}」を開いて試す</button>`

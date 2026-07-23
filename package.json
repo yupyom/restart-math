@@ -10,7 +10,8 @@
     "units": "node scripts/list-units.mjs",
     "unit": "node scripts/show-unit.mjs",
     "preview": "node scripts/dev-server.mjs",
-    "shot": "node scripts/shot.mjs"
+    "shot": "node scripts/shot.mjs",
+    "overflow": "node scripts/overflow-check.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.61.1"
