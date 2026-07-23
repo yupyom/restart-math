@@ -12,6 +12,7 @@ import { unit as simplifyRoots } from "./lessons/simplify-roots.js";
 import { unit as rootOperations } from "./lessons/root-operations.js";
 import { unit as numberClassification } from "./lessons/number-classification.js";
 import { unit as fractionArithmetic } from "./lessons/fraction-arithmetic.js";
+import { unit as mathMap } from "./lessons/math-map.js";
 import { unit as lettersAsBoxes } from "./lessons/letters-as-boxes.js";
 import { unit as likeTerms } from "./lessons/like-terms.js";
 import { unit as distributionLetters } from "./lessons/distribution-letters.js";
@@ -79,6 +80,7 @@ const rawUnits = [
   rootOperations,
   numberClassification,
   fractionArithmetic,
+  mathMap,
   lettersAsBoxes,
   likeTerms,
   distributionLetters,
@@ -211,6 +213,50 @@ const lessonContexts = {
         summary:
           "練習『分数の四則』は、通分のたし引き・約分のかけ算・逆数のわり算に加えて、比の約分と概算まで一続きで出します。手を動かして型を体にいれましょう。",
         practiceId: "fraction-arithmetic",
+      },
+    ],
+  },
+  "math-map": {
+    why: {
+      question: "なぜ文字式・方程式・不等式・関数を別々に習うの？",
+      answer:
+        "別々の話ではなく、同じ場面への問いが深まるたびに取り出す道具だからです。料金プランで言えば、『料金を式にする（文字式）→ 2つが等しくなる点を求める（方程式）→ 予算内に収まる範囲を出す（不等式）→ 全体の動きを見わたす（関数・グラフ）』と、問いの種類に合わせて道具が変わります。順に習うのは、前の道具が次の道具の部品になるからです。",
+      tryIt:
+        "プランAとBが同額になる使用量を、まず \\(1\\,\\text{GB}\\) ずつ表で試して探し、次に方程式 \\(1000+200u=1600+100u\\) で一気に求める。どちらも \\(u=6\\) になるのを見くらべる",
+    },
+    definitions: [
+      {
+        term: "文字式",
+        meaning: "数のかわりに文字を使い、量の関係を1本の式で表したもの。表を作らずに、どんな値でも計算できる",
+        example: "使用量 \\(u\\) の料金 \\(1000+200u\\)",
+        boundary: "式に \\(=\\) はない。関係を『表す』だけで、まだ何かを『求めて』はいない",
+      },
+      {
+        term: "方程式",
+        meaning: "ある文字の値を求めるために、2つの量を \\(=\\) で結んだ等式。成り立つ特定の値を探す",
+        example: "\\(1000+200u=1600+100u\\)（解は \\(u=6\\)）",
+        boundary: "どんな値でも成り立つ恒等式とは違い、答えは特定の値。グラフでは2直線の交点にあたる",
+      },
+      {
+        term: "不等式",
+        meaning: "『〜以下』『〜より大きい』のような範囲を \\(\\le,<,>,\\ge\\) で表した式。答えは1点でなく範囲になる",
+        example: "\\(1000+200u\\le2000\\)（解は \\(u\\le5\\)）",
+        boundary: "両辺に負の数を掛けたり割ったりすると、不等号の向きが変わる",
+      },
+      {
+        term: "関数",
+        meaning: "入力（使用量）を決めると出力（料金）が1つ決まる対応。グラフにすると全体の動きが一目で見える",
+        example: "\\(y=1000+200u\\) の直線",
+        boundary: "1つの入力に出力が2つ以上あるものは関数ではない",
+      },
+    ],
+    connections: [
+      {
+        kind: "practice",
+        title: "プランで道具を使い分ける",
+        summary:
+          "練習『料金プランで道具を使い分ける』は、同じプランを題材に、文字式で表す→方程式で交点を出す→不等式で上限を出す、を一続きで解きます。地図の各地点を手で確かめましょう。",
+        practiceId: "math-map",
       },
     ],
   },
@@ -1142,6 +1188,7 @@ const lessonMetadata = {
   "quadratic-equations": { strand: "数と式", practiceIds: ["quadratic-solve", "quadratic-sign"] },
   "absolute-value-equations": { strand: "数と式", practiceIds: ["absolute-value", "inequality"] },
   "distribution-numbers": { strand: "数と式", practiceIds: ["distribute"] },
+  "math-map": { strand: "数と式", practiceIds: ["math-map"] },
   "powers-roots": { strand: "数と式", practiceIds: ["square-root-meaning"] },
   "simplify-roots": { strand: "数と式", practiceIds: ["radical"] },
   "root-operations": { strand: "数と式", practiceIds: ["root-operations"] },
@@ -1207,6 +1254,7 @@ export const learningPath = [
   "number-classification",
   "fraction-arithmetic",
   "distribution-numbers",
+  "math-map",
   "letters-as-boxes",
   "like-terms",
   "distribution-letters",

@@ -281,6 +281,72 @@
   stroke-linejoin: round;
 }
 
+/* 学びの地図：2つの料金プランを直線で見せる図（model type "plan-lines"）。
+   プランA＝青（.graph-line を流用）、プランB＝オレンジ（.graph-line-b）。 */
+.plan-lines-figure {
+  width: min(100%, 480px);
+}
+
+.graph-line-b {
+  stroke: var(--accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.graph-base-dot {
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.graph-line-dot {
+  fill: var(--blue);
+}
+
+.graph-line-b-dot {
+  fill: var(--accent);
+}
+
+.graph-base-label {
+  fill: #6b7480 !important;
+  font-family: var(--font-ui) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.graph-line-label {
+  font-family: var(--font-ui) !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+.graph-line-text {
+  fill: var(--blue) !important;
+}
+
+.graph-line-b-text {
+  fill: #9a4c00 !important;
+}
+
+.graph-cross {
+  fill: var(--pink);
+  stroke: #ffffff;
+  stroke-width: 2.5;
+}
+
+.graph-cross-guide {
+  stroke: var(--pink);
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+  opacity: 0.6;
+}
+
+.graph-cross-label {
+  fill: var(--pink) !important;
+  font-family: var(--font-ui) !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
 .graph-region {
   fill: rgba(47, 111, 115, 0.14);
   stroke: none;

@@ -258,6 +258,93 @@ export function parabolaModelMarkup(model) {
   );
 }
 
+// 料金プランなどを2本の直線で見せ、交点（損得が入れ替わる点）を印す。
+// 各直線は base（基本料金・y切片）＋ rate（従量単価・傾き）× u。
+// 先頭2本の交点を自動計算して丸と補助線で示す（学習の地図の「方程式＝関数の交点」を可視化）。
+export function planLinesModelMarkup(model) {
+  const lines = (Array.isArray(model.lines) ? model.lines : []).slice(0, 2);
+  const uMax = Number(model.uMax) > 0 ? Number(model.uMax) : 12;
+  const costMax = Number(model.costMax) > 0 ? Number(model.costMax) : 3600;
+  const uStep = Number(model.uStep) > 0 ? Number(model.uStep) : uMax <= 12 ? 2 : 5;
+  const costStep = Number(model.costStep) > 0 ? Number(model.costStep) : 600;
+
+  const left = 78;
+  const right = 452;
+  const top = 46;
+  const bottom = 330;
+  const mapX = (u) => left + (u / uMax) * (right - left);
+  const mapY = (c) => bottom - (Math.min(Math.max(c, 0), costMax) / costMax) * (bottom - top);
+
+  const grid = [];
+  const ticks = [];
+  for (let u = 0; u <= uMax + 1e-9; u += uStep) {
+    grid.push(`<line class="graph-grid" x1="${mapX(u).toFixed(1)}" y1="${top}" x2="${mapX(u).toFixed(1)}" y2="${bottom}"></line>`);
+    if (u > 0) ticks.push(`<text class="graph-tick" x="${mapX(u).toFixed(1)}" y="${bottom + 22}" text-anchor="middle">${u}</text>`);
+  }
+  for (let c = 0; c <= costMax + 1e-9; c += costStep) {
+    grid.push(`<line class="graph-grid" x1="${left}" y1="${mapY(c).toFixed(1)}" x2="${right}" y2="${mapY(c).toFixed(1)}"></line>`);
+    if (c > 0) ticks.push(`<text class="graph-tick" x="${left - 8}" y="${(mapY(c) + 5).toFixed(1)}" text-anchor="end">${c}</text>`);
+  }
+
+  const geom = lines.map((line, i) => {
+    const base = Number(line.base);
+    const rate = Number(line.rate);
+    const cls = line.color === "b" || i === 1 ? "graph-line-b" : "graph-line";
+    const endCost = base + rate * uMax;
+    return {
+      base,
+      rate,
+      cls,
+      label: line.label || "",
+      x0: mapX(0),
+      y0: mapY(base),
+      x1: mapX(uMax),
+      y1: mapY(endCost),
+    };
+  });
+
+  const segments = geom
+    .map(
+      (g) =>
+        `<line class="${g.cls}" x1="${g.x0.toFixed(1)}" y1="${g.y0.toFixed(1)}" x2="${g.x1.toFixed(1)}" y2="${g.y1.toFixed(1)}"></line>` +
+        `<circle class="graph-base-dot ${g.cls}-dot" cx="${g.x0.toFixed(1)}" cy="${g.y0.toFixed(1)}" r="5.5"></circle>` +
+        `<text class="graph-base-label" x="${(g.x0 + 8).toFixed(1)}" y="${(g.y0 - 9).toFixed(1)}" text-anchor="start">${g.base}</text>` +
+        `<text class="graph-line-label ${g.cls}-text" x="${(g.x1 - 4).toFixed(1)}" y="${(g.y1 + (g.cls === "graph-line" ? -12 : 20)).toFixed(1)}" text-anchor="end">${escapeHtml(g.label)}</text>`,
+    )
+    .join("");
+
+  // 先頭2本の交点（傾きが異なるときだけ）。方程式の解＝2直線の交点。
+  let cross = "";
+  if (geom.length === 2 && geom[0].rate !== geom[1].rate) {
+    const uStar = (geom[1].base - geom[0].base) / (geom[0].rate - geom[1].rate);
+    const cStar = geom[0].base + geom[0].rate * uStar;
+    if (uStar >= 0 && uStar <= uMax && cStar >= 0 && cStar <= costMax) {
+      const cx = mapX(uStar);
+      const cy = mapY(cStar);
+      cross =
+        `<line class="graph-cross-guide" x1="${cx.toFixed(1)}" y1="${cy.toFixed(1)}" x2="${cx.toFixed(1)}" y2="${bottom}"></line>` +
+        `<circle class="graph-cross" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="7"></circle>` +
+        `<text class="graph-cross-label" x="${cx.toFixed(1)}" y="${(cy - 16).toFixed(1)}" text-anchor="middle">u=${uStar} で同額</text>`;
+    }
+  }
+
+  return geometryModelShell(
+    model,
+    `
+      <svg class="geometry-figure plan-lines-figure" viewBox="0 0 480 400" role="img" aria-label="${escapeHtml("2つの料金プランの直線と、料金が等しくなる交点を示すグラフ")}">
+        ${grid.join("")}
+        <line class="graph-axis" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}"></line>
+        <line class="graph-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}"></line>
+        <text class="graph-axis-label" x="${right}" y="${bottom + 40}" text-anchor="end">使用量 u（GB）</text>
+        <text class="graph-axis-label" x="${left - 6}" y="${top - 16}" text-anchor="start">料金（円）</text>
+        ${ticks.join("")}
+        ${cross}
+        ${segments}
+      </svg>
+    `,
+  );
+}
+
 export function unitModelMarkup(unit) {
   const model = unit.model;
   if (!model) return "";
@@ -265,6 +352,7 @@ export function unitModelMarkup(unit) {
   if (model.type === "right-triangle") return rightTriangleModelMarkup(model);
   if (model.type === "line-graph") return lineGraphModelMarkup(model);
   if (model.type === "parabola") return parabolaModelMarkup(model);
+  if (model.type === "plan-lines") return planLinesModelMarkup(model);
   if (model.type !== "area") return "";
 
   const height = Number(model.height);

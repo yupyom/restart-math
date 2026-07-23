@@ -510,11 +510,68 @@ export function generateCirclePiProblem() {
   };
 }
 
+// 学びの地図：同じ料金プランを題材に、文字式→方程式→交点の料金→不等式の上限を通しで解く。
+// 交点の使用量 uStar が整数になるよう baseB を逆算し、不等式の上限も割り切れる整数にそろえる。
+export function generateMathMapProblem() {
+  const rateB = choose([100, 150, 200]);
+  const deltaRate = choose([50, 100]);
+  const rateA = rateB + deltaRate; // プランA は単価が高い（増え方が急）
+  const uStar = choose([4, 5, 6, 8]); // 交点の使用量（GB）
+  const baseA = choose([800, 1000, 1200]); // プランA は基本料金が安い
+  const baseB = baseA + deltaRate * uStar; // 交点で同額になるよう逆算
+  const crossCost = baseA + rateA * uStar;
+  const uBound = choose([3, 4, 5, 7]); // 不等式の上限（GB）
+  const budget = baseA + rateA * uBound;
+
+  const correctExpr = `${baseA}+${rateA}u`;
+  const exprChoices = [correctExpr, `${rateA}+${baseA}u`, `${baseA}×${rateA}u`, `${baseA + rateA}u`].sort(
+    () => Math.random() - 0.5,
+  );
+
+  return {
+    modeLabel: "料金プランで道具を使い分ける",
+    title: "文字式・方程式・不等式を通しで使う",
+    prompt: `プランA『基本料金 \\(${baseA}\\) 円＋ \\(1\\,\\text{GB}\\) ごと \\(${rateA}\\) 円』、プランB『基本料金 \\(${baseB}\\) 円＋ \\(1\\,\\text{GB}\\) ごと \\(${rateB}\\) 円』。使用量を \\(u\\)（GB）として考えます。`,
+    steps: [
+      {
+        label: "文字式で表す",
+        question: "プランAのひと月の料金を \\(u\\) の式で表すと？",
+        hint: `基本料金 \\(${baseA}\\) 円に、\\(1\\,\\text{GB}\\) ごと \\(${rateA}\\) 円が \\(u\\) 個分。数の項を先、文字の項をあとに書く。`,
+        check: (input) => normalizeText(input) === normalizeText(correctExpr),
+        answer: correctExpr,
+        choices: exprChoices,
+      },
+      {
+        label: "方程式を解く",
+        question: "2つのプランが同じ料金になる使用量 \\(u\\)（GB）は？",
+        hint: `2つの式を \\(=\\) で結ぶ：\\(${baseA}+${rateA}u=${baseB}+${rateB}u\\)。\\(u\\) の項を左、数を右に集めて解く。`,
+        check: (input) => Number(normalizeText(input)) === uStar,
+        answer: String(uStar),
+      },
+      {
+        label: "交点の料金",
+        question: `そのとき（\\(u=${uStar}\\)）のひと月の料金は？（円）`,
+        hint: `どちらかの式に \\(u=${uStar}\\) を入れる：\\(${baseA}+${rateA}\\times${uStar}\\)。`,
+        check: (input) => Number(normalizeText(input)) === crossCost,
+        answer: String(crossCost),
+      },
+      {
+        label: "不等式で上限",
+        question: `プランAをひと月 \\(${budget}\\) 円以内に抑えたい。使えるのは \\(u\\) が何GB以下？`,
+        hint: `\\(${baseA}+${rateA}u\\le${budget}\\) を解く。両辺から \\(${baseA}\\) を引き、\\(${rateA}\\) で割る。`,
+        check: (input) => Number(normalizeText(input)) === uBound,
+        answer: String(uBound),
+      },
+    ],
+  };
+}
+
 export const practiceGenerators = {
   ...extraPracticeGenerators,
   "fraction-arithmetic": generateFractionArithmeticProblem,
   "significant-figures": generateSignificantFiguresProblem,
   "circle-pi": generateCirclePiProblem,
+  "math-map": generateMathMapProblem,
   "exam-review": generateExamReviewProblem,
   integer: generateIntegerProblem,
   "absolute-value": generateAbsoluteValueProblem,

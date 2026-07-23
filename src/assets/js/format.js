@@ -249,10 +249,17 @@ export function stackedEquationTeX(value) {
     return `\\[${source}\\]`;
   }
 
-  const rows = [`${parts[0].term}&${parts[1].rel} ${parts[1].term}`];
-  for (let k = 2; k < parts.length; k += 1) {
-    rows.push(`&${parts[k].rel} ${parts[k].term}`);
-  }
+  // \Rightarrow・\to を含む式変形の連鎖は、各項（不等式など）が長くなりがちなので
+  // 左辺も独立した1行にして、各行を短く保つ。= や ≈ だけの数値連鎖は、左辺と最初の
+  // 項を同じ行に置いて詰める（S=π×10^2 のように読みやすい）。
+  const isTransform = parts.slice(1).some((part) => part.rel === "\\Rightarrow" || part.rel === "\\to");
+  const rows = isTransform
+    ? // 全行の頭に & を置いて左そろえ（前列は空＝幅0）。各行が短く保たれ、⇒ が左に並ぶ。
+      parts.map((part, k) => (k === 0 ? `&${part.term}` : `&${part.rel}\\;${part.term}`))
+    : [
+        `${parts[0].term}&${parts[1].rel} ${parts[1].term}`,
+        ...parts.slice(2).map((part) => `&${part.rel} ${part.term}`),
+      ];
   return `\\[\\begin{aligned}${rows.join("\\\\")}\\end{aligned}\\]`;
 }
 
