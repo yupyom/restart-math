@@ -43,6 +43,7 @@
 | `npm run unit -- <id\|番号>` | show-unit.mjs | **1単元の本文 .js を丸ごと出力**（Read の代替・行ズレ対策） |
 | `npm run preview` | dev-server.mjs | `src/` を no-store 配信（`http://localhost:4319/`）。新しい表示部品の確認用 |
 | `npm run shot -- <ルート> [セレクタ]` | shot.mjs | **ヘッドレスの system Chrome で確実にスクショ**（要素単位・MathJax 組版待ち）。PNG を `.shots/` に保存し Read で確認 |
+| `npm run overflow -- <ルート...> [--w 360]` | overflow-check.mjs | **モバイル幅で横はみ出し（横スクロール）を検査**。ページの scrollWidth と原因要素を数値報告。長い数式の版面割れの回帰確認に使う（複数ルート可・exit code 2 で NG） |
 
 補足:
 - 直接 `node scripts/<name>.mjs …` でも同じ（npm のヘッダ行が邪魔なときは node 直呼び）。
